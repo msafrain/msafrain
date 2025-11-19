@@ -1,31 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>mSafrain</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <title>mSafrain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<!-- jQuery + jQuery UI -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css" />
+  <!-- jQuery & jQuery UI (for dragging/resizing windows) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css" />
 
-<style>
-/* ------- YOUR FULL CSS (unchanged) ------- */
-#mSafrain * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
+  <!-- Your desktop CSS -->
+  <link rel="stylesheet" href="desktop.css" />
 
-#mSafrain {
-  background: #ffffff;
-  min-height: 100vh;
-  color: #111;
-  position: relative;
-}
+  <!-- Blogger JSONP loader: latest post only, no title, date below -->
+  <script>
+    function loadBlogspot() {
+      const url = "https://msafrain.blogspot.com/feeds/posts/default" +
+                  "?alt=json-in-script&max-results=1&callback=showLatestPost";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
 
-/* QUICK LAUNCH BUTTONS */
-#mSafrain .openWindowButtons {
-  position: fixed;
+    function showLatestPost(data) {
+      const area = document.getElementById("poetryContent");
+      if (!area) return;
+
+      try {
+        const entry = data.feed.entry && data.feed.entry[0];
+        if (!entry) {
+          area.textContent = "No entries published yet.";
+          return;
+        }
+
+        // Raw HTML content from Blogger
+        let contentHtml = (entry.content && entry.content.$t ? entry.content.$t : "").trim();
+
+        // Put into a temporary DOM container
+        const temp = document.createElement("div");
+        temp.innerHTML = contentHtml;
+
+        // 1) Remove all headings (to hide Blogger title)
+        const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
+        headings.forEach(h => h.remove());
+
+        // 2) Compute date text from feed
+        let published = entry.published && entry.published.$t
+          ? new Date(entry.published.$t)
+          : null;
+
+        let dateText = "";
+        if (published && !isNaN(published.getTime())) {
+          dateText = published.toLocaleDateString("en-SG", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+          });
+        }
+
+        // 3) Render: content first, date below
+        const cleanedContent = temp.innerHTML.trim();
+
+        const dateHTML = dateText
+          ? `<div style="margin-top:16px; color:#666; font-size:12px;">${dateText}</div>`
+          : "";
+
+        area.innerHTML = `
+          <div>${cleanedContent}</div>
+          ${dateHTML}
+        `;
+      } catch (e) {
+        console.error(e);
+        area.textContent = "Unable to load mThoughts.";
+      }
+    }
+  </script>
+</head>
+
+<body onload="loadBlogspot()">
+
+  <div id="mSafrain">
+
+    <!-- QUICK LAUNCH BUTTONS -->
+    <div class="openWindowButtons">
+      <button class="openWindow" data-id="0">By Matin Safrain</button>
+      <button class="openWindow" data-id="1">mThoughts</button>
+    </div>
+
+    <!-- Window 0 -->
+    <div class="window" data-title="By Matin Safrain" style="top: 60px; left: 60px;">
+      <p>Here, I write my web poetry...</p>
+      <p>
+        You may read mPoetry on
+        <a href="https://www.wattpad.com/user/msafrain" target="_blank">Wattpad</a>.
+      </p>
+    </div>
+
+    <!-- Window 1: mThoughts -->
+    <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
+      <div class="poetry-area" id="poetryContent">
+        Loading latest piece...
+      </div>
+    </div>
+
+    <!-- Hidden window example -->
+    <div class="window closed" data-title="About" style="top: 180px; left: 220px;">
+      <h2>About</h2>
+      <p>This UI is fully custom built. Draggable, resizable, clean, lightweight. Designed for M. Safrain.</p>
+    </div>
+
+    <!-- TASKBAR -->
+    <div id="taskbar"></div>
+  </div>
+
+  <!-- Window logic (your existing JS) -->
+  <script src="desktop.js"></script>
+</body>
+</html>
