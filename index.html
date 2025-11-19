@@ -500,90 +500,47 @@ function render_mStratagems_archive(data) {
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-D2X3W8CYNC');
 
-document.addEventListener("click", function (e) {
-  const img = e.target.closest("img[data-meaning]");
-  if (!img) return;
-
-  const meaning = img.getAttribute("data-meaning") || "No explanation yet.";
-
-  // Put the meaning text into the Visual Meaning window
-  const contentEl = document.getElementById("visualMeaningContent");
-  if (contentEl) {
-    contentEl.textContent = meaning;
-  }
-
-  // Find the Visual Meaning window
-  const win = document.querySelector('.window[data-window-id="visual-meaning"]');
-  if (!win) return;
-
-  // Show the window (un-close / un-minimize)
-  win.classList.remove("closed", "minimizedWindow");
-
-  // Make it the active window
-  document.querySelectorAll("#mSafrain .window").forEach(function (w) {
-    w.classList.remove("activeWindow");
-  });
-  win.classList.add("activeWindow");
-
-  // Update taskbar tab if possible
-  const id = win.getAttribute("data-id");
-  if (id != null) {
-    document.querySelectorAll("#mSafrain .taskbarPanel").forEach(function (p) {
-      p.classList.remove("activeTab");
-    });
-
-    const panel = document.getElementById("minimPanel" + id);
-    if (panel) {
-      panel.classList.remove("closed", "minimizedTab");
-      panel.classList.add("activeTab");
-    }
-
-    // 🔽 On mobile: scroll to the Visual Meaning window using the SAME logic as desktop.js
-    if (window.innerWidth <= 768) {
-      const target = document.getElementById("window" + id);
-      if (target) {
-        // use jQuery animate if available
-        if (window.jQuery) {
-          $("html, body").animate(
-            {
-              scrollTop: $(target).offset().top - 80, // same offset
-            },
-            300
-          );
-        } else {
-          // fallback plain JS
-          const rect = target.getBoundingClientRect();
-          const y = window.scrollY + rect.top - 80;
-          window.scrollTo({ top: y, behavior: "smooth" });
-        }
-      }
-    }
-  }
-});
-
+  // 🔽 Simplified Visual Meaning handler
   document.addEventListener("click", function (e) {
-  const item = e.target.closest(".archive-item");
-  if (!item) return;
+    const img = e.target.closest("img[data-meaning]");
+    if (!img) return;
 
-  const targetKey = item.getAttribute("data-window-id");
-  if (!targetKey) return;
+    const meaning = img.getAttribute("data-meaning") || "No explanation yet.";
 
-  // Find the corresponding launchbar button
-  const btn = document.querySelector(
-    'button.openWindow[data-window-id="' + targetKey + '"]'
-  );
+    // Put the meaning text into the Visual Meaning window
+    const contentEl = document.getElementById("visualMeaningContent");
+    if (contentEl) {
+      contentEl.textContent = meaning;
+    }
 
-  // If found, "click" it programmatically
-  if (btn) {
-    btn.click();
-  }
-});
+    // Use the existing window system via hidden button
+    const btn = document.querySelector(
+      'button.openWindow[data-window-id="visual-meaning"]'
+    );
+    if (btn) {
+      btn.click();  // uses your normal openWindow logic (z-index, taskbar, scroll, etc.)
+    }
+  });
+
+  // 🔽 Archive list click handler (inside mArchives window)
+  document.addEventListener("click", function (e) {
+    const item = e.target.closest(".archive-item");
+    if (!item) return;
+
+    const targetKey = item.getAttribute("data-window-id");
+    if (!targetKey) return;
+
+    const btn = document.querySelector(
+      'button.openWindow[data-window-id="' + targetKey + '"]'
+    );
+    if (btn) {
+      btn.click();
+    }
+  });
 </script>
 </head>
-
 <body onload="loadAllFeeds()">
 
   <div id="mSafrain">
@@ -602,6 +559,9 @@ document.addEventListener("click", function (e) {
   <button class="openWindow" data-window-id="mvisual-archive" style="display:none;"></button>
   <button class="openWindow" data-window-id="mobservation-archive" style="display:none;"></button>
   <button class="openWindow" data-window-id="mstratagems-archive" style="display:none;"></button>
+
+  <!-- 🔽 NEW: hidden launcher for Visual Meaning -->
+  <button class="openWindow" data-window-id="visual-meaning" style="display:none;"></button>
 </div>
 
     <!-- Window: 0 – By mSafrain -->
