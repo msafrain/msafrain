@@ -12,31 +12,41 @@
 
   <!-- Our CSS -->
   <link rel="stylesheet" href="desktop.css" />
+
+  <!-- Blogger JSONP loader (TEXT ONLY) -->
   <script>
-  function loadBlogspot(); {
-    const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPost";
-    const script = document.createElement("script");
-    script.src = url;
-    document.body.appendChild(script);
-  }
+    // Load Blogger feed using JSONP
+    function loadBlogspot() {
+      const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPost";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
 
-  function showPost(data) {
-    const area = document.getElementById("poetryContent");
-    if (!area) return;
+    // Callback for Blogger JSONP
+    function showPost(data) {
+      const area = document.getElementById("poetryContent");
+      if (!area) return;
 
-    // Get latest post
-    const entry = data.feed.entry[0];
-    const title = entry.title.$t;
-    const content = entry.content.$t;
+      try {
+        const entry = data.feed.entry[0];            // latest post
+        const title = entry.title.$t;
+        const content = entry.content.$t;
 
-    area.innerHTML = `
-      <h2 style="margin-bottom:10px;">${title}</h2>
-      <div>${content}</div>
-    `;
-  }
-</script>
+        area.innerHTML = `
+          <h2 style="margin-bottom:10px;">${title}</h2>
+          <div>${content}</div>
+        `;
+      } catch (e) {
+        console.error(e);
+        area.textContent = "Unable to load mThoughts.";
+      }
+    }
+  </script>
 </head>
-<body>
+
+<!-- Call loadBlogspot when page finishes loading -->
+<body onload="loadBlogspot()">
 
   <div id="mSafrain">
 
@@ -55,14 +65,12 @@
       </p>
     </div>
 
-    <!-- Window 1: mThoughts (latest blog post) -->
-   <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
-  <iframe
-    class="mthoughts-frame"
-    src="https://msafrain.blogspot.com"
-    loading="lazy">
-  </iframe>
-</div>
+    <!-- Window 1: mThoughts (TEXT ONLY from Blogger) -->
+    <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
+      <div class="poetry-area" id="poetryContent">
+        Loading latest piece...
+      </div>
+    </div>
 
     <!-- Hidden window example -->
     <div class="window closed" data-title="About" style="top: 180px; left: 220px;">
