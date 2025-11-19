@@ -15,68 +15,79 @@
 
   <!-- Blogger JSONP loader -->
   <script>
-    // Load Blogger feed using JSONP
-    function loadBlogspot() {
-      const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPostClean";
-      const script = document.createElement("script");
-      script.src = url;
-      document.body.appendChild(script);
-    }
+  // Load Blogger feed using JSONP
+  function loadBlogspot() {
+    const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPostClean";
+    const script = document.createElement("script");
+    script.src = url;
+    document.body.appendChild(script);
+  }
 
-    // Callback for Blogger JSONP
-    function showPostClean(data) {
-      const area = document.getElementById("poetryContent");
-      if (!area) return;
+  function showPostClean(data) {
+    const area = document.getElementById("poetryContent");
+    if (!area) return;
 
-      try {
-        const entry = data.feed.entry[0];
+    try {
+      const entry = data.feed.entry[0];
 
-        // 1) Get raw HTML content
-        let contentHtml =
-          (entry.content && entry.content.$t ? entry.content.$t : "").trim();
+      // Raw HTML from Blogger
+      let contentHtml =
+        (entry.content && entry.content.$t ? entry.content.$t : "").trim();
 
-        // 2) Parse to DOM to clean "Untitled" headings
-        const temp = document.createElement("div");
-        temp.innerHTML = contentHtml;
+      // Parse to DOM
+      const temp = document.createElement("div");
+      temp.innerHTML = contentHtml;
 
-        const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
-        headings.forEach(function (h) {
-          if (h.textContent.trim().toLowerCase() === "untitled") {
-            h.remove();
+      // 1) Remove any headings that are exactly "Untitled"
+      const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
+      headings.forEach(function (h) {
+        if (h.textContent.trim().toLowerCase() === "untitled") {
+          h.remove();
+        }
+      });
+
+      // 2) Compute date text from feed
+      let published = entry.published && entry.published.$t
+        ? new Date(entry.published.$t)
+        : null;
+
+      let dateText = "";
+      if (published) {
+        dateText = published.toLocaleDateString("en-SG", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        });
+      }
+
+      // 3) Remove any element whose whole text is exactly the date (to kill your manual top date)
+      if (dateText) {
+        const allEls = temp.querySelectorAll("*");
+        allEls.forEach(function (el) {
+          if (el.childNodes.length === 1 &&
+              el.textContent.trim() === dateText) {
+            el.remove();
           }
         });
-
-        const cleanedContent = temp.innerHTML.trim();
-
-        // 3) Date
-        let published = entry.published && entry.published.$t
-          ? new Date(entry.published.$t)
-          : null;
-
-        let dateText = "";
-        if (published) {
-          dateText = published.toLocaleDateString("en-SG", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-          });
-        }
-
-        const dateHTML = dateText
-          ? `<div style="color:#666; font-size:13px; margin-top:12px;">${dateText}</div>`
-          : "";
-
-        // 4) 🔥 CONTENT FIRST, DATE AT BOTTOM
-        area.innerHTML = `
-          <div>${cleanedContent}</div>
-          ${dateHTML}
-        `;
-      } catch (e) {
-        console.error(e);
-        area.textContent = "Unable to load mThoughts.";
       }
+
+      const cleanedContent = temp.innerHTML.trim();
+
+      const dateHTML = dateText
+        ? `<div style="color:#666; font-size:13px; margin-top:12px;">${dateText}</div>`
+        : "";
+
+      // Content first, date at the bottom
+      area.innerHTML = `
+        <div>${cleanedContent}</div>
+        ${dateHTML}
+      `;
+    } catch (e) {
+      console.error(e);
+      area.textContent = "Unable to load mThoughts.";
     }
-  </script>
+  }
+</script>
 </head>
 
 <body onload="loadBlogspot()">
