@@ -167,11 +167,28 @@
       });
 
       // LAUNCHBAR: uses data-window-id (string keys)
-      $(document).on("click", ".openWindow", function () {
-        var key = $(this).attr("data-window-id");
-        var id = keyToId[key];
-        openWindow(id);
-      });
+$(document).on("click", ".openWindow", function () {
+  var key = $(this).attr("data-window-id");
+  var id = keyToId[key];
+
+  if (typeof id === "undefined" || id === null) return;
+
+  // Open (desktop behaviour)
+  openWindow(id);
+
+  // Extra: on mobile, also scroll to the window
+  if (window.innerWidth <= 768) {
+    var $target = $("#window" + id);
+    if ($target.length) {
+      $("html, body").animate(
+        {
+          scrollTop: $target.offset().top - 80, // small offset for header
+        },
+        300
+      );
+    }
+  }
+});
 
       $("#mSafrain").on("click", ".winmaximize", function () {
         var win = $(this).parent().parent();
