@@ -1,4 +1,4 @@
-/* Scope everything inside this root so it doesn't mess up the rest of the page */
+/* Scope inside root so it doesn't mess rest of page */
 #mSafrain * {
   box-sizing: border-box;
   margin: 0;
@@ -13,17 +13,19 @@
   position: relative;
   max-width: 1200px;
   margin: 0 auto;
-  padding-top: 60px; /* space for fixed nav on desktop */
+  padding-top: 70px; /* room for fixed nav */
 }
 
-/* QUICK LAUNCH BUTTONS (desktop default) */
+/* GLOBAL LAUNCHBAR (desktop + mobile) */
 .openWindowButtons {
   position: fixed;
   top: 10px;
   left: 10px;
+  right: 10px;
   display: flex;
   gap: 8px;
   z-index: 2100;
+  flex-wrap: wrap;
 }
 
 .openWindowButtons .openWindow {
@@ -173,39 +175,39 @@
 }
 
 /* SPECIAL: mThoughts single window shorter */
-.window[data-window-id="mthoughts-single"] {
+#window1 {
   height: 300px;
 }
 
-.window[data-window-id="mthoughts-single"] .poetry-area {
+#window1 .poetry-area {
   min-height: 240px;
 }
 
-/* Desktop layout starting positions */
+/* Desktop initial positions */
 @media (min-width: 769px) {
-  .window[data-window-id="by-msafrain"] {
+  #window0 {
     top: 80px;
     left: 40px;
   }
 
-  .window[data-window-id="mthoughts-single"] {
+  #window1 {
     top: 80px;
     left: 600px;
   }
 
-  .window[data-window-id="mthoughts-recent"] {
+  #window2 {
     top: 260px;
     left: 280px;
     height: 600px;
   }
 
-  .window[data-window-id="mvisual"] {
+  #window3 {
     top: 120px;
     left: 40px;
     height: 600px;
   }
 
-  .window[data-window-id="mobservation"] {
+  #window4 {
     top: 150px;
     left: 680px;
     height: 600px;
@@ -215,24 +217,19 @@
 /* MOBILE */
 @media (max-width: 768px) {
 
-  /* Fixed nav bar on top (always visible) */
-  #mobileNav {
-    position: fixed !important;
+  /* Launchbar stays fixed at top */
+  .openWindowButtons {
     top: 0;
     left: 0;
     right: 0;
     padding: 10px;
+    justify-content: flex-start;
     background: #ffffff;
-    z-index: 3000;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
     border-bottom: 1px solid rgba(0,0,0,0.2);
   }
 
-  /* Add padding so content isn't hidden by nav */
   #mSafrain {
-    padding-top: 80px !important;
+    padding-top: 80px;
     max-width: 100%;
     margin: 0;
   }
@@ -255,7 +252,6 @@
 
   /* Optional: hide taskbar on mobile */
   #taskbar {
-    position: static;
     display: none !important;
   }
 }
