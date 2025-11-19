@@ -13,10 +13,11 @@
   position: relative;
   max-width: 1200px;
   margin: 0 auto;
+  padding-top: 60px; /* space for fixed nav on desktop */
 }
 
-/* QUICK LAUNCH BUTTONS */
-#mSafrain .openWindowButtons {
+/* QUICK LAUNCH BUTTONS (desktop default) */
+.openWindowButtons {
   position: fixed;
   top: 10px;
   left: 10px;
@@ -25,7 +26,7 @@
   z-index: 2100;
 }
 
-#mSafrain .openWindowButtons .openWindow {
+.openWindowButtons .openWindow {
   background: #f3f4f6;
   border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 6px 12px;
@@ -34,12 +35,12 @@
   cursor: pointer;
 }
 
-#mSafrain .openWindowButtons .openWindow:hover {
+.openWindowButtons .openWindow:hover {
   background: #e5e7eb;
 }
 
 /* TASKBAR */
-#mSafrain #taskbar {
+#taskbar {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -54,7 +55,7 @@
   z-index: 2000;
 }
 
-#mSafrain .taskbarPanel {
+.taskbarPanel {
   padding: 4px 10px;
   background: rgba(0, 0, 0, 0.06);
   border-radius: 6px;
@@ -63,25 +64,25 @@
   white-space: nowrap;
 }
 
-#mSafrain .taskbarPanel:hover {
+.taskbarPanel:hover {
   background: rgba(0, 0, 0, 0.12);
 }
 
-#mSafrain .taskbarPanel.activeTab {
+.taskbarPanel.activeTab {
   background: rgba(76, 175, 80, 0.18);
   border: 1px solid rgba(76, 175, 80, 0.7);
 }
 
-#mSafrain .taskbarPanel.minimizedTab {
+.taskbarPanel.minimizedTab {
   opacity: 0.5;
 }
 
-#mSafrain .taskbarPanel.closed {
+.taskbarPanel.closed {
   display: none;
 }
 
 /* WINDOWS */
-#mSafrain .window {
+.window {
   position: absolute;
   width: 520px;
   height: 250px;
@@ -92,20 +93,20 @@
   box-shadow: none !important;
 }
 
-#mSafrain .window.activeWindow {
+.window.activeWindow {
   border-color: rgba(76, 175, 80, 0.4);
 }
 
-#mSafrain .window.closed {
+.window.closed {
   display: none;
 }
 
-#mSafrain .window.minimizedWindow {
+.window.minimizedWindow {
   pointer-events: none;
 }
 
 /* Window header */
-#mSafrain .windowHeader {
+.windowHeader {
   height: 32px;
   background: #e5e7eb;
   display: flex;
@@ -118,9 +119,9 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-#mSafrain .windowHeader span.winclose,
-#mSafrain .windowHeader span.winmaximize,
-#mSafrain .windowHeader span.winminimize {
+.windowHeader span.winclose,
+.windowHeader span.winmaximize,
+.windowHeader span.winminimize {
   display: inline-block;
   width: 18px;
   height: 18px;
@@ -134,22 +135,22 @@
   color: #111;
 }
 
-#mSafrain .windowHeader span.winclose:hover {
+.windowHeader span.winclose:hover {
   background: #ef4444;
   color: #fff;
 }
 
-#mSafrain .windowHeader span.winmaximize:hover {
+.windowHeader span.winmaximize:hover {
   background: #22c55e;
   color: #fff;
 }
 
-#mSafrain .windowHeader span.winminimize:hover {
+.windowHeader span.winminimize:hover {
   background: #eab308;
 }
 
 /* Inner content */
-#mSafrain .wincontent {
+.wincontent {
   padding: 10px;
   width: calc(100% - 20px);
   height: calc(100% - 42px);
@@ -157,8 +158,8 @@
   background: #ffffff;
 }
 
-/* Poetry area */
-#mSafrain .poetry-area {
+/* Poetry / content area */
+.poetry-area {
   width: 100%;
   min-height: 500px;
   border-radius: 6px;
@@ -171,63 +172,72 @@
   white-space: pre-wrap;
 }
 
-/* SPECIAL: Single mThoughts window = 300px height */
-#mSafrain .window[data-window-id="mthoughts-single"] {
-  height: 300px !important;
+/* SPECIAL: mThoughts single window shorter */
+.window[data-window-id="mthoughts-single"] {
+  height: 300px;
 }
 
-#mSafrain .window[data-window-id="mthoughts-single"] .poetry-area {
-  min-height: 240px !important;
+.window[data-window-id="mthoughts-single"] .poetry-area {
+  min-height: 240px;
 }
 
-/* Desktop layout */
+/* Desktop layout starting positions */
 @media (min-width: 769px) {
-
-  /* By mSafrain: starting position, still draggable */
-  #mSafrain .window[data-window-id="by-msafrain"] {
+  .window[data-window-id="by-msafrain"] {
     top: 80px;
     left: 40px;
   }
 
-  /* mThoughts (single): starting position, still draggable */
-  #mSafrain .window[data-window-id="mthoughts-single"] {
+  .window[data-window-id="mthoughts-single"] {
     top: 80px;
     left: 600px;
   }
 
-  /* mThoughts – Recent: starting position, still draggable */
-  #mSafrain .window[data-window-id="mthoughts-recent"] {
+  .window[data-window-id="mthoughts-recent"] {
     top: 260px;
     left: 280px;
-    height: 600px; /* keep height control, no need for !important */
+    height: 600px;
+  }
+
+  .window[data-window-id="mvisual"] {
+    top: 120px;
+    left: 40px;
+    height: 600px;
+  }
+
+  .window[data-window-id="mobservation"] {
+    top: 150px;
+    left: 680px;
+    height: 600px;
   }
 }
 
 /* MOBILE */
 @media (max-width: 768px) {
 
-  /* FIXED launchbar on mobile */
-  #mSafrain .openWindowButtons {
+  /* Fixed nav bar on top (always visible) */
+  #mobileNav {
     position: fixed !important;
     top: 0;
     left: 0;
     right: 0;
     padding: 10px;
-    background: white;
+    background: #ffffff;
     z-index: 3000;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    border-bottom: 1px solid rgba(0,0,0,0.15);
+    border-bottom: 1px solid rgba(0,0,0,0.2);
   }
 
-  /* Give space so content doesn't hide behind the fixed bar */
+  /* Add padding so content isn't hidden by nav */
   #mSafrain {
-    padding-top: 70px !important;
+    padding-top: 80px !important;
+    max-width: 100%;
+    margin: 0;
   }
 
-  /* Windows become stacked sections */
-  #mSafrain .window {
+  .window {
     position: relative !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -237,7 +247,15 @@
     margin: 20px 0;
   }
 
+  .wincontent {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Optional: hide taskbar on mobile */
   #taskbar {
-    display: none !important; /* optional: hide taskbar on mobile to reduce clutter */
+    position: static;
+    display: none !important;
   }
 }
