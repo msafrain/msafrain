@@ -232,4 +232,20 @@
   #mSafrain .taskbarPanel {
     margin-bottom: 4px;
   }
+
+  /* --- EXTRA FIX FOR MOBILE WINDOWS AND SCROLLING --- */
+  #mSafrain .window {
+    position: relative !important;
+    inset: auto !important;        /* resets top/bottom/left/right */
+    transform: none !important;    /* remove draggable transforms */
+    margin: 20px 0 !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  #mSafrain #taskbar {
+    position: relative !important;
+  }
 }
