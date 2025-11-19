@@ -13,19 +13,78 @@
   <!-- Your desktop CSS -->
   <link rel="stylesheet" href="desktop.css" />
 
-  <!-- Blogger JSONP loader: latest 6 posts -->
+  <!-- Blogger JSONP loader: 6 posts, used by both windows -->
   <script>
     function loadBlogspot() {
       const url =
         "https://msafrain.blogspot.com/feeds/posts/default" +
-        "?alt=json-in-script&max-results=6&callback=showLatestPosts";
+        "?alt=json-in-script&max-results=6&callback=handleBlogFeed";
       const script = document.createElement("script");
       script.src = url;
       document.body.appendChild(script);
     }
 
-    function showLatestPosts(data) {
+    // Main callback for JSONP
+    function handleBlogFeed(data) {
+      renderLatestSingle(data);  // for mThoughts window (1 post)
+      renderRecentList(data);    // for the extra window (6 posts)
+    }
+
+    function renderLatestSingle(data) {
       const area = document.getElementById("poetryContent");
+      if (!area) return;
+
+      try {
+        const entry = data.feed.entry && data.feed.entry[0];
+        if (!entry) {
+          area.textContent = "No entries published yet.";
+          return;
+        }
+
+        let contentHtml =
+          entry.content && entry.content.$t
+            ? entry.content.$t.trim()
+            : "";
+
+        const temp = document.createElement("div");
+        temp.innerHTML = contentHtml;
+
+        // Remove all headings (hide Blogger title inside content)
+        const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
+        headings.forEach(h => h.remove());
+
+        // Date
+        let published =
+          entry.published && entry.published.$t
+            ? new Date(entry.published.$t)
+            : null;
+
+        let dateText = "";
+        if (published && !isNaN(published.getTime())) {
+          dateText = published.toLocaleDateString("en-SG", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+          });
+        }
+
+        const cleanedContent = temp.innerHTML.trim();
+        const dateHTML = dateText
+          ? `<div style="margin-top:16px; color:#666; font-size:12px;">${dateText}</div>`
+          : "";
+
+        area.innerHTML = `
+          <div>${cleanedContent}</div>
+          ${dateHTML}
+        `;
+      } catch (e) {
+        console.error(e);
+        area.textContent = "Unable to load mThoughts.";
+      }
+    }
+
+    function renderRecentList(data) {
+      const area = document.getElementById("recentContent");
       if (!area) return;
 
       try {
@@ -37,23 +96,21 @@
 
         let allPostsHTML = "";
 
-        // Loop through up to 6 recent posts
+        // List up to 6 posts
         entries.slice(0, 6).forEach(function(entry) {
-          // Raw HTML content from Blogger
           let contentHtml =
             entry.content && entry.content.$t
               ? entry.content.$t.trim()
               : "";
 
-          // Temporary container to clean up HTML
           const temp = document.createElement("div");
           temp.innerHTML = contentHtml;
 
-          // 1) Remove all headings (hide Blogger title inside content)
+          // Remove headings again
           const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
           headings.forEach(h => h.remove());
 
-          // 2) Compute date text from feed
+          // Date
           let published =
             entry.published && entry.published.$t
               ? new Date(entry.published.$t)
@@ -69,12 +126,10 @@
           }
 
           const cleanedContent = temp.innerHTML.trim();
-
           const dateHTML = dateText
             ? `<div style="margin-top:8px; color:#666; font-size:12px;">${dateText}</div>`
             : "";
 
-          // Wrap each post in an <article>
           allPostsHTML += `
             <article style="margin-bottom:24px;">
               <div>${cleanedContent}</div>
@@ -86,7 +141,7 @@
         area.innerHTML = allPostsHTML;
       } catch (e) {
         console.error(e);
-        area.textContent = "Unable to load mThoughts.";
+        area.textContent = "Unable to load recent mThoughts.";
       }
     }
   </script>
@@ -97,7 +152,8 @@
     <!-- QUICK LAUNCH BUTTONS -->
     <div class="openWindowButtons">
       <button class="openWindow" data-id="0">By mSafrain</button>
-      <button class="openWindow" data-id="1">mThoughts</button>
+      <!-- This now opens the 6-post window (index 2) -->
+      <button class="openWindow" data-id="2">mThoughts</button>
     </div>
 
     <!-- Window 0 -->
@@ -109,9 +165,16 @@
       </p>
     </div>
 
-    <!-- Window 1: mThoughts (shows 6 recent blog posts) -->
+    <!-- Window 1: mThoughts (single latest post, visible by default) -->
     <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
       <div class="poetry-area" id="poetryContent">
+        Loading latest piece...
+      </div>
+    </div>
+
+    <!-- Window 2: mThoughts – Recent (6 posts, opened by launchbar) -->
+    <div class="window closed" data-title="mThoughts – Recent" style="top: 200px; left: 180px; height: 600px; width: 520px;">
+      <div class="poetry-area" id="recentContent">
         Loading recent pieces...
       </div>
     </div>
