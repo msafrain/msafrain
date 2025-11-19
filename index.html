@@ -14,79 +14,67 @@
   <link rel="stylesheet" href="desktop.css" />
 
   <!-- Blogger JSONP loader -->
-  <script>
-  // Load Blogger feed using JSONP
-  function loadBlogspot() {
-    const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPostClean";
-    const script = document.createElement("script");
-    script.src = url;
-    document.body.appendChild(script);
-  }
+  <!-- Blogger JSONP loader for latest 3 posts -->
+<script>
+function loadBlogspot() {
+  const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=3&callback=showThreePosts";
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
+}
 
-  function showPostClean(data) {
-    const area = document.getElementById("poetryContent");
-    if (!area) return;
+function showThreePosts(data) {
+  const area = document.getElementById("poetryContent");
+  if (!area) return;
 
-    try {
-      const entry = data.feed.entry[0];
+  try {
+    const entries = data.feed.entry;
+    if (!entries || entries.length === 0) {
+      area.textContent = "No recent posts.";
+      return;
+    }
 
-      // Raw HTML from Blogger
-      let contentHtml =
-        (entry.content && entry.content.$t ? entry.content.$t : "").trim();
+    let html = "";
 
-      // Parse to DOM
-      const temp = document.createElement("div");
-      temp.innerHTML = contentHtml;
+    entries.forEach((entry, i) => {
+      let title = entry.title?.$t || "Untitled";
 
-      // 1) Remove any headings that are exactly "Untitled"
-      const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
-      headings.forEach(function (h) {
-        if (h.textContent.trim().toLowerCase() === "untitled") {
-          h.remove();
-        }
-      });
-
-      // 2) Compute date text from feed
-      let published = entry.published && entry.published.$t
-        ? new Date(entry.published.$t)
-        : null;
-
+      let published = entry.published?.$t;
       let dateText = "";
       if (published) {
-        dateText = published.toLocaleDateString("en-SG", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        });
+        try {
+          let date = new Date(published);
+          dateText = date.toLocaleDateString("en-SG", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        } catch (e) {
+          dateText = published;
+        }
       }
 
-      // 3) Remove any element whose whole text is exactly the date (to kill your manual top date)
-      if (dateText) {
-        const allEls = temp.querySelectorAll("*");
-        allEls.forEach(function (el) {
-          if (el.childNodes.length === 1 &&
-              el.textContent.trim() === dateText) {
-            el.remove();
-          }
-        });
-      }
+      let body = entry.content?.$t || entry.summary?.$t || "";
 
-      const cleanedContent = temp.innerHTML.trim();
-
-      const dateHTML = dateText
-        ? `<div style="color:#666; font-size:13px; margin-top:12px;">${dateText}</div>`
-        : "";
-
-      // Content first, date at the bottom
-      area.innerHTML = `
-        <div>${cleanedContent}</div>
-        ${dateHTML}
+      html += `
+        <div class="thought-section">
+          <div class="thought-title" style="font-weight:600; font-size:16px;">${title}</div>
+          <div class="thought-date" style="font-size:12px; color:#666;">${dateText}</div>
+          <div class="thought-body" style="margin-top:8px;">${body}</div>
+        </div>
       `;
-    } catch (e) {
-      console.error(e);
-      area.textContent = "Unable to load mThoughts.";
-    }
+
+      if (i < entries.length - 1) {
+        html += `<hr style="border:none; border-top:1px solid #ddd; margin:16px 0;" />`;
+      }
+    });
+
+    area.innerHTML = html;
+  } catch (e) {
+    console.error(e);
+    area.textContent = "Unable to load mThoughts.";
   }
+}
 </script>
 </head>
 
