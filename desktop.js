@@ -221,6 +221,19 @@
       $("#mSafrain").on("click", ".openWindow", function () {
         var numericId = getNumericIdFromTarget($(this));
         if (numericId === null) return;
+        
+        // MOBILE: Scroll to window instead of desktop behaviour
+if (window.innerWidth <= 768) {
+    const win = document.getElementById("window" + numericId);
+    if (win) {
+        win.classList.remove("closed");
+        win.classList.remove("minimizedWindow");
+
+        // Smooth scroll to window
+        win.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    return; // prevent desktop logic
+}
 
         var $panel = $("#minimPanel" + numericId);
 
