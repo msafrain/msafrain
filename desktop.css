@@ -11,7 +11,7 @@
   min-height: 100vh;
   color: #111;
   position: relative;
-  max-width: 1200px;    /* center the desktop on larger screens */
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -80,10 +80,10 @@
   display: none;
 }
 
-/* WINDOWS (no shadows) */
+/* WINDOWS */
 #mSafrain .window {
   position: absolute;
-  width: 520px;         /* wider so it fills more horizontally */
+  width: 520px;
   height: 250px;
   background: #f9fafb;
   border-radius: 8px;
@@ -94,7 +94,6 @@
 
 #mSafrain .window.activeWindow {
   border-color: rgba(76, 175, 80, 0.4);
-  box-shadow: none !important;
 }
 
 #mSafrain .window.closed {
@@ -105,7 +104,7 @@
   pointer-events: none;
 }
 
-/* Header bar */
+/* Window header */
 #mSafrain .windowHeader {
   height: 32px;
   background: #e5e7eb;
@@ -147,7 +146,6 @@
 
 #mSafrain .windowHeader span.winminimize:hover {
   background: #eab308;
-  color: #111;
 }
 
 /* Inner content */
@@ -159,23 +157,9 @@
   background: #ffffff;
 }
 
-/* Fullscreen window */
-#mSafrain .fullSizeWindow {
-  position: fixed !important;
-  top: 10px !important;
-  left: 10px !important;
-  right: 10px !important;
-  bottom: 50px !important;
-  width: auto !important;
-  height: auto !important;
-  border-radius: 10px;
-  box-shadow: none !important;
-}
-
-/* Poetry / mThoughts area */
+/* Poetry area */
 #mSafrain .poetry-area {
   width: 100%;
-  height: auto;
   min-height: 500px;
   border-radius: 6px;
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -187,25 +171,32 @@
   white-space: pre-wrap;
 }
 
-/* ---------- DESKTOP LAYOUT ONLY (fills left & right) ---------- */
+/* SPECIAL: Single mThoughts window = 300px height */
+#mSafrain .window[data-window-id="mthoughts-single"] {
+  height: 300px !important;
+}
+
+#mSafrain .window[data-window-id="mthoughts-single"] .poetry-area {
+  min-height: 240px !important;
+}
+
+/* Desktop layout */
 @media (min-width: 769px) {
-  /* Place By mSafrain on the left */
+
   #mSafrain .window[data-window-id="by-msafrain"] {
     top: 80px !important;
     left: 40px !important;
   }
 
-  /* Place single mThoughts on the right side */
   #mSafrain .window[data-window-id="mthoughts-single"] {
     top: 80px !important;
-    left: 600px !important; /* adjust if you want more/less gap */
+    left: 600px !important;
   }
 
-  /* Center-ish popup for mThoughts – Recent */
   #mSafrain .window[data-window-id="mthoughts-recent"] {
     top: 260px !important;
     left: 280px !important;
-    height: 600px;  /* taller to show multiple posts */
+    height: 600px !important;
   }
 }
 
@@ -228,9 +219,18 @@
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
+    margin: 10px 0;
     left: 0 !important;
     top: 0 !important;
-    margin: 10px 0;
+  }
+
+  /* MOBILE: Make single mThoughts window still respect 300px */
+  #mSafrain .window[data-window-id="mthoughts-single"] {
+    height: auto !important;
+  }
+
+  #mSafrain .window[data-window-id="mthoughts-single"] .poetry-area {
+    min-height: 240px !important;
   }
 
   #mSafrain .wincontent {
