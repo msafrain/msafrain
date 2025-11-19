@@ -1,11 +1,5 @@
 // desktop.js
-// mSafrain Desktop UI + mThoughts (Blogger feed)
-
-// 🔧 CHANGE THIS to your real Blogger blog name.
-// If your blog is https://msafrain.blogspot.com,
-// then BLOG_FEED_URL becomes:
-const BLOG_FEED_URL =
-  "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=handleBloggerFeed";
+// Window management for mSafrain Desktop UI
 
 (function () {
   function initDesktopUI($) {
@@ -99,69 +93,7 @@ const BLOG_FEED_URL =
         }
       }
 
-      // === mThoughts: Blogger feed ===
-
-      // Global JSONP callback for Blogger
-      window.handleBloggerFeed = function (data) {
-        var el = document.getElementById("poetryContent");
-        if (!el) return;
-
-        try {
-          if (!data.feed || !data.feed.entry || !data.feed.entry.length) {
-            el.textContent = "No entries published yet.";
-            return;
-          }
-
-          var entry = data.feed.entry[0]; // latest post
-          var title = entry.title && entry.title.$t ? entry.title.$t : "Untitled";
-
-          var content =
-            entry.content && entry.content.$t
-              ? entry.content.$t
-              : entry.summary && entry.summary.$t
-              ? entry.summary.$t
-              : "";
-
-          var dateStr = "";
-          if (entry.published && entry.published.$t) {
-            var d = new Date(entry.published.$t);
-            dateStr = d.toLocaleDateString("en-SG", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            });
-          }
-
-          el.innerHTML =
-            "<h2>" +
-            title +
-            "</h2>" +
-            (dateStr ? '<div class="date">' + dateStr + "</div>" : "") +
-            '<div class="body">' +
-            content +
-            "</div>";
-        } catch (err) {
-          console.error("Error parsing Blogger feed:", err);
-          el.textContent = "Unable to load mThoughts.";
-        }
-      };
-
-      function loadLatestPoem() {
-        var el = document.getElementById("poetryContent");
-        if (!el) return;
-
-        // Fallback while loading
-        el.textContent = "Loading latest piece...";
-
-        // Inject Blogger JSONP script
-        var s = document.createElement("script");
-        s.type = "text/javascript";
-        s.src = BLOG_FEED_URL;
-        s.referrerPolicy = "no-referrer-when-downgrade";
-        document.body.appendChild(s);
-      }
-
-      // === INITIALISE WINDOWS ===
+      // INITIALISE WINDOWS
       $("#mSafrain .window").each(function () {
         $(this).css("z-index", 1000);
         $(this).attr("data-id", i);
@@ -200,7 +132,6 @@ const BLOG_FEED_URL =
 
       setupInteractions();
       adjustFullScreenSize();
-      loadLatestPoem();
 
       // EVENTS
       $("#mSafrain .window").mousedown(function () {
