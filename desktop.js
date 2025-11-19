@@ -179,6 +179,7 @@
         minimizeWindow($(this).parent().parent().attr("data-id"));
       });
 
+      // Bottom taskbar behaviour (unchanged)
       $("#mSafrain").on("click", ".taskbarPanel", function () {
         var numericId = getNumericIdFromTarget($(this));
         if (numericId === null) return;
@@ -192,10 +193,23 @@
         }
       });
 
+      // TOP launchbar: now mirrors taskbar behaviour
       $("#mSafrain").on("click", ".openWindow", function () {
         var numericId = getNumericIdFromTarget($(this));
         if (numericId === null) return;
-        openWindow(numericId);
+
+        var $panel = $("#minimPanel" + numericId);
+
+        if ($panel.hasClass("activeTab")) {
+          // If already active, clicking top button will minimize (same as taskbar)
+          minimizeWindow(numericId);
+        } else if ($panel.hasClass("minimizedTab")) {
+          // If minimized, restore
+          openMinimized(numericId);
+        } else {
+          // Otherwise open/focus
+          openWindow(numericId);
+        }
       });
 
       $("#mSafrain").on("click", ".winmaximize", function () {
