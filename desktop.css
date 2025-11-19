@@ -11,6 +11,8 @@
   min-height: 100vh;
   color: #111;
   position: relative;
+  max-width: 1200px;    /* center the desktop on larger screens */
+  margin: 0 auto;
 }
 
 /* QUICK LAUNCH BUTTONS */
@@ -81,7 +83,7 @@
 /* WINDOWS (no shadows) */
 #mSafrain .window {
   position: absolute;
-  width: 420px;
+  width: 520px;         /* wider so it fills more horizontally */
   height: 250px;
   background: #f9fafb;
   border-radius: 8px;
@@ -103,6 +105,7 @@
   pointer-events: none;
 }
 
+/* Header bar */
 #mSafrain .windowHeader {
   height: 32px;
   background: #e5e7eb;
@@ -147,6 +150,7 @@
   color: #111;
 }
 
+/* Inner content */
 #mSafrain .wincontent {
   padding: 10px;
   width: calc(100% - 20px);
@@ -183,10 +187,34 @@
   white-space: pre-wrap;
 }
 
+/* ---------- DESKTOP LAYOUT ONLY (fills left & right) ---------- */
+@media (min-width: 769px) {
+  /* Place By mSafrain on the left */
+  #mSafrain .window[data-window-id="by-msafrain"] {
+    top: 80px !important;
+    left: 40px !important;
+  }
+
+  /* Place single mThoughts on the right side */
+  #mSafrain .window[data-window-id="mthoughts-single"] {
+    top: 80px !important;
+    left: 600px !important; /* adjust if you want more/less gap */
+  }
+
+  /* Center-ish popup for mThoughts – Recent */
+  #mSafrain .window[data-window-id="mthoughts-recent"] {
+    top: 260px !important;
+    left: 280px !important;
+    height: 600px;  /* taller to show multiple posts */
+  }
+}
+
 /* MOBILE */
 @media (max-width: 768px) {
   #mSafrain {
     min-height: auto;
+    max-width: 100%;
+    margin: 0;
   }
 
   #mSafrain .openWindowButtons {
