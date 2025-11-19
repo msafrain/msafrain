@@ -16,6 +16,10 @@
       // Map from string window IDs (data-window-id) to numeric IDs
       var windowIdMap = {};
 
+      function isMobile() {
+        return window.innerWidth <= 768;
+      }
+
       function adjustFullScreenSize() {
         $("#mSafrain .fullSizeWindow .wincontent")
           .css("width", window.innerWidth - 32)
@@ -37,21 +41,33 @@
       }
 
       function minimizeWindow(id) {
+        // store original position for desktop restore
         windowTopPos[id] = $("#window" + id).css("top");
         windowLeftPos[id] = $("#window" + id).css("left");
 
-        $("#window" + id).animate(
-          {
-            top: 800,
-            left: 0,
-          },
-          200,
-          function () {
-            $("#window" + id).addClass("minimizedWindow");
-            $("#minimPanel" + id).addClass("minimizedTab");
-            $("#minimPanel" + id).removeClass("activeTab");
-          }
-        );
+        if (isMobile()) {
+          // Mobile lite: slide up instead of flying to bottom
+          $("#window" + id).addClass("minimizedWindow");
+          $("#minimPanel" + id)
+            .addClass("minimizedTab")
+            .removeClass("activeTab");
+
+          $("#window" + id).slideUp(200);
+        } else {
+          // Desktop: animate to bottom-left (old behaviour)
+          $("#window" + id).animate(
+            {
+              top: 800,
+              left: 0,
+            },
+            200,
+            function () {
+              $("#window" + id).addClass("minimizedWindow");
+              $("#minimPanel" + id).addClass("minimizedTab");
+              $("#minimPanel" + id).removeClass("activeTab");
+            }
+          );
+        }
       }
 
       function openWindow(id) {
@@ -64,7 +80,7 @@
         }
       }
 
-      function closeWindwow(id) {
+      function closeWindwow(id) { // keeping original typo name
         $("#window" + id).addClass("closed");
         $("#minimPanel" + id).addClass("closed");
       }
@@ -72,19 +88,27 @@
       function openMinimized(id) {
         $("#window" + id).removeClass("minimizedWindow");
         $("#minimPanel" + id).removeClass("minimizedTab");
-        makeWindowActive(id);
 
-        $("#window" + id).animate(
-          {
-            top: windowTopPos[id],
-            left: windowLeftPos[id],
-          },
-          200
-        );
+        if (isMobile()) {
+          // Mobile lite: slide down and then activate
+          $("#window" + id).slideDown(200, function () {
+            makeWindowActive(id);
+          });
+        } else {
+          // Desktop: animate back to stored position
+          makeWindowActive(id);
+          $("#window" + id).animate(
+            {
+              top: windowTopPos[id],
+              left: windowLeftPos[id],
+            },
+            200
+          );
+        }
       }
 
       function setupInteractions() {
-        var isMobile = window.innerWidth <= 768;
+        var mobile = isMobile();
 
         try {
           $("#mSafrain .window").draggable("destroy");
@@ -93,7 +117,7 @@
           $("#mSafrain .wincontent").resizable("destroy");
         } catch (e) {}
 
-        if (!isMobile) {
+        if (!mobile) {
           $("#mSafrain .wincontent").resizable();
           $("#mSafrain .window").draggable({ cancel: ".wincontent" });
         }
@@ -179,7 +203,7 @@
         minimizeWindow($(this).parent().parent().attr("data-id"));
       });
 
-      // Bottom taskbar behaviour (unchanged)
+      // Bottom taskbar behaviour
       $("#mSafrain").on("click", ".taskbarPanel", function () {
         var numericId = getNumericIdFromTarget($(this));
         if (numericId === null) return;
@@ -193,7 +217,7 @@
         }
       });
 
-      // TOP launchbar: now mirrors taskbar behaviour
+      // TOP launchbar: mirrors taskbar behaviour
       $("#mSafrain").on("click", ".openWindow", function () {
         var numericId = getNumericIdFromTarget($(this));
         if (numericId === null) return;
@@ -201,13 +225,10 @@
         var $panel = $("#minimPanel" + numericId);
 
         if ($panel.hasClass("activeTab")) {
-          // If already active, clicking top button will minimize (same as taskbar)
           minimizeWindow(numericId);
         } else if ($panel.hasClass("minimizedTab")) {
-          // If minimized, restore
           openMinimized(numericId);
         } else {
-          // Otherwise open/focus
           openWindow(numericId);
         }
       });
