@@ -14,35 +14,28 @@
   <link rel="stylesheet" href="desktop.css" />
 
   <!-- Blogger JSONP loader (TEXT ONLY) -->
-  <script>
-    // Load Blogger feed using JSONP
-    function loadBlogspot() {
-      const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPost";
-      const script = document.createElement("script");
-      script.src = url;
-      document.body.appendChild(script);
-    }
+ <script>
+  function loadBlogspot() {
+    const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPost";
+    const script = document.createElement("script");
+    script.src = url;
+    document.body.appendChild(script);
+  }
 
-    // Callback for Blogger JSONP
-    function showPost(data) {
-      const area = document.getElementById("poetryContent");
-      if (!area) return;
+  function showPost(data) {
+    const area = document.getElementById("poetryContent");
+    if (!area) return;
 
-      try {
-        const entry = data.feed.entry[0];            // latest post
-        const title = entry.title.$t;
-        const content = entry.content.$t;
+    const entry = data.feed.entry[0];
+    const title = entry.title.$t;
+    const content = entry.content.$t;
 
-        area.innerHTML = `
-          <h2 style="margin-bottom:10px;">${title}</h2>
-          <div>${content}</div>
-        `;
-      } catch (e) {
-        console.error(e);
-        area.textContent = "Unable to load mThoughts.";
-      }
-    }
-  </script>
+    area.innerHTML = `
+      <h2 style="margin-bottom:10px;">${title}</h2>
+      <div>${content}</div>
+    `;
+  }
+</script>
 </head>
 
 <!-- Call loadBlogspot when page finishes loading -->
