@@ -5,7 +5,7 @@
 // If your blog is https://msafrain.blogspot.com,
 // then BLOG_FEED_URL becomes:
 const BLOG_FEED_URL =
-  "https://YOURBLOGNAME.blogspot.com/feeds/posts/default?alt=json-in-script&callback=handleBloggerFeed";
+  "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=handleBloggerFeed";
 
 (function () {
   function initDesktopUI($) {
