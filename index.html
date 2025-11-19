@@ -153,13 +153,18 @@
         const imgs = temp.querySelectorAll("img");
         if (!imgs.length) return;
 
-        imgs.forEach(function (img) {
-          output += `
-            <div style="margin-bottom:20px;">
-              <img src="${img.src}" style="width:100%; border-radius:8px; display:block;">
-            </div>
-          `;
-        });
+            imgs.forEach(function (img) {
+      const meaning = img.getAttribute("alt") || "";  // take explanation from alt text
+
+      output += `
+        <div style="margin-bottom:20px;">
+          <img 
+            src="${img.src}"
+            data-meaning="${meaning.replace(/"/g, '&quot;')}"
+            style="width:100%; border-radius:8px; display:block; cursor:pointer;">
+        </div>
+      `;
+    });
       });
 
       area.innerHTML = output || "No visuals yet.";
@@ -285,6 +290,46 @@ function render_mStratagems(data) {
   gtag('js', new Date());
 
   gtag('config', 'G-D2X3W8CYNC');
+
+document.addEventListener("click", function (e) {
+  const img = e.target.closest("img[data-meaning]");
+  if (!img) return;
+
+  const meaning = img.getAttribute("data-meaning") || "No explanation yet.";
+
+  // Put the meaning text into the Visual Meaning window
+  const contentEl = document.getElementById("visualMeaningContent");
+  if (contentEl) {
+    contentEl.textContent = meaning;
+  }
+
+  // Find the Visual Meaning window
+  const win = document.querySelector('.window[data-window-id="visual-meaning"]');
+  if (!win) return;
+
+  // Show the window (un-close / un-minimize)
+  win.classList.remove("closed", "minimizedWindow");
+
+  // Make it the active window
+  document.querySelectorAll("#mSafrain .window").forEach(function (w) {
+    w.classList.remove("activeWindow");
+  });
+  win.classList.add("activeWindow");
+
+  // Update taskbar tab if possible
+  const id = win.getAttribute("data-id");
+  if (id != null) {
+    document.querySelectorAll("#mSafrain .taskbarPanel").forEach(function (p) {
+      p.classList.remove("activeTab");
+    });
+
+    const panel = document.getElementById("minimPanel" + id);
+    if (panel) {
+      panel.classList.remove("closed", "minimizedTab");
+      panel.classList.add("activeTab");
+    }
+  }
+});
 </script>
 </head>
 
@@ -342,6 +387,17 @@ function render_mStratagems(data) {
         Loading mVisual...
       </div>
     </div>
+
+    <!-- Window: Visual Meaning -->
+    <div class="window closed"
+         data-window-id="visual-meaning"
+         data-title="Visual Meaning"
+         style="top:220px;left:360px;width:420px;height:260px;">
+      <div class="poetry-area" id="visualMeaningContent">
+        Click a visual to see its meaning.
+      </div>
+    </div>
+
 
     <!-- Window: 4 – mObservation -->
     <div class="window closed"
