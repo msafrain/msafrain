@@ -245,6 +245,11 @@
     height: auto !important;
   }
 
+  /* make sure CLOSED windows really hide */
+#mSafrain .window.closed {
+  display: none !important;
+}
+
   #mSafrain #taskbar {
     position: relative !important;
   }
