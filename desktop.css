@@ -1,4 +1,4 @@
-/* Scope inside root so it doesn't mess rest of page */
+/* Scope everything inside this root so it doesn't mess up the rest of the page */
 #mSafrain * {
   box-sizing: border-box;
   margin: 0;
@@ -11,24 +11,19 @@
   min-height: 100vh;
   color: #111;
   position: relative;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-top: 70px; /* room for fixed nav */
 }
 
-/* GLOBAL LAUNCHBAR (desktop + mobile) */
-.openWindowButtons {
+/* QUICK LAUNCH BUTTONS (top buttons) */
+#mSafrain .openWindowButtons {
   position: fixed;
   top: 10px;
   left: 10px;
-  right: 10px;
   display: flex;
   gap: 8px;
   z-index: 2100;
-  flex-wrap: wrap;
 }
 
-.openWindowButtons .openWindow {
+#mSafrain .openWindowButtons .openWindow {
   background: #f3f4f6;
   border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 6px 12px;
@@ -37,12 +32,12 @@
   cursor: pointer;
 }
 
-.openWindowButtons .openWindow:hover {
+#mSafrain .openWindowButtons .openWindow:hover {
   background: #e5e7eb;
 }
 
-/* TASKBAR */
-#taskbar {
+/* TASKBAR (bottom) */
+#mSafrain #taskbar {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -57,7 +52,7 @@
   z-index: 2000;
 }
 
-.taskbarPanel {
+#mSafrain .taskbarPanel {
   padding: 4px 10px;
   background: rgba(0, 0, 0, 0.06);
   border-radius: 6px;
@@ -66,27 +61,27 @@
   white-space: nowrap;
 }
 
-.taskbarPanel:hover {
+#mSafrain .taskbarPanel:hover {
   background: rgba(0, 0, 0, 0.12);
 }
 
-.taskbarPanel.activeTab {
+#mSafrain .taskbarPanel.activeTab {
   background: rgba(76, 175, 80, 0.18);
   border: 1px solid rgba(76, 175, 80, 0.7);
 }
 
-.taskbarPanel.minimizedTab {
+#mSafrain .taskbarPanel.minimizedTab {
   opacity: 0.5;
 }
 
-.taskbarPanel.closed {
+#mSafrain .taskbarPanel.closed {
   display: none;
 }
 
 /* WINDOWS */
-.window {
+#mSafrain .window {
   position: absolute;
-  width: 520px;
+  width: 420px;
   height: 250px;
   background: #f9fafb;
   border-radius: 8px;
@@ -95,20 +90,21 @@
   box-shadow: none !important;
 }
 
-.window.activeWindow {
+#mSafrain .window.activeWindow {
   border-color: rgba(76, 175, 80, 0.4);
+  box-shadow: none !important;
 }
 
-.window.closed {
+#mSafrain .window.closed {
   display: none;
 }
 
-.window.minimizedWindow {
+#mSafrain .window.minimizedWindow {
   pointer-events: none;
 }
 
-/* Window header */
-.windowHeader {
+/* Window header bar */
+#mSafrain .windowHeader {
   height: 32px;
   background: #e5e7eb;
   display: flex;
@@ -121,9 +117,9 @@
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.windowHeader span.winclose,
-.windowHeader span.winmaximize,
-.windowHeader span.winminimize {
+#mSafrain .windowHeader span.winclose,
+#mSafrain .windowHeader span.winmaximize,
+#mSafrain .windowHeader span.winminimize {
   display: inline-block;
   width: 18px;
   height: 18px;
@@ -137,22 +133,23 @@
   color: #111;
 }
 
-.windowHeader span.winclose:hover {
+#mSafrain .windowHeader span.winclose:hover {
   background: #ef4444;
   color: #fff;
 }
 
-.windowHeader span.winmaximize:hover {
+#mSafrain .windowHeader span.winmaximize:hover {
   background: #22c55e;
   color: #fff;
 }
 
-.windowHeader span.winminimize:hover {
+#mSafrain .windowHeader span.winminimize:hover {
   background: #eab308;
+  color: #111;
 }
 
-/* Inner content */
-.wincontent {
+/* Window content */
+#mSafrain .wincontent {
   padding: 10px;
   width: calc(100% - 20px);
   height: calc(100% - 42px);
@@ -160,9 +157,23 @@
   background: #ffffff;
 }
 
-/* Poetry / content area */
-.poetry-area {
+/* Fullscreen window */
+#mSafrain .fullSizeWindow {
+  position: fixed !important;
+  top: 10px !important;
+  left: 10px !important;
+  right: 10px !important;
+  bottom: 50px !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 10px;
+  box-shadow: none !important;
+}
+
+/* Poetry / text area */
+#mSafrain .poetry-area {
   width: 100%;
+  height: auto;
   min-height: 500px;
   border-radius: 6px;
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -174,84 +185,42 @@
   white-space: pre-wrap;
 }
 
-/* SPECIAL: mThoughts single window shorter */
-#window1 {
-  height: 300px;
-}
-
-#window1 .poetry-area {
-  min-height: 240px;
-}
-
-/* Desktop initial positions */
-@media (min-width: 769px) {
-  #window0 {
-    top: 80px;
-    left: 40px;
-  }
-
-  #window1 {
-    top: 80px;
-    left: 600px;
-  }
-
-  #window2 {
-    top: 260px;
-    left: 280px;
-    height: 600px;
-  }
-
-  #window3 {
-    top: 120px;
-    left: 40px;
-    height: 600px;
-  }
-
-  #window4 {
-    top: 150px;
-    left: 680px;
-    height: 600px;
-  }
-}
-
 /* MOBILE */
 @media (max-width: 768px) {
-
-  /* Launchbar stays fixed at top */
-  .openWindowButtons {
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 10px;
-    justify-content: flex-start;
-    background: #ffffff;
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-  }
-
   #mSafrain {
-    padding-top: 80px;
-    max-width: 100%;
-    margin: 0;
+    min-height: auto;
   }
 
-  .window {
+  #mSafrain .openWindowButtons {
+    position: static;
+    padding: 10px;
+    flex-wrap: wrap;
+  }
+
+  #mSafrain .window {
     position: relative !important;
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
     left: 0 !important;
     top: 0 !important;
-    margin: 20px 0;
+    margin: 10px 0;
   }
 
-  .wincontent {
+  #mSafrain .wincontent {
     width: 100% !important;
     height: auto !important;
     max-height: none !important;
   }
 
-  /* Optional: hide taskbar on mobile */
-  #taskbar {
-    display: none !important;
+  #mSafrain #taskbar {
+    position: static;
+    height: auto;
+    flex-wrap: wrap;
+    padding: 6px 8px;
+  }
+
+  #mSafrain .taskbarPanel {
+    margin-bottom: 4px;
   }
 }
