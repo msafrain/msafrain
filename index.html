@@ -17,23 +17,25 @@
  <script>
   // Load Blogger feed using JSONP
   function loadBlogspot() {
-    const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPost";
+    const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPostClean";
     const script = document.createElement("script");
     script.src = url;
     document.body.appendChild(script);
   }
 
-  // Callback for Blogger JSONP
-  function showPost(data) {
+  // CALLBACK with a NEW NAME: showPostClean
+  function showPostClean(data) {
     const area = document.getElementById("poetryContent");
     if (!area) return;
 
     try {
       const entry = data.feed.entry[0];
 
-      let title = (entry.title && entry.title.$t ? entry.title.$t : "").trim();
+      let title   = (entry.title   && entry.title.$t   ? entry.title.$t   : "").trim();
       let content = (entry.content && entry.content.$t ? entry.content.$t : "").trim();
-      let published = entry.published && entry.published.$t ? new Date(entry.published.$t) : null;
+      let published = entry.published && entry.published.$t
+        ? new Date(entry.published.$t)
+        : null;
 
       // Format date
       let dateText = "";
@@ -45,7 +47,7 @@
         });
       }
 
-      // 🔥 If title is empty OR literally "Untitled" (any case) → hide it
+      // ❌ If title is empty OR literally "Untitled" (any case) → hide it
       if (!title || /^untitled$/i.test(title)) {
         title = "";
       }
