@@ -13,7 +13,7 @@
   <!-- Our CSS -->
   <link rel="stylesheet" href="desktop.css" />
 
-  <!-- Blogger JSONP loader (TEXT ONLY, strip 'Untitled' from content) -->
+  <!-- Blogger JSONP loader -->
   <script>
     // Load Blogger feed using JSONP
     function loadBlogspot() {
@@ -31,15 +31,14 @@
       try {
         const entry = data.feed.entry[0];
 
-        // Raw HTML content from Blogger
+        // 1) Get raw HTML content
         let contentHtml =
           (entry.content && entry.content.$t ? entry.content.$t : "").trim();
 
-        // Parse content into a DOM fragment so we can clean it
+        // 2) Parse to DOM to clean "Untitled" headings
         const temp = document.createElement("div");
         temp.innerHTML = contentHtml;
 
-        // Remove any headings whose text is exactly "Untitled" (any h1–h6)
         const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
         headings.forEach(function (h) {
           if (h.textContent.trim().toLowerCase() === "untitled") {
@@ -47,10 +46,9 @@
           }
         });
 
-        // Get cleaned HTML back
         const cleanedContent = temp.innerHTML.trim();
 
-        // Parse published date (optional)
+        // 3) Date
         let published = entry.published && entry.published.$t
           ? new Date(entry.published.$t)
           : null;
@@ -65,12 +63,11 @@
         }
 
         const dateHTML = dateText
-          ? `<div style="color:#666; font-size:13px; margin-bottom:10px;">${dateText}</div>`
+          ? `<div style="color:#666; font-size:13px; margin-top:12px;">${dateText}</div>`
           : "";
 
-        // Final render: date + cleaned content (no title, no 'Untitled')
+        // 4) 🔥 CONTENT FIRST, DATE AT BOTTOM
         area.innerHTML = `
-          ${dateHTML}
           <div>${cleanedContent}</div>
           ${dateHTML}
         `;
@@ -82,7 +79,6 @@
   </script>
 </head>
 
-<!-- Call loadBlogspot when page finishes loading -->
 <body onload="loadBlogspot()">
 
   <div id="mSafrain">
@@ -102,7 +98,7 @@
       </p>
     </div>
 
-    <!-- Window 1: mThoughts (TEXT from Blogger, cleaned) -->
+    <!-- Window 1: mThoughts -->
     <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
       <div class="poetry-area" id="poetryContent">
         Loading latest piece...
@@ -119,7 +115,7 @@
     <div id="taskbar"></div>
   </div>
 
-  <!-- Our logic -->
+  <!-- Window logic -->
   <script src="desktop.js"></script>
 </body>
 </html>
