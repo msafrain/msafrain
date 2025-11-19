@@ -1,0 +1,235 @@
+/* Scope everything inside mSafrain */
+#mSafrain * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+#mSafrain {
+  background: #ffffff;
+  min-height: 100vh;
+  color: #111;
+  position: relative;
+}
+
+/* QUICK LAUNCH BUTTONS */
+#mSafrain .openWindowButtons {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 8px;
+  z-index: 2100;
+}
+
+#mSafrain .openWindowButtons .openWindow {
+  background: #f3f4f6;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#mSafrain .openWindowButtons .openWindow:hover {
+  background: #e5e7eb;
+}
+
+/* TASKBAR */
+#mSafrain #taskbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  gap: 6px;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+}
+
+#mSafrain .taskbarPanel {
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#mSafrain .taskbarPanel:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+
+#mSafrain .taskbarPanel.activeTab {
+  background: rgba(76, 175, 80, 0.18);
+  border: 1px solid rgba(76, 175, 80, 0.7);
+}
+
+#mSafrain .taskbarPanel.minimizedTab {
+  opacity: 0.5;
+}
+
+#mSafrain .taskbarPanel.closed {
+  display: none;
+}
+
+/* WINDOWS (no shadows) */
+#mSafrain .window {
+  position: absolute;
+  width: 420px;
+  height: 250px;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  box-shadow: none !important;
+}
+
+#mSafrain .window.activeWindow {
+  border-color: rgba(76, 175, 80, 0.4);
+  box-shadow: none !important;
+}
+
+#mSafrain .window.closed {
+  display: none;
+}
+
+#mSafrain .window.minimizedWindow {
+  pointer-events: none;
+}
+
+#mSafrain .windowHeader {
+  height: 32px;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  color: #111;
+  font-size: 13px;
+  cursor: move;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+#mSafrain .windowHeader span.winclose,
+#mSafrain .windowHeader span.winmaximize,
+#mSafrain .windowHeader span.winminimize {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-left: 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.08);
+  color: #111;
+}
+
+#mSafrain .windowHeader span.winclose:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+#mSafrain .windowHeader span.winmaximize:hover {
+  background: #22c55e;
+  color: #fff;
+}
+
+#mSafrain .windowHeader span.winminimize:hover {
+  background: #eab308;
+  color: #111;
+}
+
+#mSafrain .wincontent {
+  padding: 10px;
+  width: calc(100% - 20px);
+  height: calc(100% - 42px);
+  overflow: auto;
+  background: #ffffff;
+}
+
+#mSafrain .fullSizeWindow {
+  position: fixed !important;
+  top: 10px !important;
+  left: 10px !important;
+  right: 10px !important;
+  bottom: 50px !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 10px;
+  box-shadow: none !important;
+}
+
+/* mThoughts area */
+#mSafrain .poetry-area {
+  width: 100%;
+  height: auto;
+  min-height: 500px;
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: #fff;
+  color: #000;
+  padding: 8px;
+  font-family: "Iowan Old Style", Georgia, serif;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+#mSafrain .poetry-area h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+#mSafrain .poetry-area .date {
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  #mSafrain {
+    min-height: auto;
+  }
+
+  #mSafrain .openWindowButtons {
+    position: static;
+    padding: 10px;
+    flex-wrap: wrap;
+  }
+
+  #mSafrain .window {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    left: 0 !important;
+    top: 0 !important;
+    margin: 10px 0;
+  }
+
+  #mSafrain .wincontent {
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  #mSafrain #taskbar {
+    position: static;
+    height: auto;
+    flex-wrap: wrap;
+    padding: 6px 8px;
+  }
+
+  #mSafrain .taskbarPanel {
+    margin-bottom: 4px;
+  }
+}
