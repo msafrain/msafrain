@@ -13,7 +13,7 @@
   position: relative;
 }
 
-/* QUICK LAUNCH BUTTONS (top buttons) */
+/* QUICK LAUNCH BUTTONS */
 #mSafrain .openWindowButtons {
   position: fixed;
   top: 10px;
@@ -36,7 +36,7 @@
   background: #e5e7eb;
 }
 
-/* TASKBAR (bottom) */
+/* TASKBAR */
 #mSafrain #taskbar {
   position: fixed;
   bottom: 0;
@@ -103,7 +103,7 @@
   pointer-events: none;
 }
 
-/* Window header bar */
+/* Window header */
 #mSafrain .windowHeader {
   height: 32px;
   background: #e5e7eb;
@@ -170,7 +170,7 @@
   box-shadow: none !important;
 }
 
-/* Poetry / text area */
+/* Poetry / content area */
 #mSafrain .poetry-area {
   width: 100%;
   height: auto;
@@ -183,6 +183,15 @@
   font-family: "Iowan Old Style", Georgia, serif;
   font-size: 14px;
   white-space: pre-wrap;
+}
+
+/* Shorter mThoughts single window */
+#mSafrain .window[data-window-id="mthoughts-single"] {
+  height: 300px;
+}
+
+#mSafrain .window[data-window-id="mthoughts-single"] .poetry-area {
+  min-height: 240px;
 }
 
 /* MOBILE */
