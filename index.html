@@ -12,6 +12,29 @@
 
   <!-- Our CSS -->
   <link rel="stylesheet" href="desktop.css" />
+  <script>
+  function loadBlogspot(); {
+    const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPost";
+    const script = document.createElement("script");
+    script.src = url;
+    document.body.appendChild(script);
+  }
+
+  function showPost(data) {
+    const area = document.getElementById("poetryContent");
+    if (!area) return;
+
+    // Get latest post
+    const entry = data.feed.entry[0];
+    const title = entry.title.$t;
+    const content = entry.content.$t;
+
+    area.innerHTML = `
+      <h2 style="margin-bottom:10px;">${title}</h2>
+      <div>${content}</div>
+    `;
+  }
+</script>
 </head>
 <body>
 
