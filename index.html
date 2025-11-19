@@ -13,7 +13,7 @@
   <!-- Our CSS -->
   <link rel="stylesheet" href="desktop.css" />
 
-  <!-- Blogger JSONP loader (TEXT ONLY, NO TITLES) -->
+  <!-- Blogger JSONP loader (TEXT ONLY, strip 'Untitled' from content) -->
   <script>
     // Load Blogger feed using JSONP
     function loadBlogspot() {
@@ -31,13 +31,30 @@
       try {
         const entry = data.feed.entry[0];
 
-        // Ignore title completely
-        let content = (entry.content && entry.content.$t ? entry.content.$t : "").trim();
+        // Raw HTML content from Blogger
+        let contentHtml =
+          (entry.content && entry.content.$t ? entry.content.$t : "").trim();
+
+        // Parse content into a DOM fragment so we can clean it
+        const temp = document.createElement("div");
+        temp.innerHTML = contentHtml;
+
+        // Remove any headings whose text is exactly "Untitled" (any h1–h6)
+        const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
+        headings.forEach(function (h) {
+          if (h.textContent.trim().toLowerCase() === "untitled") {
+            h.remove();
+          }
+        });
+
+        // Get cleaned HTML back
+        const cleanedContent = temp.innerHTML.trim();
+
+        // Parse published date (optional)
         let published = entry.published && entry.published.$t
           ? new Date(entry.published.$t)
           : null;
 
-        // Format date
         let dateText = "";
         if (published) {
           dateText = published.toLocaleDateString("en-SG", {
@@ -51,10 +68,10 @@
           ? `<div style="color:#666; font-size:13px; margin-bottom:10px;">${dateText}</div>`
           : "";
 
-        // No title at all – only date + content
+        // Final render: date + cleaned content (no title, no 'Untitled')
         area.innerHTML = `
           ${dateHTML}
-          <div>${content}</div>
+          <div>${cleanedContent}</div>
         `;
       } catch (e) {
         console.error(e);
@@ -84,7 +101,7 @@
       </p>
     </div>
 
-    <!-- Window 1: mThoughts (TEXT from Blogger) -->
+    <!-- Window 1: mThoughts (TEXT from Blogger, cleaned) -->
     <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
       <div class="poetry-area" id="poetryContent">
         Loading latest piece...
