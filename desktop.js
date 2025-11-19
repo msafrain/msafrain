@@ -13,6 +13,9 @@
         windowLeftPos = [],
         id;
 
+      // Map from string window IDs (data-window-id) to numeric IDs
+      var windowIdMap = {};
+
       function adjustFullScreenSize() {
         $("#mSafrain .fullSizeWindow .wincontent")
           .css("width", window.innerWidth - 32)
@@ -21,7 +24,10 @@
 
       function makeWindowActive(thisid) {
         $("#mSafrain .window").each(function () {
-          $(this).css("z-index", parseInt($(this).css("z-index") || 0, 10) - 1);
+          $(this).css(
+            "z-index",
+            parseInt($(this).css("z-index") || 0, 10) - 1
+          );
         });
         $("#window" + thisid).css("z-index", 1000);
         $("#mSafrain .window").removeClass("activeWindow");
@@ -93,36 +99,63 @@
         }
       }
 
+      // Helper: resolve numeric window ID from an element (button/panel)
+      function getNumericIdFromTarget($el) {
+        var winTarget = $el.attr("data-window-target");
+        if (winTarget && windowIdMap.hasOwnProperty(winTarget)) {
+          return windowIdMap[winTarget];
+        }
+        // Fallback to old behaviour: use data-id (numeric)
+        var dataId = $el.attr("data-id");
+        if (typeof dataId !== "undefined") {
+          return dataId;
+        }
+        return null;
+      }
+
       // INITIALISE WINDOWS
       $("#mSafrain .window").each(function () {
-        $(this).css("z-index", 1000);
-        $(this).attr("data-id", i);
-        minimizedWidth[i] = $(this).width();
-        minimizedHeight[i] = $(this).height();
-        windowTopPos[i] = $(this).css("top");
-        windowLeftPos[i] = $(this).css("left");
+        var $win = $(this);
 
+        $win.css("z-index", 1000);
+
+        // String ID for this window (from HTML), or generate a fallback
+        var stringId = $win.attr("data-window-id") || "window-" + i;
+
+        // Numeric ID for internal logic
+        $win.attr("data-id", i);
+        minimizedWidth[i] = $win.width();
+        minimizedHeight[i] = $win.height();
+        windowTopPos[i] = $win.css("top");
+        windowLeftPos[i] = $win.css("left");
+
+        // Store mapping from string ID -> numeric ID
+        windowIdMap[stringId] = i;
+
+        // TASKBAR PANEL: include both numeric and string references
         $("#taskbar").append(
           '<div class="taskbarPanel" id="minimPanel' +
             i +
             '" data-id="' +
             i +
+            '" data-window-target="' +
+            stringId +
             '">' +
-            $(this).attr("data-title") +
+            $win.attr("data-title") +
             "</div>"
         );
 
-        if ($(this).hasClass("closed")) {
+        if ($win.hasClass("closed")) {
           $("#minimPanel" + i).addClass("closed");
         }
 
-        $(this).attr("id", "window" + i);
+        $win.attr("id", "window" + i);
         i++;
 
-        $(this).wrapInner('<div class="wincontent"></div>');
-        $(this).prepend(
+        $win.wrapInner('<div class="wincontent"></div>');
+        $win.prepend(
           '<div class="windowHeader"><strong>' +
-            $(this).attr("data-title") +
+            $win.attr("data-title") +
             '</strong><span class="winminimize">–</span><span class="winmaximize">□</span><span class="winclose">x</span></div>'
         );
       });
@@ -147,37 +180,37 @@
       });
 
       $("#mSafrain").on("click", ".taskbarPanel", function () {
-        id = $(this).attr("data-id");
+        var numericId = getNumericIdFromTarget($(this));
+        if (numericId === null) return;
 
         if ($(this).hasClass("activeTab")) {
-          minimizeWindow(id);
+          minimizeWindow(numericId);
         } else if ($(this).hasClass("minimizedTab")) {
-          openMinimized(id);
+          openMinimized(numericId);
         } else {
-          makeWindowActive(id);
+          makeWindowActive(numericId);
         }
       });
 
       $("#mSafrain").on("click", ".openWindow", function () {
-        openWindow($(this).attr("data-id"));
+        var numericId = getNumericIdFromTarget($(this));
+        if (numericId === null) return;
+        openWindow(numericId);
       });
 
       $("#mSafrain").on("click", ".winmaximize", function () {
         var win = $(this).parent().parent();
+        var id = win.attr("data-id");
         if (win.hasClass("fullSizeWindow")) {
           win.removeClass("fullSizeWindow");
           win
             .find(".wincontent")
-            .height(minimizedHeight[win.attr("data-id")])
-            .width(minimizedWidth[win.attr("data-id")]);
+            .height(minimizedHeight[id])
+            .width(minimizedWidth[id]);
         } else {
           win.addClass("fullSizeWindow");
-          minimizedHeight[win.attr("data-id")] = win
-            .find(".wincontent")
-            .height();
-          minimizedWidth[win.attr("data-id")] = win
-            .find(".wincontent")
-            .width();
+          minimizedHeight[id] = win.find(".wincontent").height();
+          minimizedWidth[id] = win.find(".wincontent").width();
           adjustFullScreenSize();
         }
       });
