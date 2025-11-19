@@ -14,13 +14,13 @@
   <link rel="stylesheet" href="desktop.css" />
 
   <!-- Blogger feed loaders -->
-  <script>
-    function loadAllFeeds() {
-      load_mThoughts_single();
-      load_mThoughts_recent();
-      load_mVisual();
-      load_mObservation();
-    }
+ function loadAllFeeds() {
+  load_mThoughts_single();
+  load_mThoughts_recent();
+  load_mVisual();
+  load_mObservation();
+  load_mStratagems(); // NEW
+}
 
     /* mThoughts SINGLE (latest 1) */
     function load_mThoughts_single() {
@@ -217,6 +217,63 @@
 
       area.innerHTML = output;
     }
+
+  /* mStratagems (latest 10) */
+function load_mStratagems() {
+  const url =
+    "https://msafrain.blogspot.com/feeds/posts/default/-/mStratagems" +
+    "?alt=json-in-script&max-results=10&callback=render_mStratagems";
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
+}
+
+function render_mStratagems(data) {
+  const area = document.getElementById("mStratagemsContent");
+  if (!area) return;
+
+  const entries = (data.feed && data.feed.entry) || [];
+  if (!entries.length) {
+    area.textContent = "No mStratagems yet.";
+    return;
+  }
+
+  let output = "";
+  entries.forEach(function (entry) {
+    let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+    const temp = document.createElement("div");
+    temp.innerHTML = contentHtml;
+
+    // remove Blogger headings
+    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+
+    // date
+    let dateText = "";
+    if (entry.published && entry.published.$t) {
+      const published = new Date(entry.published.$t);
+      if (!isNaN(published.getTime())) {
+        dateText = published.toLocaleDateString("en-SG", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        });
+      }
+    }
+
+    const dateHTML = dateText
+      ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
+      : "";
+
+    output += `
+      <article style="margin-bottom:24px;">
+        <div>${temp.innerHTML}</div>
+        ${dateHTML}
+      </article>
+    `;
+  });
+
+  area.innerHTML = output;
+}
   </script>
 
 <!-- Google tag (gtag.js) -->
@@ -235,12 +292,13 @@
   <div id="mSafrain">
 
     <!-- TOP LAUNCHBAR (uses data-window-id, not numbers) -->
-    <div class="openWindowButtons">
-      <button class="openWindow" data-window-id="by-main">By mSafrain</button>
-      <button class="openWindow" data-window-id="mthoughts-recent">mThoughts</button>
-      <button class="openWindow" data-window-id="mvisual">mVisual</button>
-      <button class="openWindow" data-window-id="mobservation">mObservation</button>
-    </div>
+ <div class="openWindowButtons">
+  <button class="openWindow" data-window-id="by-main">By mSafrain</button>
+  <button class="openWindow" data-window-id="mthoughts-recent">mThoughts</button>
+  <button class="openWindow" data-window-id="mvisual">mVisual</button>
+  <button class="openWindow" data-window-id="mobservation">mObservation</button>
+  <button class="openWindow" data-window-id="mstratagems">mStratagems</button> <!-- NEW -->
+</div>
 
     <!-- Window: 0 – By mSafrain -->
     <div class="window"
@@ -293,6 +351,16 @@
         Loading mObservation...
       </div>
     </div>
+
+    <!-- Window: 5 – mStratagems -->
+<div class="window closed"
+     data-window-id="mstratagems"
+     data-title="mStratagems"
+     style="top:220px;left:360px;height:600px;">
+  <div class="poetry-area" id="mStratagemsContent">
+    Loading mStratagems...
+  </div>
+</div>
 
     <!-- TASKBAR -->
     <div id="taskbar"></div>
