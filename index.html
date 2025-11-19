@@ -23,18 +23,36 @@
   }
 
   function showPost(data) {
-    const area = document.getElementById("poetryContent");
-    if (!area) return;
+  const area = document.getElementById("poetryContent");
+  if (!area) return;
 
+  try {
     const entry = data.feed.entry[0];
-    const title = entry.title.$t;
-    const content = entry.content.$t;
+
+    let title = entry.title.$t.trim();
+    let content = entry.content.$t.trim();
+    let published = new Date(entry.published.$t);
+
+    // Format date (optional)
+    const dateText = published.toLocaleDateString("en-SG", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+
+    // If title is empty → remove title completely
+    const titleHTML = title ? `<h2 style="margin-bottom:6px;">${title}</h2>` : "";
 
     area.innerHTML = `
-      <h2 style="margin-bottom:10px;">${title}</h2>
+      ${titleHTML}
+      <div style="color:#666; font-size:13px; margin-bottom:10px;">${dateText}</div>
       <div>${content}</div>
     `;
+  } catch (e) {
+    console.error(e);
+    area.textContent = "Unable to load mThoughts.";
   }
+}
 </script>
 </head>
 
