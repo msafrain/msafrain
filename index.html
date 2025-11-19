@@ -1,119 +1,476 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>mSafrain</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+  /* Scope everything inside this root so it doesn't mess up the rest of WordPress */
+  #mSafrain * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
 
-  <!-- jQuery & jQuery UI (for dragging/resizing windows) -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css" />
+  #mSafrain {
+    background: #ffffff;
+    min-height: 100vh;
+    color: #111;
+    position: relative;
+  }
 
-  <!-- Our CSS -->
-  <link rel="stylesheet" href="desktop.css" />
+  /* QUICK LAUNCH BUTTONS */
+  #mSafrain .openWindowButtons {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    gap: 8px;
+    z-index: 2100;
+  }
 
-  <!-- Blogger JSONP loader for latest 3 posts -->
-<script>
-function loadBlogspot() {
-  const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&max-results=3&callback=showThreePosts";
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
-}
+  #mSafrain .openWindowButtons .openWindow {
+    background: #f3f4f6;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+  }
 
-function showThreePosts(data) {
-  const area = document.getElementById("poetryContent");
-  if (!area) return;
+  #mSafrain .openWindowButtons .openWindow:hover {
+    background: #e5e7eb;
+  }
 
-  try {
-    const entries = data.feed.entry;
-    if (!entries || entries.length === 0) {
-      area.textContent = "No recent posts.";
-      return;
+  /* TASKBAR */
+  #mSafrain #taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    gap: 6px;
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    z-index: 2000;
+  }
+
+  #mSafrain .taskbarPanel {
+    padding: 4px 10px;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  #mSafrain .taskbarPanel:hover {
+    background: rgba(0, 0, 0, 0.12);
+  }
+
+  #mSafrain .taskbarPanel.activeTab {
+    background: rgba(76, 175, 80, 0.18);
+    border: 1px solid rgba(76, 175, 80, 0.7);
+  }
+
+  #mSafrain .taskbarPanel.minimizedTab {
+    opacity: 0.5;
+  }
+
+  #mSafrain .taskbarPanel.closed {
+    display: none;
+  }
+
+  /* WINDOWS (no shadows) */
+  #mSafrain .window {
+    position: absolute;
+    width: 420px;
+    height: 250px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    box-shadow: none !important;
+  }
+
+  #mSafrain .window.activeWindow {
+    border-color: rgba(76, 175, 80, 0.4);
+    box-shadow: none !important;
+  }
+
+  #mSafrain .window.closed {
+    display: none;
+  }
+
+  #mSafrain .window.minimizedWindow {
+    pointer-events: none;
+  }
+
+  #mSafrain .windowHeader {
+    height: 32px;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8px;
+    color: #111;
+    font-size: 13px;
+    cursor: move;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  #mSafrain .windowHeader span.winclose,
+  #mSafrain .windowHeader span.winmaximize,
+  #mSafrain .windowHeader span.winminimize {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 18px;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.08);
+    color: #111;
+  }
+
+  #mSafrain .windowHeader span.winclose:hover {
+    background: #ef4444;
+    color: #fff;
+  }
+
+  #mSafrain .windowHeader span.winmaximize:hover {
+    background: #22c55e;
+    color: #fff;
+  }
+
+  #mSafrain .windowHeader span.winminimize:hover {
+    background: #eab308;
+    color: #111;
+  }
+
+  #mSafrain .wincontent {
+    padding: 10px;
+    width: calc(100% - 20px);
+    height: calc(100% - 42px);
+    overflow: auto;
+    background: #ffffff;
+  }
+
+  #mSafrain .fullSizeWindow {
+    position: fixed !important;
+    top: 10px !important;
+    left: 10px !important;
+    right: 10px !important;
+    bottom: 50px !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 10px;
+    box-shadow: none !important;
+  }
+
+  /* Poetry area (display div) */
+  #mSafrain .poetry-area {
+    width: 100%;
+    height: auto;
+    min-height: 500px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: #fff;
+    color: #000;
+    padding: 8px;
+    font-family: "Iowan Old Style", Georgia, serif;
+    font-size: 14px;
+    white-space: pre-wrap;
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    #mSafrain {
+      min-height: auto;
     }
 
-    let html = "";
+    #mSafrain .openWindowButtons {
+      position: static;
+      padding: 10px;
+      flex-wrap: wrap;
+    }
 
-    entries.forEach((entry, i) => {
-      let title = entry.title?.$t || "Untitled";
+    #mSafrain .window {
+      position: relative !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+      left: 0 !important;
+      top: 0 !important;
+      margin: 10px 0;
+    }
 
-      let published = entry.published?.$t;
-      let dateText = "";
-      if (published) {
-        try {
-          let date = new Date(published);
-          dateText = date.toLocaleDateString("en-SG", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          });
-        } catch (e) {
-          dateText = published;
-        }
-      }
+    #mSafrain .wincontent {
+      width: 100% !important;
+      height: auto !important;
+      max-height: none !important;
+    }
 
-      let body = entry.content?.$t || entry.summary?.$t || "";
+    #mSafrain #taskbar {
+      position: static;
+      height: auto;
+      flex-wrap: wrap;
+      padding: 6px 8px;
+    }
 
-      html += `
-        <div class="thought-section">
-          <div class="thought-title" style="font-weight:600; font-size:16px;">${title}</div>
-          <div class="thought-date" style="font-size:12px; color:#666;">${dateText}</div>
-          <div class="thought-body" style="margin-top:8px;">${body}</div>
-        </div>
-      `;
-
-      if (i < entries.length - 1) {
-        html += `<hr style="border:none; border-top:1px solid #ddd; margin:16px 0;" />`;
-      }
-    });
-
-    area.innerHTML = html;
-  } catch (e) {
-    console.error(e);
-    area.textContent = "Unable to load mThoughts.";
+    #mSafrain .taskbarPanel {
+      margin-bottom: 4px;
+    }
   }
-}
-</script>
-</head>
+</style>
 
-<body onload="loadBlogspot()">
+<div id="mSafrain">
 
-  <div id="mSafrain">
-
-    <!-- QUICK LAUNCH BUTTONS -->
-    <div class="openWindowButtons">
-      <button class="openWindow" data-id="0">By M Safrain</button>
-      <button class="openWindow" data-id="1">mThoughts</button>
-    </div>
-
-    <!-- Window 0 -->
-    <div class="window" data-title="By M Safrain" style="top: 60px; left: 60px;">
-      <p>Here, I write my thoughts...</p>
-      <p>
-        You may read mPoetry on
-        <a href="https://www.wattpad.com/user/msafrain" target="_blank">Wattpad</a>.
-      </p>
-    </div>
-
-    <!-- Window 1: mThoughts -->
-    <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
-      <div class="poetry-area" id="poetryContent">
-        Loading latest piece...
-      </div>
-    </div>
-
-    <!-- Hidden window example -->
-    <div class="window closed" data-title="About" style="top: 180px; left: 220px;">
-      <h2>About</h2>
-      <p>This UI is fully custom built. Draggable, resizable, clean, lightweight. Designed for M. Safrain.</p>
-    </div>
-
-    <!-- TASKBAR -->
-    <div id="taskbar"></div>
+  <!-- QUICK LAUNCH BUTTONS -->
+  <div class="openWindowButtons">
+    <button class="openWindow" data-id="0">By Matin Safrain</button>
+    <button class="openWindow" data-id="1">mThoughts</button>
   </div>
 
-  <!-- Window logic -->
-  <script src="desktop.js"></script>
-</body>
-</html>
+  <!-- Window 0 -->
+  <div class="window" data-title="By Matin Safrain" style="top: 60px; left: 60px;">
+    <p>Here, I write my web poetry...</p>
+    <p>
+      You may read mPoetry on
+      <a href="https://www.wattpad.com/user/msafrain" target="_blank">Wattpad</a>.
+    </p>
+  </div>
+
+  <!-- Window 1: Thoughts/poetry feed from WordPress blog -->
+  <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
+    <div class="poetry-area" id="poetryContent">
+      Loading latest piece...
+    </div>
+  </div>
+
+  <!-- Hidden window example -->
+  <div class="window closed" data-title="About" style="top: 180px; left: 220px;">
+    <h2>About</h2>
+    <p>This UI is fully custom built. Draggable, resizable, clean, lightweight. Designed for M. Safrain.</p>
+  </div>
+
+  <!-- TASKBAR -->
+  <div id="taskbar"></div>
+</div>
+
+<!-- jQuery & jQuery UI (for dragging/resizing) -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+
+<script>
+  (function () {
+    function initDesktopUI($) {
+      $(function () {
+        // Only run if this block is on the page
+        if (!$("#mSafrain").length) return;
+
+        var i = 0,
+          minimizedWidth = [],
+          minimizedHeight = [],
+          windowTopPos = [],
+          windowLeftPos = [],
+          id;
+
+        function adjustFullScreenSize() {
+          $("#mSafrain .fullSizeWindow .wincontent")
+            .css("width", (window.innerWidth - 32))
+            .css("height", (window.innerHeight - 98));
+        }
+
+        function makeWindowActive(thisid) {
+          $("#mSafrain .window").each(function () {
+            $(this).css('z-index', parseInt($(this).css('z-index') || 0, 10) - 1);
+          });
+          $("#window" + thisid).css('z-index', 1000);
+          $("#mSafrain .window").removeClass("activeWindow");
+          $("#window" + thisid).addClass("activeWindow");
+          $("#mSafrain .taskbarPanel").removeClass("activeTab");
+          $("#minimPanel" + thisid).addClass("activeTab");
+        }
+
+        function minimizeWindow(id) {
+          windowTopPos[id] = $("#window" + id).css("top");
+          windowLeftPos[id] = $("#window" + id).css("left");
+
+          $("#window" + id).animate({
+            top: 800,
+            left: 0
+          }, 200, function () {
+            $("#window" + id).addClass('minimizedWindow');
+            $("#minimPanel" + id).addClass('minimizedTab');
+            $("#minimPanel" + id).removeClass('activeTab');
+          });
+        }
+
+        function openWindow(id) {
+          if ($("#window" + id).hasClass("minimizedWindow")) {
+            openMinimized(id);
+          } else {
+            makeWindowActive(id);
+            $("#window" + id).removeClass("closed");
+            $("#minimPanel" + id).removeClass("closed");
+          }
+        }
+
+        function closeWindwow(id) {
+          $("#window" + id).addClass("closed");
+          $("#minimPanel" + id).addClass("closed");
+        }
+
+        function openMinimized(id) {
+          $("#window" + id).removeClass("minimizedWindow");
+          $("#minimPanel" + id).removeClass("minimizedTab");
+          makeWindowActive(id);
+
+          $("#window" + id).animate({
+            top: windowTopPos[id],
+            left: windowLeftPos[id]
+          }, 200);
+        }
+
+        function setupInteractions() {
+          var isMobile = window.innerWidth <= 768;
+
+          try { $("#mSafrain .window").draggable("destroy"); } catch (e) { }
+          try { $("#mSafrain .wincontent").resizable("destroy"); } catch (e) { }
+
+          if (!isMobile) {
+            $("#mSafrain .wincontent").resizable();
+            $("#mSafrain .window").draggable({ cancel: ".wincontent" });
+          }
+        }
+
+        // Load latest piece from WordPress REST API
+        function loadLatestPoem() {
+          // Uses relative URL so it works on msafrain.com
+          fetch('/wp-json/wp/v2/posts?per_page=1')
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+              var el = document.getElementById('poetryContent');
+              if (!el) return;
+
+              if (Array.isArray(data) && data.length > 0) {
+                var post = data[0]; // latest post
+
+                // Try to use full content; fall back to excerpt or title
+                var html =
+                  (post.content && post.content.rendered) ||
+                  (post.excerpt && post.excerpt.rendered) ||
+                  (post.title && post.title.rendered) ||
+                  'No content found.';
+
+                el.innerHTML = html;
+              } else {
+                el.textContent = 'No entries published yet.';
+              }
+            })
+            .catch(function (err) {
+              console.error('Error loading mThoughts from WordPress:', err);
+              var el = document.getElementById('poetryContent');
+              if (el) {
+                el.textContent = 'Unable to load content at the moment.';
+              }
+            });
+        }
+
+        // INITIALISE WINDOWS
+        $("#mSafrain .window").each(function () {
+          $(this).css("z-index", 1000);
+          $(this).attr("data-id", i);
+          minimizedWidth[i] = $(this).width();
+          minimizedHeight[i] = $(this).height();
+          windowTopPos[i] = $(this).css("top");
+          windowLeftPos[i] = $(this).css("left");
+
+          $("#taskbar").append(
+            '<div class="taskbarPanel" id="minimPanel' + i + '" data-id="' + i + '">' +
+            $(this).attr("data-title") + "</div>"
+          );
+
+          if ($(this).hasClass("closed")) {
+            $("#minimPanel" + i).addClass("closed");
+          }
+
+          $(this).attr("id", "window" + (i++));
+          $(this).wrapInner('<div class="wincontent"></div>');
+          $(this).prepend(
+            '<div class="windowHeader"><strong>' +
+            $(this).attr("data-title") +
+            '</strong><span class="winminimize">–</span><span class="winmaximize">□</span><span class="winclose">x</span></div>'
+          );
+        });
+
+        $("#minimPanel" + (i - 1)).addClass("activeTab");
+        $("#window" + (i - 1)).addClass("activeWindow");
+
+        setupInteractions();
+        adjustFullScreenSize();
+        loadLatestPoem();
+
+        // EVENTS
+        $("#mSafrain .window").mousedown(function () {
+          makeWindowActive($(this).attr("data-id"));
+        });
+
+        $("#mSafrain").on("click", ".winclose", function () {
+          closeWindwow($(this).parent().parent().attr("data-id"));
+        });
+
+        $("#mSafrain").on("click", ".winminimize", function () {
+          minimizeWindow($(this).parent().parent().attr("data-id"));
+        });
+
+        $("#mSafrain").on("click", ".taskbarPanel", function () {
+          id = $(this).attr("data-id");
+
+          if ($(this).hasClass("activeTab")) {
+            minimizeWindow(id);
+          } else if ($(this).hasClass("minimizedTab")) {
+            openMinimized(id);
+          } else {
+            makeWindowActive(id);
+          }
+        });
+
+        $("#mSafrain").on("click", ".openWindow", function () {
+          openWindow($(this).attr("data-id"));
+        });
+
+        $("#mSafrain").on("click", ".winmaximize", function () {
+          var win = $(this).parent().parent();
+          if (win.hasClass("fullSizeWindow")) {
+            win.removeClass("fullSizeWindow");
+            win.find(".wincontent")
+              .height(minimizedHeight[win.attr("data-id")])
+              .width(minimizedWidth[win.attr("data-id")]);
+          } else {
+            win.addClass("fullSizeWindow");
+            minimizedHeight[win.attr("data-id")] = win.find(".wincontent").height();
+            minimizedWidth[win.attr("data-id")] = win.find(".wincontent").width();
+            adjustFullScreenSize();
+          }
+        });
+
+        $(window).on("resize", function () {
+          setupInteractions();
+          adjustFullScreenSize();
+        });
+      });
+    }
+
+    function waitForjQuery() {
+      if (window.jQuery && typeof window.jQuery === "function") {
+        initDesktopUI(window.jQuery);
+      } else {
+        setTimeout(waitForjQuery, 100);
+      }
+    }
+
+    waitForjQuery();
+  })();
+</script>
