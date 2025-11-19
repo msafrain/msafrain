@@ -13,64 +13,55 @@
   <!-- Our CSS -->
   <link rel="stylesheet" href="desktop.css" />
 
-  <!-- Blogger JSONP loader (TEXT ONLY) -->
- <script>
-  // Load Blogger feed using JSONP
-  function loadBlogspot() {
-    const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPostClean";
-    const script = document.createElement("script");
-    script.src = url;
-    document.body.appendChild(script);
-  }
-
-  // CALLBACK with a NEW NAME: showPostClean
-  function showPostClean(data) {
-    const area = document.getElementById("poetryContent");
-    if (!area) return;
-
-    try {
-      const entry = data.feed.entry[0];
-
-      let title   = (entry.title   && entry.title.$t   ? entry.title.$t   : "").trim();
-      let content = (entry.content && entry.content.$t ? entry.content.$t : "").trim();
-      let published = entry.published && entry.published.$t
-        ? new Date(entry.published.$t)
-        : null;
-
-      // Format date
-      let dateText = "";
-      if (published) {
-        dateText = published.toLocaleDateString("en-SG", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        });
-      }
-
-      // ❌ If title is empty OR literally "Untitled" (any case) → hide it
-      if (!title || /^untitled$/i.test(title)) {
-        title = "";
-      }
-
-      const titleHTML = title
-        ? `<h2 style="margin-bottom:6px;">${title}</h2>`
-        : "";
-
-      const dateHTML = dateText
-        ? `<div style="color:#666; font-size:13px; margin-bottom:10px;">${dateText}</div>`
-        : "";
-
-      area.innerHTML = `
-        ${titleHTML}
-        ${dateHTML}
-        <div>${content}</div>
-      `;
-    } catch (e) {
-      console.error(e);
-      area.textContent = "Unable to load mThoughts.";
+  <!-- Blogger JSONP loader (TEXT ONLY, NO TITLES) -->
+  <script>
+    // Load Blogger feed using JSONP
+    function loadBlogspot() {
+      const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPostClean";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
     }
-  }
-</script>
+
+    // Callback for Blogger JSONP
+    function showPostClean(data) {
+      const area = document.getElementById("poetryContent");
+      if (!area) return;
+
+      try {
+        const entry = data.feed.entry[0];
+
+        // Ignore title completely
+        let content = (entry.content && entry.content.$t ? entry.content.$t : "").trim();
+        let published = entry.published && entry.published.$t
+          ? new Date(entry.published.$t)
+          : null;
+
+        // Format date
+        let dateText = "";
+        if (published) {
+          dateText = published.toLocaleDateString("en-SG", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric"
+          });
+        }
+
+        const dateHTML = dateText
+          ? `<div style="color:#666; font-size:13px; margin-bottom:10px;">${dateText}</div>`
+          : "";
+
+        // No title at all – only date + content
+        area.innerHTML = `
+          ${dateHTML}
+          <div>${content}</div>
+        `;
+      } catch (e) {
+        console.error(e);
+        area.textContent = "Unable to load mThoughts.";
+      }
+    }
+  </script>
 </head>
 
 <!-- Call loadBlogspot when page finishes loading -->
@@ -93,7 +84,7 @@
       </p>
     </div>
 
-    <!-- Window 1: mThoughts (TEXT ONLY from Blogger) -->
+    <!-- Window 1: mThoughts (TEXT from Blogger) -->
     <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
       <div class="poetry-area" id="poetryContent">
         Loading latest piece...
