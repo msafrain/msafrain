@@ -13,63 +13,77 @@
   <!-- Your desktop CSS -->
   <link rel="stylesheet" href="desktop.css" />
 
-  <!-- Blogger JSONP loader: latest post only, no title, date below -->
+  <!-- Blogger JSONP loader: latest 6 posts -->
   <script>
     function loadBlogspot() {
-      const url = "https://msafrain.blogspot.com/feeds/posts/default" +
-                  "?alt=json-in-script&max-results=1&callback=showLatestPost";
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default" +
+        "?alt=json-in-script&max-results=6&callback=showLatestPosts";
       const script = document.createElement("script");
       script.src = url;
       document.body.appendChild(script);
     }
 
-    function showLatestPost(data) {
+    function showLatestPosts(data) {
       const area = document.getElementById("poetryContent");
       if (!area) return;
 
       try {
-        const entry = data.feed.entry && data.feed.entry[0];
-        if (!entry) {
+        const entries = (data.feed && data.feed.entry) || [];
+        if (!entries.length) {
           area.textContent = "No entries published yet.";
           return;
         }
 
-        // Raw HTML content from Blogger
-        let contentHtml = (entry.content && entry.content.$t ? entry.content.$t : "").trim();
+        let allPostsHTML = "";
 
-        // Put into a temporary DOM container
-        const temp = document.createElement("div");
-        temp.innerHTML = contentHtml;
+        // Loop through up to 6 recent posts
+        entries.slice(0, 6).forEach(function(entry) {
+          // Raw HTML content from Blogger
+          let contentHtml =
+            entry.content && entry.content.$t
+              ? entry.content.$t.trim()
+              : "";
 
-        // 1) Remove all headings (to hide Blogger title)
-        const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
-        headings.forEach(h => h.remove());
+          // Temporary container to clean up HTML
+          const temp = document.createElement("div");
+          temp.innerHTML = contentHtml;
 
-        // 2) Compute date text from feed
-        let published = entry.published && entry.published.$t
-          ? new Date(entry.published.$t)
-          : null;
+          // 1) Remove all headings (hide Blogger title inside content)
+          const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
+          headings.forEach(h => h.remove());
 
-        let dateText = "";
-        if (published && !isNaN(published.getTime())) {
-          dateText = published.toLocaleDateString("en-SG", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-          });
-        }
+          // 2) Compute date text from feed
+          let published =
+            entry.published && entry.published.$t
+              ? new Date(entry.published.$t)
+              : null;
 
-        // 3) Render: content first, date below
-        const cleanedContent = temp.innerHTML.trim();
+          let dateText = "";
+          if (published && !isNaN(published.getTime())) {
+            dateText = published.toLocaleDateString("en-SG", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric"
+            });
+          }
 
-        const dateHTML = dateText
-          ? `<div style="margin-top:16px; color:#666; font-size:12px;">${dateText}</div>`
-          : "";
+          const cleanedContent = temp.innerHTML.trim();
 
-        area.innerHTML = `
-          <div>${cleanedContent}</div>
-          ${dateHTML}
-        `;
+          const dateHTML = dateText
+            ? `<div style="margin-top:8px; color:#666; font-size:12px;">${dateText}</div>`
+            : "";
+
+          // Wrap each post in an <article>
+          allPostsHTML += `
+            <article style="margin-bottom:24px;">
+              <div>${cleanedContent}</div>
+              ${dateHTML}
+            </article>
+          `;
+        });
+
+        area.innerHTML = allPostsHTML;
       } catch (e) {
         console.error(e);
         area.textContent = "Unable to load mThoughts.";
@@ -79,9 +93,7 @@
 </head>
 
 <body onload="loadBlogspot()">
-
   <div id="mSafrain">
-
     <!-- QUICK LAUNCH BUTTONS -->
     <div class="openWindowButtons">
       <button class="openWindow" data-id="0">By mSafrain</button>
@@ -97,17 +109,20 @@
       </p>
     </div>
 
-    <!-- Window 1: mThoughts -->
+    <!-- Window 1: mThoughts (shows 6 recent blog posts) -->
     <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
       <div class="poetry-area" id="poetryContent">
-        Loading latest piece...
+        Loading recent pieces...
       </div>
     </div>
 
     <!-- Hidden window example -->
     <div class="window closed" data-title="About" style="top: 180px; left: 220px;">
       <h2>About</h2>
-      <p>This UI is fully custom built. Draggable, resizable, clean, lightweight. Designed for M. Safrain.</p>
+      <p>
+        This UI is fully custom built. Draggable, resizable, clean, lightweight.
+        Designed for M. Safrain.
+      </p>
     </div>
 
     <!-- TASKBAR -->
