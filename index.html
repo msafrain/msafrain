@@ -15,13 +15,17 @@
 
   <!-- Blogger feed loaders -->
   <script>
-    function loadAllFeeds() {
-      load_mThoughts_single();
-      load_mThoughts_recent();
-      load_mVisual();
-      load_mObservation();
-      load_mStratagems(); // NEW
-    }
+ function loadAllFeeds() {
+  load_mThoughts_single();
+  load_mThoughts_recent();
+  load_mVisual();
+  load_mObservation();
+  load_mStratagems();
+  load_mThoughts_archive();      // NEW
+  load_mVisual_archive();        // NEW
+  load_mObservation_archive();   // NEW
+  load_mStratagems_archive();    // NEW
+}
 
     /* mThoughts SINGLE (latest 1) */
     function load_mThoughts_single() {
@@ -280,6 +284,214 @@ function render_mStratagems(data) {
 
   area.innerHTML = output;
 }
+
+    /* mThoughts ARCHIVE (all posts) */
+function load_mThoughts_archive() {
+  const url =
+    "https://msafrain.blogspot.com/feeds/posts/default/-/mThoughts" +
+    "?alt=json-in-script&max-results=999&callback=render_mThoughts_archive";
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
+}
+
+function render_mThoughts_archive(data) {
+  const area = document.getElementById("mThoughtsArchiveContent");
+  if (!area) return;
+
+  const entries = (data.feed && data.feed.entry) || [];
+  if (!entries.length) {
+    area.textContent = "No mThoughts yet.";
+    return;
+  }
+
+  let output = "";
+  entries.forEach(function (entry) {
+    let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+    const temp = document.createElement("div");
+    temp.innerHTML = contentHtml;
+    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+
+    let dateText = "";
+    if (entry.published && entry.published.$t) {
+      const published = new Date(entry.published.$t);
+      if (!isNaN(published.getTime())) {
+        dateText = published.toLocaleDateString("en-SG", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        });
+      }
+    }
+
+    const dateHTML = dateText
+      ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
+      : "";
+
+    output += `
+      <article style="margin-bottom:24px;">
+        <div>${temp.innerHTML}</div>
+        ${dateHTML}
+      </article>
+    `;
+  });
+
+  area.innerHTML = output;
+}
+
+/* mVisual ARCHIVE (all posts) */
+function load_mVisual_archive() {
+  const url =
+    "https://msafrain.blogspot.com/feeds/posts/default/-/mVisual" +
+    "?alt=json-in-script&max-results=999&callback=render_mVisual_archive";
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
+}
+
+function render_mVisual_archive(data) {
+  const area = document.getElementById("mVisualArchiveContent");
+  if (!area) return;
+
+  const entries = (data.feed && data.feed.entry) || [];
+  if (!entries.length) {
+    area.textContent = "No mVisual posts yet.";
+    return;
+  }
+
+  let output = "";
+  entries.forEach(function (entry) {
+    let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+    const temp = document.createElement("div");
+    temp.innerHTML = contentHtml;
+
+    const imgs = temp.querySelectorAll("img");
+    if (!imgs.length) return;
+
+    imgs.forEach(function (img) {
+      const meaning = img.getAttribute("alt") || "";
+      output += `
+        <div style="margin-bottom:20px;">
+          <img 
+            src="${img.src}"
+            data-meaning="${meaning.replace(/"/g, '&quot;')}"
+            style="width:100%; border-radius:8px; display:block; cursor:pointer;">
+        </div>
+      `;
+    });
+  });
+
+  area.innerHTML = output || "No visuals yet.";
+}
+
+/* mObservation ARCHIVE (all posts) */
+function load_mObservation_archive() {
+  const url =
+    "https://msafrain.blogspot.com/feeds/posts/default/-/mObservation" +
+    "?alt=json-in-script&max-results=999&callback=render_mObservation_archive";
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
+}
+
+function render_mObservation_archive(data) {
+  const area = document.getElementById("mObservationArchiveContent");
+  if (!area) return;
+
+  const entries = (data.feed && data.feed.entry) || [];
+  if (!entries.length) {
+    area.textContent = "No observations yet.";
+    return;
+  }
+
+  let output = "";
+  entries.forEach(function (entry) {
+    let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+    const temp = document.createElement("div");
+    temp.innerHTML = contentHtml;
+    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+
+    let dateText = "";
+    if (entry.published && entry.published.$t) {
+      const published = new Date(entry.published.$t);
+      if (!isNaN(published.getTime())) {
+        dateText = published.toLocaleDateString("en-SG", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        });
+      }
+    }
+
+    const dateHTML = dateText
+      ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
+      : "";
+
+    output += `
+      <article style="margin-bottom:24px;">
+        <div>${temp.innerHTML}</div>
+        ${dateHTML}
+      </article>
+    `;
+  });
+
+  area.innerHTML = output;
+}
+
+/* mStratagems ARCHIVE (all posts) */
+function load_mStratagems_archive() {
+  const url =
+    "https://msafrain.blogspot.com/feeds/posts/default/-/mStratagems" +
+    "?alt=json-in-script&max-results=999&callback=render_mStratagems_archive";
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
+}
+
+function render_mStratagems_archive(data) {
+  const area = document.getElementById("mStratagemsArchiveContent");
+  if (!area) return;
+
+  const entries = (data.feed && data.feed.entry) || [];
+  if (!entries.length) {
+    area.textContent = "No mStratagems yet.";
+    return;
+  }
+
+  let output = "";
+  entries.forEach(function (entry) {
+    let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+    const temp = document.createElement("div");
+    temp.innerHTML = contentHtml;
+
+    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+
+    let dateText = "";
+    if (entry.published && entry.published.$t) {
+      const published = new Date(entry.published.$t);
+      if (!isNaN(published.getTime())) {
+        dateText = published.toLocaleDateString("en-SG", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        });
+      }
+    }
+
+    const dateHTML = dateText
+      ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
+      : "";
+
+    output += `
+      <article style="margin-bottom:24px;">
+        <div>${temp.innerHTML}</div>
+        ${dateHTML}
+      </article>
+    `;
+  });
+
+  area.innerHTML = output;
+}
   </script>
 
 <!-- Google tag (gtag.js) -->
@@ -383,7 +595,13 @@ document.addEventListener("click", function (e) {
   <button class="openWindow" data-window-id="mvisual">mVisual</button>
   <button class="openWindow" data-window-id="mobservation">mObservation</button>
   <button class="openWindow" data-window-id="mstratagems">mStratagems</button>
-  <button class="openWindow" data-window-id="marchives">mArchives</button> <!-- NEW -->
+  <button class="openWindow" data-window-id="marchives">mArchives</button>
+
+  <!-- HIDDEN buttons for archives -->
+  <button class="openWindow" data-window-id="mthoughts-archive" style="display:none;"></button>
+  <button class="openWindow" data-window-id="mvisual-archive" style="display:none;"></button>
+  <button class="openWindow" data-window-id="mobservation-archive" style="display:none;"></button>
+  <button class="openWindow" data-window-id="mstratagems-archive" style="display:none;"></button>
 </div>
 
     <!-- Window: 0 – By mSafrain -->
