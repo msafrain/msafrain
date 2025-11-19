@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>mSafrain – Desktop UI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- jQuery & jQuery UI (for dragging/resizing windows) -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css" />
+
+  <!-- Our CSS -->
+  <link rel="stylesheet" href="desktop.css" />
+</head>
+<body>
+
+  <div id="mSafrain">
+
+    <!-- QUICK LAUNCH BUTTONS -->
+    <div class="openWindowButtons">
+      <button class="openWindow" data-id="0">By Matin Safrain</button>
+      <button class="openWindow" data-id="1">mThoughts</button>
+    </div>
+
+    <!-- Window 0 -->
+    <div class="window" data-title="By Matin Safrain" style="top: 60px; left: 60px;">
+      <p>Here, I write my web poetry...</p>
+      <p>
+        You may read mPoetry on
+        <a href="https://www.wattpad.com/user/msafrain" target="_blank">Wattpad</a>.
+      </p>
+    </div>
+
+    <!-- Window 1: mThoughts (latest blog post) -->
+    <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
+      <div class="poetry-area" id="poetryContent">
+        Loading latest piece...
+      </div>
+    </div>
+
+    <!-- Hidden window example -->
+    <div class="window closed" data-title="About" style="top: 180px; left: 220px;">
+      <h2>About</h2>
+      <p>This UI is fully custom built. Draggable, resizable, clean, lightweight. Designed for M. Safrain.</p>
+    </div>
+
+    <!-- TASKBAR -->
+    <div id="taskbar"></div>
+  </div>
+
+  <!-- Our logic -->
+  <script src="desktop.js"></script>
+</body>
+</html>
