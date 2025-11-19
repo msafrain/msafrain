@@ -15,6 +15,7 @@
 
   <!-- Blogger JSONP loader (TEXT ONLY) -->
  <script>
+  // Load Blogger feed using JSONP
   function loadBlogspot() {
     const url = "https://msafrain.blogspot.com/feeds/posts/default?alt=json-in-script&callback=showPost";
     const script = document.createElement("script");
@@ -22,37 +23,51 @@
     document.body.appendChild(script);
   }
 
-  ffunction showPost(data) {
-  const area = document.getElementById("poetryContent");
-  if (!area) return;
+  // Callback for Blogger JSONP
+  function showPost(data) {
+    const area = document.getElementById("poetryContent");
+    if (!area) return;
 
-  try {
-    const entry = data.feed.entry[0];
+    try {
+      const entry = data.feed.entry[0];
 
-    let title = entry.title.$t.trim();
-    let content = entry.content.$t.trim();
-    let published = new Date(entry.published.$t);
+      let title = (entry.title && entry.title.$t ? entry.title.$t : "").trim();
+      let content = (entry.content && entry.content.$t ? entry.content.$t : "").trim();
+      let published = entry.published && entry.published.$t ? new Date(entry.published.$t) : null;
 
-    // Format date (optional)
-    const dateText = published.toLocaleDateString("en-SG", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
-    });
+      // Format date
+      let dateText = "";
+      if (published) {
+        dateText = published.toLocaleDateString("en-SG", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        });
+      }
 
-    // If title is empty → remove title completely
-    const titleHTML = title ? `<h2 style="margin-bottom:6px;">${title}</h2>` : "";
+      // 🔥 If title is empty OR literally "Untitled" (any case) → hide it
+      if (!title || /^untitled$/i.test(title)) {
+        title = "";
+      }
 
-    area.innerHTML = `
-      ${titleHTML}
-      <div style="color:#666; font-size:13px; margin-bottom:10px;">${dateText}</div>
-      <div>${content}</div>
-    `;
-  } catch (e) {
-    console.error(e);
-    area.textContent = "Unable to load mThoughts.";
+      const titleHTML = title
+        ? `<h2 style="margin-bottom:6px;">${title}</h2>`
+        : "";
+
+      const dateHTML = dateText
+        ? `<div style="color:#666; font-size:13px; margin-bottom:10px;">${dateText}</div>`
+        : "";
+
+      area.innerHTML = `
+        ${titleHTML}
+        ${dateHTML}
+        <div>${content}</div>
+      `;
+    } catch (e) {
+      console.error(e);
+      area.textContent = "Unable to load mThoughts.";
+    }
   }
-}
 </script>
 </head>
 
