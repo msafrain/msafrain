@@ -351,6 +351,24 @@ document.addEventListener("click", function (e) {
     }
   }
 });
+
+  document.addEventListener("click", function (e) {
+  const item = e.target.closest(".archive-item");
+  if (!item) return;
+
+  const targetKey = item.getAttribute("data-window-id");
+  if (!targetKey) return;
+
+  // Find the corresponding launchbar button
+  const btn = document.querySelector(
+    'button.openWindow[data-window-id="' + targetKey + '"]'
+  );
+
+  // If found, "click" it programmatically
+  if (btn) {
+    btn.click();
+  }
+});
 </script>
 </head>
 
