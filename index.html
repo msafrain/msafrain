@@ -10,10 +10,10 @@
   <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css" />
 
-  <!-- Your desktop CSS -->
+  <!-- Desktop CSS -->
   <link rel="stylesheet" href="desktop.css" />
 
-  <!-- Blogger feed loaders for mThoughts, mVisual, mObservation -->
+  <!-- Blogger feed loaders -->
   <script>
     function loadAllFeeds() {
       load_mThoughts_single();
@@ -46,7 +46,7 @@
       const temp = document.createElement("div");
       temp.innerHTML = contentHtml;
 
-      // Remove headings (hide Blogger title inside content)
+      // Remove headings (hide Blogger title from content)
       temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
       // Date
@@ -98,10 +98,8 @@
         const temp = document.createElement("div");
         temp.innerHTML = contentHtml;
 
-        // Remove headings
         temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
-        // Date
         let dateText = "";
         if (entry.published && entry.published.$t) {
           const published = new Date(entry.published.$t);
@@ -129,7 +127,7 @@
       area.innerHTML = output;
     }
 
-    /* ---------------------------- mVisual (images) ---------------------------- */
+    /* ---------------------------- mVisual (images, latest 10) ---------------------------- */
     function load_mVisual() {
       const url =
         "https://msafrain.blogspot.com/feeds/posts/default/-/mVisual" +
@@ -170,7 +168,7 @@
       area.innerHTML = output || "No visuals yet.";
     }
 
-    /* ---------------------------- mObservation (text posts) ---------------------------- */
+    /* ---------------------------- mObservation (latest 5) ---------------------------- */
     function load_mObservation() {
       const url =
         "https://msafrain.blogspot.com/feeds/posts/default/-/mObservation" +
@@ -196,10 +194,8 @@
         const temp = document.createElement("div");
         temp.innerHTML = contentHtml;
 
-        // Remove headings
         temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
-        // Date
         let dateText = "";
         if (entry.published && entry.published.$t) {
           const published = new Date(entry.published.$t);
@@ -230,53 +226,54 @@
 </head>
 
 <body onload="loadAllFeeds()">
-  <div id="mSafrain">
-    <!-- QUICK LAUNCH BUTTONS -->
-    <div class="openWindowButtons">
-      <button class="openWindow" data-window-target="by-msafrain">By mSafrain</button>
-      <button class="openWindow" data-window-target="mthoughts-recent">mThoughts</button>
-      <button class="openWindow" data-window-target="mvisual">mVisual</button>
-      <button class="openWindow" data-window-target="mobservation">mObservation</button>
-    </div>
 
-    <!-- Window: By mSafrain (intro) -->
+  <!-- GLOBAL LAUNCHBAR (works for desktop & mobile) -->
+  <div id="mobileNav" class="openWindowButtons">
+    <button class="openWindow" data-window-target="by-msafrain">By mSafrain</button>
+    <button class="openWindow" data-window-target="mthoughts-recent">mThoughts</button>
+    <button class="openWindow" data-window-target="mvisual">mVisual</button>
+    <button class="openWindow" data-window-target="mobservation">mObservation</button>
+  </div>
+
+  <div id="mSafrain">
+    <!-- Window: By mSafrain -->
     <div class="window" data-window-id="by-msafrain" data-title="By mSafrain" style="top:80px;left:40px;">
-      <p>Here, I write whatever in my mind...</p>
+      <p>Here, I write my thoughts and weave them into little windows.</p>
       <p>
         You may read mPoetry on
         <a href="https://www.wattpad.com/user/msafrain" target="_blank">Wattpad</a>.
       </p>
     </div>
 
-    <!-- Window: mThoughts SINGLE (latest post widget) -->
+    <!-- Window: mThoughts SINGLE -->
     <div class="window" data-window-id="mthoughts-single" data-title="mThoughts" style="top:80px;left:600px;height:300px;">
       <div class="poetry-area" id="mThoughtsSingle">
         Loading mThoughts...
       </div>
     </div>
 
-    <!-- Window: mThoughts RECENT (6 latest posts, opened from launchbar) -->
+    <!-- Window: mThoughts RECENT -->
     <div class="window closed" data-window-id="mthoughts-recent" data-title="mThoughts – Recent" style="top:260px;left:280px;height:600px;">
       <div class="poetry-area" id="mThoughtsRecent">
         Loading recent mThoughts...
       </div>
     </div>
 
-    <!-- Window: mVisual (illustrations) -->
+    <!-- Window: mVisual -->
     <div class="window closed" data-window-id="mvisual" data-title="mVisual" style="top:120px;left:40px;height:600px;">
       <div class="poetry-area" id="mVisualContent">
         Loading mVisual...
       </div>
     </div>
 
-    <!-- Window: mObservation (observations writing) -->
+    <!-- Window: mObservation -->
     <div class="window closed" data-window-id="mobservation" data-title="mObservation" style="top:150px;left:680px;height:600px;">
       <div class="poetry-area" id="mObservationContent">
         Loading mObservation...
       </div>
     </div>
 
-    <!-- Optional: About window -->
+    <!-- Optional About window -->
     <div class="window closed" data-window-id="about" data-title="About" style="top:200px;left:220px;">
       <h2>About</h2>
       <p>This UI is custom-built, draggable and resizable. Designed for M. Safrain.</p>
