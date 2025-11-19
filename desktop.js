@@ -10,8 +10,7 @@
         minimizedWidth = [],
         minimizedHeight = [],
         windowTopPos = [],
-        windowLeftPos = [],
-        id;
+        windowLeftPos = [];
 
       // Map from string window IDs (data-window-id) to numeric IDs
       var windowIdMap = {};
@@ -46,15 +45,14 @@
         windowLeftPos[id] = $("#window" + id).css("left");
 
         if (isMobile()) {
-          // Mobile lite: slide up instead of flying to bottom
+          // On mobile we don't really minimize; we just don't use this.
+          // Kept here for safety but not used in mobile flows.
           $("#window" + id).addClass("minimizedWindow");
           $("#minimPanel" + id)
             .addClass("minimizedTab")
             .removeClass("activeTab");
-
-          $("#window" + id).slideUp(200);
         } else {
-          // Desktop: animate to bottom-left (old behaviour)
+          // Desktop: animate to bottom-left
           $("#window" + id).animate(
             {
               top: 800,
@@ -80,7 +78,7 @@
         }
       }
 
-      function closeWindwow(id) { // keeping original typo name
+      function closeWindwow(id) {
         $("#window" + id).addClass("closed");
         $("#minimPanel" + id).addClass("closed");
       }
@@ -90,12 +88,9 @@
         $("#minimPanel" + id).removeClass("minimizedTab");
 
         if (isMobile()) {
-          // Mobile lite: slide down and then activate
-          $("#window" + id).slideDown(200, function () {
-            makeWindowActive(id);
-          });
+          // Not really used now; we scroll instead on mobile.
+          makeWindowActive(id);
         } else {
-          // Desktop: animate back to stored position
           makeWindowActive(id);
           $("#window" + id).animate(
             {
@@ -135,6 +130,22 @@
           return dataId;
         }
         return null;
+      }
+
+      // Mobile helper: open + scroll to window section
+      function mobileFocusWindow(numericId) {
+        var $win = $("#window" + numericId);
+        if (!$win.length) return;
+
+        // Ensure it's visible
+        $win.removeClass("closed minimizedWindow");
+        $("#minimPanel" + numericId)
+          .removeClass("closed minimizedTab")
+          .addClass("activeTab");
+
+        // Smooth scroll (use jQuery animate for broad support)
+        var offsetTop = $win.offset().top;
+        $("html, body").animate({ scrollTop: offsetTop - 60 }, 300);
       }
 
       // INITIALISE WINDOWS
@@ -192,7 +203,9 @@
 
       // EVENTS
       $("#mSafrain .window").mousedown(function () {
-        makeWindowActive($(this).attr("data-id"));
+        if (!isMobile()) {
+          makeWindowActive($(this).attr("data-id"));
+        }
       });
 
       $("#mSafrain").on("click", ".winclose", function () {
@@ -200,7 +213,14 @@
       });
 
       $("#mSafrain").on("click", ".winminimize", function () {
-        minimizeWindow($(this).parent().parent().attr("data-id"));
+        var id = $(this).parent().parent().attr("data-id");
+        if (!isMobile()) {
+          minimizeWindow(id);
+        } else {
+          // On mobile, we just scroll via launchbar/taskbar, so minimize button can simply hide
+          $("#window" + id).addClass("minimizedWindow").slideUp(200);
+          $("#minimPanel" + id).addClass("minimizedTab").removeClass("activeTab");
+        }
       });
 
       // Bottom taskbar behaviour
@@ -208,6 +228,13 @@
         var numericId = getNumericIdFromTarget($(this));
         if (numericId === null) return;
 
+        if (isMobile()) {
+          // Mobile: just scroll to that window
+          mobileFocusWindow(numericId);
+          return;
+        }
+
+        // Desktop behaviour
         if ($(this).hasClass("activeTab")) {
           minimizeWindow(numericId);
         } else if ($(this).hasClass("minimizedTab")) {
@@ -217,24 +244,17 @@
         }
       });
 
-      // TOP launchbar: mirrors taskbar behaviour
+      // TOP launchbar: mobile scroll, desktop toggle
       $("#mSafrain").on("click", ".openWindow", function () {
         var numericId = getNumericIdFromTarget($(this));
         if (numericId === null) return;
-        
-        // MOBILE: Scroll to window instead of desktop behaviour
-if (window.innerWidth <= 768) {
-    const win = document.getElementById("window" + numericId);
-    if (win) {
-        win.classList.remove("closed");
-        win.classList.remove("minimizedWindow");
 
-        // Smooth scroll to window
-        win.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-    return; // prevent desktop logic
-}
+        if (isMobile()) {
+          mobileFocusWindow(numericId);
+          return;
+        }
 
+        // Desktop behaviour
         var $panel = $("#minimPanel" + numericId);
 
         if ($panel.hasClass("activeTab")) {
