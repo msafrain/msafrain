@@ -248,4 +248,22 @@
   #mSafrain #taskbar {
     position: relative !important;
   }
-}
+  
+ /* --- MAKE LAUNCHBAR STICKY ON MOBILE --- */
+  #mSafrain .openWindowButtons {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    padding: 10px;
+    z-index: 5000;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+  }
+
+  /* Push content down so windows aren't hidden under sticky bar */
+  #mSafrain {
+    padding-top: 70px !important;
+  }
+
+}  /* <-- THIS IS THE END OF YOUR MOBILE MEDIA QUERY */
