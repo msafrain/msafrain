@@ -5,7 +5,7 @@
   <title>mSafrain</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- jQuery & jQuery UI (for dragging/resizing windows) -->
+  <!-- jQuery & jQuery UI -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css" />
@@ -13,182 +13,280 @@
   <!-- Your desktop CSS -->
   <link rel="stylesheet" href="desktop.css" />
 
-  <!-- Blogger JSONP loader: 6 posts, used by both windows -->
+  <!-- Blogger feed loaders for mThoughts, mVisual, mObservation -->
   <script>
-    function loadBlogspot() {
+    function loadAllFeeds() {
+      load_mThoughts_single();
+      load_mThoughts_recent();
+      load_mVisual();
+      load_mObservation();
+    }
+
+    /* ---------------------------- mThoughts SINGLE (latest 1) ---------------------------- */
+    function load_mThoughts_single() {
       const url =
-        "https://msafrain.blogspot.com/feeds/posts/default" +
-        "?alt=json-in-script&max-results=6&callback=handleBlogFeed";
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mThoughts" +
+        "?alt=json-in-script&max-results=1&callback=render_mThoughts_single";
       const script = document.createElement("script");
       script.src = url;
       document.body.appendChild(script);
     }
 
-    // Main callback for JSONP
-    function handleBlogFeed(data) {
-      renderLatestSingle(data);  // for mThoughts window (1 post)
-      renderRecentList(data);    // for the extra window (6 posts)
-    }
-
-    function renderLatestSingle(data) {
-      const area = document.getElementById("poetryContent");
+    function render_mThoughts_single(data) {
+      const area = document.getElementById("mThoughtsSingle");
       if (!area) return;
 
-      try {
-        const entry = data.feed.entry && data.feed.entry[0];
-        if (!entry) {
-          area.textContent = "No entries published yet.";
-          return;
-        }
+      const entry = data.feed && data.feed.entry && data.feed.entry[0];
+      if (!entry) {
+        area.textContent = "No mThoughts yet.";
+        return;
+      }
 
-        let contentHtml =
-          entry.content && entry.content.$t
-            ? entry.content.$t.trim()
-            : "";
+      let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+      const temp = document.createElement("div");
+      temp.innerHTML = contentHtml;
 
-        const temp = document.createElement("div");
-        temp.innerHTML = contentHtml;
+      // Remove headings (hide Blogger title inside content)
+      temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
-        // Remove all headings (hide Blogger title inside content)
-        const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
-        headings.forEach(h => h.remove());
-
-        // Date
-        let published =
-          entry.published && entry.published.$t
-            ? new Date(entry.published.$t)
-            : null;
-
-        let dateText = "";
-        if (published && !isNaN(published.getTime())) {
+      // Date
+      let dateText = "";
+      if (entry.published && entry.published.$t) {
+        const published = new Date(entry.published.$t);
+        if (!isNaN(published.getTime())) {
           dateText = published.toLocaleDateString("en-SG", {
             day: "2-digit",
             month: "short",
             year: "numeric"
           });
         }
-
-        const cleanedContent = temp.innerHTML.trim();
-        const dateHTML = dateText
-          ? `<div style="margin-top:16px; color:#666; font-size:12px;">${dateText}</div>`
-          : "";
-
-        area.innerHTML = `
-          <div>${cleanedContent}</div>
-          ${dateHTML}
-        `;
-      } catch (e) {
-        console.error(e);
-        area.textContent = "Unable to load mThoughts.";
       }
+
+      const dateHTML = dateText
+        ? `<div style="margin-top:12px; font-size:12px; color:#666;">${dateText}</div>`
+        : "";
+
+      area.innerHTML = `
+        <div>${temp.innerHTML}</div>
+        ${dateHTML}
+      `;
     }
 
-    function renderRecentList(data) {
-      const area = document.getElementById("recentContent");
+    /* ---------------------------- mThoughts RECENT (latest 6) ---------------------------- */
+    function load_mThoughts_recent() {
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mThoughts" +
+        "?alt=json-in-script&max-results=6&callback=render_mThoughts_recent";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
+
+    function render_mThoughts_recent(data) {
+      const area = document.getElementById("mThoughtsRecent");
       if (!area) return;
 
-      try {
-        const entries = (data.feed && data.feed.entry) || [];
-        if (!entries.length) {
-          area.textContent = "No entries published yet.";
-          return;
-        }
+      const entries = (data.feed && data.feed.entry) || [];
+      if (!entries.length) {
+        area.textContent = "No mThoughts yet.";
+        return;
+      }
 
-        let allPostsHTML = "";
+      let output = "";
+      entries.forEach(function (entry) {
+        let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+        const temp = document.createElement("div");
+        temp.innerHTML = contentHtml;
 
-        // List up to 6 posts
-        entries.slice(0, 6).forEach(function(entry) {
-          let contentHtml =
-            entry.content && entry.content.$t
-              ? entry.content.$t.trim()
-              : "";
+        // Remove headings
+        temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
-          const temp = document.createElement("div");
-          temp.innerHTML = contentHtml;
-
-          // Remove headings again
-          const headings = temp.querySelectorAll("h1,h2,h3,h4,h5,h6");
-          headings.forEach(h => h.remove());
-
-          // Date
-          let published =
-            entry.published && entry.published.$t
-              ? new Date(entry.published.$t)
-              : null;
-
-          let dateText = "";
-          if (published && !isNaN(published.getTime())) {
+        // Date
+        let dateText = "";
+        if (entry.published && entry.published.$t) {
+          const published = new Date(entry.published.$t);
+          if (!isNaN(published.getTime())) {
             dateText = published.toLocaleDateString("en-SG", {
               day: "2-digit",
               month: "short",
               year: "numeric"
             });
           }
+        }
 
-          const cleanedContent = temp.innerHTML.trim();
-          const dateHTML = dateText
-            ? `<div style="margin-top:8px; color:#666; font-size:12px;">${dateText}</div>`
-            : "";
+        const dateHTML = dateText
+          ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
+          : "";
 
-          allPostsHTML += `
-            <article style="margin-bottom:24px;">
-              <div>${cleanedContent}</div>
-              ${dateHTML}
-            </article>
+        output += `
+          <article style="margin-bottom:24px;">
+            <div>${temp.innerHTML}</div>
+            ${dateHTML}
+          </article>
+        `;
+      });
+
+      area.innerHTML = output;
+    }
+
+    /* ---------------------------- mVisual (images) ---------------------------- */
+    function load_mVisual() {
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mVisual" +
+        "?alt=json-in-script&max-results=10&callback=render_mVisual";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
+
+    function render_mVisual(data) {
+      const area = document.getElementById("mVisualContent");
+      if (!area) return;
+
+      const entries = (data.feed && data.feed.entry) || [];
+      if (!entries.length) {
+        area.textContent = "No visuals yet.";
+        return;
+      }
+
+      let output = "";
+      entries.forEach(function (entry) {
+        let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+        const temp = document.createElement("div");
+        temp.innerHTML = contentHtml;
+
+        const imgs = temp.querySelectorAll("img");
+        if (!imgs.length) return;
+
+        imgs.forEach(function (img) {
+          output += `
+            <div style="margin-bottom:20px;">
+              <img src="${img.src}" style="width:100%; border-radius:8px; display:block;">
+            </div>
           `;
         });
+      });
 
-        area.innerHTML = allPostsHTML;
-      } catch (e) {
-        console.error(e);
-        area.textContent = "Unable to load recent mThoughts.";
+      area.innerHTML = output || "No visuals yet.";
+    }
+
+    /* ---------------------------- mObservation (text posts) ---------------------------- */
+    function load_mObservation() {
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mObservation" +
+        "?alt=json-in-script&max-results=5&callback=render_mObservation";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
+
+    function render_mObservation(data) {
+      const area = document.getElementById("mObservationContent");
+      if (!area) return;
+
+      const entries = (data.feed && data.feed.entry) || [];
+      if (!entries.length) {
+        area.textContent = "No observations yet.";
+        return;
       }
+
+      let output = "";
+      entries.forEach(function (entry) {
+        let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+        const temp = document.createElement("div");
+        temp.innerHTML = contentHtml;
+
+        // Remove headings
+        temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+
+        // Date
+        let dateText = "";
+        if (entry.published && entry.published.$t) {
+          const published = new Date(entry.published.$t);
+          if (!isNaN(published.getTime())) {
+            dateText = published.toLocaleDateString("en-SG", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric"
+            });
+          }
+        }
+
+        const dateHTML = dateText
+          ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
+          : "";
+
+        output += `
+          <article style="margin-bottom:24px;">
+            <div>${temp.innerHTML}</div>
+            ${dateHTML}
+          </article>
+        `;
+      });
+
+      area.innerHTML = output;
     }
   </script>
 </head>
 
-<body onload="loadBlogspot()">
+<body onload="loadAllFeeds()">
   <div id="mSafrain">
     <!-- QUICK LAUNCH BUTTONS -->
-<div class="openWindowButtons">
-  <button class="openWindow" data-window-target="by-msafrain">By mSafrain</button>
-  <!-- This quick launch opens the 6-post window -->
-  <button class="openWindow" data-window-target="mthoughts-recent">mThoughts</button>
-</div>
+    <div class="openWindowButtons">
+      <button class="openWindow" data-window-target="by-msafrain">By mSafrain</button>
+      <button class="openWindow" data-window-target="mthoughts-recent">mThoughts</button>
+      <button class="openWindow" data-window-target="mvisual">mVisual</button>
+      <button class="openWindow" data-window-target="mobservation">mObservation</button>
+    </div>
 
-<!-- Window 0: By mSafrain -->
-<div class="window" data-window-id="by-msafrain" data-title="By mSafrain" style="top: 60px; left: 60px;">
-  <p>Here, I write my thoughts...</p>
-  <p>
-    You may read mPoetry on
-    <a href="https://www.wattpad.com/user/msafrain" target="_blank">Wattpad</a>.
-  </p>
-</div>
+    <!-- Window: By mSafrain (intro) -->
+    <div class="window" data-window-id="by-msafrain" data-title="By mSafrain" style="top:80px;left:40px;">
+      <p>Here, I write my thoughts and weave them into little windows.</p>
+      <p>
+        You may read mPoetry on
+        <a href="https://www.wattpad.com/user/msafrain" target="_blank">Wattpad</a>.
+      </p>
+    </div>
 
-<!-- Window 1: mThoughts (single latest post, visible on desktop) -->
-<div class="window" data-window-id="mthoughts-single" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
-  <div class="poetry-area" id="poetryContent">
-    Loading latest piece...
-  </div>
-</div>
+    <!-- Window: mThoughts SINGLE (latest post widget) -->
+    <div class="window" data-window-id="mthoughts-single" data-title="mThoughts" style="top:80px;left:600px;height:300px;">
+      <div class="poetry-area" id="mThoughtsSingle">
+        Loading mThoughts...
+      </div>
+    </div>
 
-<!-- Window 2: mThoughts – Recent (6 posts, opened by launchbar) -->
-<div class="window closed" data-window-id="mthoughts-recent" data-title="mThoughts – Recent" style="top: 200px; left: 180px; height: 600px; width: 520px;">
-  <div class="poetry-area" id="recentContent">
-    Loading recent pieces...
-  </div>
-</div>
+    <!-- Window: mThoughts RECENT (6 latest posts, opened from launchbar) -->
+    <div class="window closed" data-window-id="mthoughts-recent" data-title="mThoughts – Recent" style="top:260px;left:280px;height:600px;">
+      <div class="poetry-area" id="mThoughtsRecent">
+        Loading recent mThoughts...
+      </div>
+    </div>
 
-<!-- Hidden window example -->
-<div class="window closed" data-window-id="about" data-title="About" style="top: 180px; left: 220px;">
-  <h2>About</h2>
-  <p>This UI is fully custom built. Draggable, resizable, clean, lightweight. Designed for M. Safrain.</p>
-</div>
+    <!-- Window: mVisual (illustrations) -->
+    <div class="window closed" data-window-id="mvisual" data-title="mVisual" style="top:120px;left:40px;height:600px;">
+      <div class="poetry-area" id="mVisualContent">
+        Loading mVisual...
+      </div>
+    </div>
+
+    <!-- Window: mObservation (observations writing) -->
+    <div class="window closed" data-window-id="mobservation" data-title="mObservation" style="top:150px;left:680px;height:600px;">
+      <div class="poetry-area" id="mObservationContent">
+        Loading mObservation...
+      </div>
+    </div>
+
+    <!-- Optional: About window -->
+    <div class="window closed" data-window-id="about" data-title="About" style="top:200px;left:220px;">
+      <h2>About</h2>
+      <p>This UI is custom-built, draggable and resizable. Designed for M. Safrain.</p>
+    </div>
+
     <!-- TASKBAR -->
     <div id="taskbar"></div>
   </div>
 
-  <!-- Window logic (your existing JS) -->
+  <!-- Desktop window logic -->
   <script src="desktop.js"></script>
 </body>
 </html>
