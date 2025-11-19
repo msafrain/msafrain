@@ -183,20 +183,23 @@
 /* Desktop layout */
 @media (min-width: 769px) {
 
+  /* By mSafrain: starting position, still draggable */
   #mSafrain .window[data-window-id="by-msafrain"] {
-    top: 80px !important;
-    left: 40px !important;
+    top: 80px;
+    left: 40px;
   }
 
+  /* mThoughts (single): starting position, still draggable */
   #mSafrain .window[data-window-id="mthoughts-single"] {
-    top: 80px !important;
-    left: 600px !important;
+    top: 80px;
+    left: 600px;
   }
 
+  /* mThoughts – Recent: starting position, still draggable */
   #mSafrain .window[data-window-id="mthoughts-recent"] {
-    top: 260px !important;
-    left: 280px !important;
-    height: 600px !important;
+    top: 260px;
+    left: 280px;
+    height: 600px; /* keep height control, no need for !important */
   }
 }
 
