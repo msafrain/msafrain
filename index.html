@@ -150,44 +150,40 @@
 <body onload="loadBlogspot()">
   <div id="mSafrain">
     <!-- QUICK LAUNCH BUTTONS -->
-    <div class="openWindowButtons">
-      <button class="openWindow" data-id="0">By mSafrain</button>
-      <!-- This now opens the 6-post window (index 2) -->
-      <button class="openWindow" data-id="2">mThoughts</button>
-    </div>
+<div class="openWindowButtons">
+  <button class="openWindow" data-window-target="by-msafrain">By mSafrain</button>
+  <!-- This quick launch opens the 6-post window -->
+  <button class="openWindow" data-window-target="mthoughts-recent">mThoughts</button>
+</div>
 
-    <!-- Window 0 -->
-    <div class="window" data-title="By mSafrain" style="top: 60px; left: 60px;">
-      <p>Here, I write my thoughts...</p>
-      <p>
-        You may read mPoetry on
-        <a href="https://www.wattpad.com/user/msafrain" target="_blank">Wattpad</a>.
-      </p>
-    </div>
+<!-- Window 0: By mSafrain -->
+<div class="window" data-window-id="by-msafrain" data-title="By mSafrain" style="top: 60px; left: 60px;">
+  <p>Here, I write my thoughts...</p>
+  <p>
+    You may read mPoetry on
+    <a href="https://www.wattpad.com/user/msafrain" target="_blank">Wattpad</a>.
+  </p>
+</div>
 
-    <!-- Window 1: mThoughts (single latest post, visible by default) -->
-    <div class="window" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
-      <div class="poetry-area" id="poetryContent">
-        Loading latest piece...
-      </div>
-    </div>
+<!-- Window 1: mThoughts (single latest post, visible on desktop) -->
+<div class="window" data-window-id="mthoughts-single" data-title="mThoughts" style="top: 140px; left: 520px; height: 600px;">
+  <div class="poetry-area" id="poetryContent">
+    Loading latest piece...
+  </div>
+</div>
 
-    <!-- Window 2: mThoughts – Recent (6 posts, opened by launchbar) -->
-    <div class="window closed" data-title="mThoughts – Recent" style="top: 200px; left: 180px; height: 600px; width: 520px;">
-      <div class="poetry-area" id="recentContent">
-        Loading recent pieces...
-      </div>
-    </div>
+<!-- Window 2: mThoughts – Recent (6 posts, opened by launchbar) -->
+<div class="window closed" data-window-id="mthoughts-recent" data-title="mThoughts – Recent" style="top: 200px; left: 180px; height: 600px; width: 520px;">
+  <div class="poetry-area" id="recentContent">
+    Loading recent pieces...
+  </div>
+</div>
 
-    <!-- Hidden window example -->
-    <div class="window closed" data-title="About" style="top: 180px; left: 220px;">
-      <h2>About</h2>
-      <p>
-        This UI is fully custom built. Draggable, resizable, clean, lightweight.
-        Designed for M. Safrain.
-      </p>
-    </div>
-
+<!-- Hidden window example -->
+<div class="window closed" data-window-id="about" data-title="About" style="top: 180px; left: 220px;">
+  <h2>About</h2>
+  <p>This UI is fully custom built. Draggable, resizable, clean, lightweight. Designed for M. Safrain.</p>
+</div>
     <!-- TASKBAR -->
     <div id="taskbar"></div>
   </div>
