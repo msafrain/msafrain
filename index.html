@@ -328,6 +328,27 @@ document.addEventListener("click", function (e) {
       panel.classList.remove("closed", "minimizedTab");
       panel.classList.add("activeTab");
     }
+
+    // 🔽 On mobile: scroll to the Visual Meaning window using the SAME logic as desktop.js
+    if (window.innerWidth <= 768) {
+      const target = document.getElementById("window" + id);
+      if (target) {
+        // use jQuery animate if available
+        if (window.jQuery) {
+          $("html, body").animate(
+            {
+              scrollTop: $(target).offset().top - 80, // same offset
+            },
+            300
+          );
+        } else {
+          // fallback plain JS
+          const rect = target.getBoundingClientRect();
+          const y = window.scrollY + rect.top - 80;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }
+    }
   }
 });
 </script>
