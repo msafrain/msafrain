@@ -205,51 +205,39 @@
 
 /* MOBILE */
 @media (max-width: 768px) {
-  #mSafrain {
-    min-height: auto;
-    max-width: 100%;
-    margin: 0;
-  }
 
+  /* FIXED launchbar on mobile */
   #mSafrain .openWindowButtons {
-    position: static;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
     padding: 10px;
+    background: white;
+    z-index: 3000;
+    display: flex;
     flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
   }
 
+  /* Give space so content doesn't hide behind the fixed bar */
+  #mSafrain {
+    padding-top: 70px !important;
+  }
+
+  /* Windows become stacked sections */
   #mSafrain .window {
     position: relative !important;
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    margin: 10px 0;
     left: 0 !important;
     top: 0 !important;
+    margin: 20px 0;
   }
 
-  /* MOBILE: Make single mThoughts window still respect 300px */
-  #mSafrain .window[data-window-id="mthoughts-single"] {
-    height: auto !important;
-  }
-
-  #mSafrain .window[data-window-id="mthoughts-single"] .poetry-area {
-    min-height: 240px !important;
-  }
-
-  #mSafrain .wincontent {
-    width: 100% !important;
-    height: auto !important;
-    max-height: none !important;
-  }
-
-  #mSafrain #taskbar {
-    position: static;
-    height: auto;
-    flex-wrap: wrap;
-    padding: 6px 8px;
-  }
-
-  #mSafrain .taskbarPanel {
-    margin-bottom: 4px;
+  #taskbar {
+    display: none !important; /* optional: hide taskbar on mobile to reduce clutter */
   }
 }
