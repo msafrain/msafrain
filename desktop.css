@@ -368,7 +368,9 @@
 @media (max-width: 768px) {
   #mSafrain .desktop-icon.m-envelope {
     right: 12px;
-    top: 80px;
+    top: 120px;            /* adjust as needed */
+    position: fixed !important;
+    z-index: 6000 !important;
   }
 }
 
