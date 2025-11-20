@@ -269,8 +269,7 @@
 /***************************
  * 2. BLOGGER FEED HELPERS *
  ***************************/
-var BLOG_BASE = "https://msafrain.blogspot.com/feeds/posts/summary";
-
+var BLOG_BASE = "https://msafrain.blogspot.com/feeds/posts/default";
 function bloggerJsonp(label, maxResults, callbackName) {
   var src = BLOG_BASE;
   if (label) {
@@ -287,21 +286,24 @@ function bloggerJsonp(label, maxResults, callbackName) {
   document.body.appendChild(s);
 }
 
-function extractContent(entry) {
-  if (!entry) return "";
-  if (entry.content && entry.content.$t) return entry.content.$t;
-  if (entry.summary && entry.summary.$t) return entry.summary.$t;
-  return "";
+function stripHtml(html) {
+  if (!html) return "";
+  return html.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
 }
 
-function formatDate(entry) {
-  if (!entry || !entry.published || !entry.published.$t) return "";
-  var d = new Date(entry.published.$t);
-  if (isNaN(d.getTime())) return "";
-  var day = String(d.getDate()).padStart(2, "0");
-  var month = d.toLocaleString("en-US", { month: "short" });
-  var year = d.getFullYear();
-  return day + " " + month + " " + year;
+// Use title if available, otherwise first 80 chars of content
+function getTitleOrSnippet(entry) {
+  var title =
+    entry && entry.title && entry.title.$t
+      ? entry.title.$t.trim()
+      : "";
+
+  if (title) return title;
+
+  var content = stripHtml(extractContent(entry));
+  if (!content) return "(untitled)";
+  if (content.length <= 80) return content;
+  return content.substring(0, 80) + "...";
 }
 
 /******************************
@@ -371,8 +373,8 @@ function handle_mThoughts_archive(json) {
   }
 
   var html = "";
-  json.feed.entry.forEach(function (entry) {
-    var title = entry.title && entry.title.$t ? entry.title.$t : "(untitled)";
+  j  json.feed.entry.forEach(function (entry) {
+    var title = getTitleOrSnippet(entry);
     var dateStr = formatDate(entry);
     html += '<div class="archive-item">';
     if (dateStr) {
@@ -421,6 +423,7 @@ function handle_mVisual(json) {
         img.src +
         '" alt=""></div>';
     } else {
+      // fallback if post had no image
       html += content;
     }
   });
@@ -442,7 +445,7 @@ function handle_mVisual_archive(json) {
 
   var html = "";
   json.feed.entry.forEach(function (entry) {
-    var title = entry.title && entry.title.$t ? entry.title.$t : "(untitled)";
+    var title = getTitleOrSnippet(entry);    
     var dateStr = formatDate(entry);
     html += '<div class="archive-item">';
     if (dateStr) {
@@ -498,7 +501,7 @@ function handle_mObservation_archive(json) {
 
   var html = "";
   json.feed.entry.forEach(function (entry) {
-    var title = entry.title && entry.title.$t ? entry.title.$t : "(untitled)";
+    var title = getTitleOrSnippet(entry);    
     var dateStr = formatDate(entry);
     html += '<div class="archive-item">';
     if (dateStr) {
@@ -554,7 +557,7 @@ function handle_mStratagems_archive(json) {
 
   var html = "";
   json.feed.entry.forEach(function (entry) {
-    var title = entry.title && entry.title.$t ? entry.title.$t : "(untitled)";
+    var title = getTitleOrSnippet(entry);    
     var dateStr = formatDate(entry);
     html += '<div class="archive-item">';
     if (dateStr) {
@@ -624,7 +627,7 @@ function handle_mLetters_archive(json) {
 
   var html = "";
   json.feed.entry.forEach(function (entry) {
-    var title = entry.title && entry.title.$t ? entry.title.$t : "(untitled)";
+    var title = getTitleOrSnippet(entry);
     var dateStr = formatDate(entry);
     html += '<div class="archive-item">';
     if (dateStr) {
