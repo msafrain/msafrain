@@ -29,25 +29,33 @@
   load_mLetters_archive();  // ALL letters (for mLetters Archives)
 }
 
-    /* Helper: strip leading empty blocks (p/div/br) */
-    function stripLeadingEmptyBlocks(temp) {
-      while (
-        temp.firstChild &&
-        (
-          temp.firstChild.nodeName === "BR" ||
-          (
-            temp.firstChild.nodeName === "DIV" &&
-            !temp.firstChild.textContent.trim()
-          ) ||
-          (
-            temp.firstChild.nodeName === "P" &&
-            !temp.firstChild.textContent.trim()
-          )
-        )
-      ) {
-        temp.removeChild(temp.firstChild);
-      }
+    /* Helper: strip leading empty blocks (p/div/br) but keep ones with images */
+function stripLeadingEmptyBlocks(temp) {
+  while (temp.firstChild) {
+    const node = temp.firstChild;
+    const name = node.nodeName;
+
+    // always allow blocks that contain images
+    if ((name === "P" || name === "DIV") && node.querySelector("img")) {
+      break;
     }
+
+    // remove plain <br> at the top
+    if (name === "BR") {
+      temp.removeChild(node);
+      continue;
+    }
+
+    // remove empty P/DIV with no text and no children content
+    if ((name === "P" || name === "DIV") && !node.textContent.trim()) {
+      temp.removeChild(node);
+      continue;
+    }
+
+    // first child is meaningful, stop
+    break;
+  }
+}
 
     /* mThoughts SINGLE (latest 1) */
     function load_mThoughts_single() {
