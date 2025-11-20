@@ -150,7 +150,7 @@
 
 /* Window content */
 #mSafrain .wincontent {
-  /* no top padding → reduces white gap */
+  /* remove top padding so content hugs header */
   padding: 0 10px 10px;
   width: calc(100% - 20px);
   height: calc(100% - 42px);
@@ -160,12 +160,6 @@
 
 /* Make first child inside any window hug the top */
 #mSafrain .window .wincontent > *:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Special fix: non-poetry windows with plain <p> (e.g. By mSafrain) */
-#mSafrain .window .wincontent > p:first-child {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
@@ -183,7 +177,7 @@
   box-shadow: none !important;
 }
 
-/* Poetry / content area */
+/* Poetry / content area (inner white box) */
 #mSafrain .poetry-area {
   width: 100%;
   height: auto;
@@ -192,60 +186,38 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   background: #fff;
   color: #000;
-  /* no top padding → text close to border */
+  /* no top padding → NO big white gap */
   padding: 0 8px 8px;
   font-family: "Iowan Old Style", Georgia, serif;
   font-size: 14px;
   white-space: pre-wrap;
 }
 
-/* Make sure ALL inner elements keep manual spacing & line-breaks */
+/* Kill ALL top margin/padding inside poetry-area (for every element) */
+#mSafrain .poetry-area,
 #mSafrain .poetry-area * {
-  white-space: pre-wrap !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
-/* Normalise paragraphs inside poetry-area */
+/* Normal paragraph spacing: only bottom margin */
 #mSafrain .poetry-area p {
   margin: 0 0 0.75em !important;
 }
 
-/* Kill any top margin/padding on first element inside poetry-area */
-#mSafrain .poetry-area *:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Remove Blogger’s hidden wrapper margin on first wrapper */
-#mSafrain .poetry-area > div:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Remove extra first blank line that Blogger sometimes inserts */
+/* Remove Blogger’s extra first <br> that creates fake blank line */
 #mSafrain .poetry-area br:first-child {
   display: none !important;
 }
 
-/* FINAL FIXES for UL-based content (mLetters etc.) */
-#mSafrain .poetry-area > ul,
-#mSafrain .poetry-area > ul * {
+/* Handle Blogger wrappers (div > div > p etc.) */
+#mSafrain .poetry-area > div,
+#mSafrain .poetry-area > div > div {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
 
-/* Kill UL default padding inside poetry-area */
-#mSafrain .poetry-area ul {
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-/* Remove LI top spacing */
-#mSafrain .poetry-area ul li {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Shorter mThoughts single window */
+/* mThoughts single window a bit shorter */
 #mSafrain .window[data-window-id="mthoughts-single"] {
   height: 300px;
 }
@@ -268,6 +240,32 @@
 
 #mSafrain .archive-item:hover {
   background: #f3f4f6;
+}
+
+/* mLetters list layout */
+#mSafrain #mLettersList {
+  margin: 0;
+  padding: 0;
+}
+
+#mSafrain #mLettersList li {
+  list-style: none;
+}
+
+/* preserve Blogger line-breaks inside letters */
+#mSafrain #mLettersList li div {
+  white-space: pre-wrap;
+}
+
+/* Ensure UL in poetry-area has no default padding causing gap */
+#mSafrain .poetry-area ul {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#mSafrain .poetry-area ul li {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 /* MOBILE */
@@ -312,8 +310,8 @@
   /* --- EXTRA FIX FOR MOBILE WINDOWS AND SCROLLING --- */
   #mSafrain .window {
     position: relative !important;
-    inset: auto !important;        /* resets top/bottom/left/right */
-    transform: none !important;    /* remove draggable transforms */
+    inset: auto !important;
+    transform: none !important;
     margin: 20px 0 !important;
     display: block !important;
     width: 100% !important;
@@ -354,7 +352,7 @@
     position: fixed !important;
     z-index: 6000 !important;
   }
-}  /* <-- END OF MOBILE MEDIA QUERY */
+}
 
 /* ↓↓↓ ICON CODE ↓↓↓  */
 
@@ -429,19 +427,4 @@
   line-height: 18px;
   text-align: center;
   font-weight: 600;
-}
-
-/* mLetters list layout */
-#mSafrain #mLettersList {
-  margin: 0;
-  padding: 0;
-}
-
-#mSafrain #mLettersList li {
-  list-style: none;
-}
-
-/* PRESERVE BLOGGER LINE-BREAKS FOR LETTER PREVIEW */
-#mSafrain #mLettersList li div {
-  white-space: pre-wrap;
 }
