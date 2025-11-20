@@ -150,12 +150,24 @@
 
 /* Window content */
 #mSafrain .wincontent {
-  /* IMPORTANT: no top padding → removes white gap */
+  /* no top padding → reduces white gap */
   padding: 0 10px 10px;
   width: calc(100% - 20px);
   height: calc(100% - 42px);
   overflow: auto;
   background: #ffffff;
+}
+
+/* Make first child inside any window hug the top */
+#mSafrain .window .wincontent > *:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Special fix: non-poetry windows with plain <p> (e.g. By mSafrain) */
+#mSafrain .window .wincontent > p:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 /* Fullscreen window */
@@ -180,7 +192,7 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   background: #fff;
   color: #000;
-  /* IMPORTANT: no top padding → text hugs top border */
+  /* no top padding → text close to border */
   padding: 0 8px 8px;
   font-family: "Iowan Old Style", Georgia, serif;
   font-size: 14px;
@@ -197,7 +209,7 @@
   margin: 0 0 0.75em !important;
 }
 
-/* Kill any top margin/padding on any first element inside poetry-area */
+/* Kill any top margin/padding on first element inside poetry-area */
 #mSafrain .poetry-area *:first-child {
   margin-top: 0 !important;
   padding-top: 0 !important;
@@ -212,6 +224,25 @@
 /* Remove extra first blank line that Blogger sometimes inserts */
 #mSafrain .poetry-area br:first-child {
   display: none !important;
+}
+
+/* FINAL FIXES for UL-based content (mLetters etc.) */
+#mSafrain .poetry-area > ul,
+#mSafrain .poetry-area > ul * {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Kill UL default padding inside poetry-area */
+#mSafrain .poetry-area ul {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Remove LI top spacing */
+#mSafrain .poetry-area ul li {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 /* Shorter mThoughts single window */
@@ -237,12 +268,6 @@
 
 #mSafrain .archive-item:hover {
   background: #f3f4f6;
-}
-
-/* Ensure the very first element inside ANY window hugs the top */
-#mSafrain .window .wincontent > *:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
 }
 
 /* MOBILE */
@@ -276,7 +301,7 @@
   #mSafrain #taskbar {
     position: static;
     height: auto;
-  flex-wrap: wrap;
+    flex-wrap: wrap;
     padding: 6px 8px;
   }
 
@@ -419,23 +444,4 @@
 /* PRESERVE BLOGGER LINE-BREAKS FOR LETTER PREVIEW */
 #mSafrain #mLettersList li div {
   white-space: pre-wrap;
-}
-
-/* FINAL FIX: remove top gap from ALL windows */
-#mSafrain .poetry-area > ul,
-#mSafrain .poetry-area > ul * {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* also kill UL default padding */
-#mSafrain .poetry-area ul {
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-/* remove LI top spacing */
-#mSafrain .poetry-area ul li {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
 }
