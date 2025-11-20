@@ -97,7 +97,7 @@
       // INITIALISE WINDOWS
       $("#mSafrain .window").each(function () {
         var $win = $(this);
-        var key = $win.attr("data-window-id") || ("window-" + i);
+        var key = $win.attr("data-window-id") || "window-" + i;
 
         $win.css("z-index", 1000);
         $win.attr("data-id", i);
@@ -135,8 +135,10 @@
       });
 
       // Last window active by default
-      $("#minimPanel" + (i - 1)).addClass("activeTab");
-      $("#window" + (i - 1)).addClass("activeWindow");
+      if (i > 0) {
+        $("#minimPanel" + (i - 1)).addClass("activeTab");
+        $("#window" + (i - 1)).addClass("activeWindow");
+      }
 
       setupInteractions();
       adjustFullScreenSize();
@@ -166,29 +168,46 @@
         }
       });
 
-      // LAUNCHBAR: uses data-window-id (string keys)
-$(document).on("click", ".openWindow", function () {
-  var key = $(this).attr("data-window-id");
-  var id = keyToId[key];
+      // LAUNCHBAR & hidden buttons – use data-window-id (string keys)
+      $(document).on("click", ".openWindow", function () {
+        var key = $(this).attr("data-window-id");
+        var id = keyToId[key];
 
-  if (typeof id === "undefined" || id === null) return;
+        if (typeof id === "undefined" || id === null) return;
 
-  // Open (desktop behaviour)
-  openWindow(id);
+        openWindow(id);
 
-  // Extra: on mobile, also scroll to the window
-  if (window.innerWidth <= 768) {
-    var $target = $("#window" + id);
-    if ($target.length) {
-      $("html, body").animate(
-        {
-          scrollTop: $target.offset().top - 80, // small offset for header
-        },
-        300
-      );
-    }
-  }
-});
+        // Extra: on mobile, also scroll to the window
+        if (window.innerWidth <= 768) {
+          var $target = $("#window" + id);
+          if ($target.length) {
+            $("html, body").animate(
+              { scrollTop: $target.offset().top - 80 },
+              300
+            );
+          }
+        }
+      });
+
+      // DESKTOP ICONS – same mapping (mEnvelope, future icons)
+      $(document).on("click", ".desktop-icon", function () {
+        var key = $(this).attr("data-window-id");
+        var id = keyToId[key];
+
+        if (typeof id === "undefined" || id === null) return;
+
+        openWindow(id);
+
+        if (window.innerWidth <= 768) {
+          var $target = $("#window" + id);
+          if ($target.length) {
+            $("html, body").animate(
+              { scrollTop: $target.offset().top - 80 },
+              300
+            );
+          }
+        }
+      });
 
       $("#mSafrain").on("click", ".winmaximize", function () {
         var win = $(this).parent().parent();
