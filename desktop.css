@@ -397,4 +397,8 @@
   }
 }
 
+/* Remove extra first blank line that Blogger inserts */
+#mSafrain .poetry-area > *:first-child > br:first-child {
+  display: none;
+}
 /* ↑↑↑ PASTE UNTIL HERE ↑↑↑ */
