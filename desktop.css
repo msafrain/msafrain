@@ -185,6 +185,14 @@
   white-space: pre-wrap;
 }
 
+/* Normalise paragraphs inside poetry-area */
+#mSafrain .poetry-area p {
+  margin: 0 0 0.75em;    /* no top margin, only bottom spacing */
+}
+#mSafrain .poetry-area p:first-child {
+  margin-top: 0;         /* extra safety */
+}
+
 /* Shorter mThoughts single window */
 #mSafrain .window[data-window-id="mthoughts-single"] {
   height: 300px;
@@ -372,6 +380,11 @@
 
 #mSafrain #mLettersList li {
   list-style: none;
+}
+
+/* PRESERVE BLOGGER LINE-BREAKS FOR LETTER PREVIEW */
+#mSafrain #mLettersList li div {
+  white-space: pre-wrap;
 }
 
 /* MOBILE repositioning only */
