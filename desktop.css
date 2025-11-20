@@ -159,7 +159,8 @@
   white-space: pre-line;       /* NEW: keep Blogger line breaks */
 }
 
-/* Ensure nested Blogger elements don’t override alignment */
+/* Force left alignment for all window content */
+#mSafrain .wincontent,
 #mSafrain .wincontent * {
   text-align: left !important;
 }
