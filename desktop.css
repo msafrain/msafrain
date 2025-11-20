@@ -333,3 +333,9 @@
 
   /* --- EXTRA FIXES IF NEEDED ON MOBILE --- */
 }
+
+/* Make mLetters fill the window and scroll like other text windows */
+#mSafrain .window[data-window-id="menvelope"] .poetry-area {
+  height: 100%;
+  overflow-y: auto;
+}
