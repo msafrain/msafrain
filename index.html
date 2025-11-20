@@ -25,7 +25,8 @@
   load_mVisual_archive();
   load_mObservation_archive();
   load_mStratagems_archive();
-  load_mLetters(); // NEW
+  load_mLetters();          // recent 6 letters (for mEnvelope)
+  load_mLetters_archive();  // ALL letters (for mLetters Archives)
 }
 
     /* mThoughts SINGLE (latest 1) */
@@ -552,6 +553,55 @@ function render_mLetters(data) {
     badgeEl.textContent = count > 9 ? "9+" : String(count);
   }
 }
+/* mLetters ARCHIVE (all posts) */
+function load_mLetters_archive() {
+  const url =
+    "https://msafrain.blogspot.com/feeds/posts/default/-/mLetters" +
+    "?alt=json-in-script&max-results=999&callback=render_mLetters_archive";
+
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
+}
+
+function render_mLetters_archive(data) {
+  const area = document.getElementById("mLettersArchiveContent");
+  if (!area) return;
+
+  const entries = (data.feed && data.feed.entry) || [];
+  if (!entries.length) {
+    area.textContent = "No mLetters yet.";
+    return;
+  }
+
+  let output = "<ul style='list-style:none;margin:0;padding:0;'>";
+  entries.forEach(function (entry) {
+    const title =
+      entry.title && entry.title.$t ? entry.title.$t : "Untitled letter";
+
+    let dateText = "";
+    if (entry.published && entry.published.$t) {
+      const published = new Date(entry.published.$t);
+      if (!isNaN(published.getTime())) {
+        dateText = published.toLocaleDateString("en-SG", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+      }
+    }
+
+    output += `
+      <li style="margin-bottom:10px;">
+        <div style="font-size:11px;opacity:0.7;">${dateText}</div>
+        <div style="font-size:13px;">${title}</div>
+      </li>
+    `;
+  });
+
+  output += "</ul>";
+  area.innerHTML = output;
+}
   </script>
 
 <!-- Google tag (gtag.js) -->
@@ -619,6 +669,7 @@ function render_mLetters(data) {
   <button class="openWindow" data-window-id="mvisual-archive" style="display:none;"></button>
   <button class="openWindow" data-window-id="mobservation-archive" style="display:none;"></button>
   <button class="openWindow" data-window-id="mstratagems-archive" style="display:none;"></button>
+  <button class="openWindow" data-window-id="mletters-archive" style="display:none;"></button>
 
   <!-- NEW: hidden launcher for mLetters / mEnvelope -->
   <button class="openWindow" data-window-id="menvelope" style="display:none;"></button>
@@ -740,6 +791,16 @@ function render_mLetters(data) {
   </div>
 </div>
 
+    <!-- Window: mLetters Archives -->
+<div class="window closed"
+     data-window-id="mletters-archive"
+     data-title="mLetters Archives"
+     style="top:220px;left:320px;height:600px;">
+  <div class="poetry-area" id="mLettersArchiveContent">
+    Loading mLetters Archives...
+  </div>
+</div>
+
 <!-- Window: mArchives -->
 <div class="window closed"
      data-window-id="marchives"
@@ -750,7 +811,7 @@ function render_mLetters(data) {
     <div class="archive-item" data-window-id="mvisual-archive">mVisual Archives</div>
     <div class="archive-item" data-window-id="mobservation-archive">mObservation Archives</div>
     <div class="archive-item" data-window-id="mstratagems-archive">mStratagems Archives</div>
-    <div class="archive-item" data-window-id="menvelope">mLetters</div> <!-- ← add this -->
+    <div class="archive-item" data-window-id="mletters-archive">mLetters Archives</div>
   </div>
 </div>
 
@@ -758,7 +819,7 @@ function render_mLetters(data) {
 <div class="desktop-icon m-envelope" data-window-id="menvelope">
   <div class="icon-envelope"></div>
   <span class="icon-label">mEnvelope</span>
-  <span class="icon-badge" id="envelope-badge">6</span>
+  <span class="icon-badge" id="envelope-badge">0</span>
 </div>
 
     <!-- Window: mEnvelope / mLetters -->
