@@ -50,9 +50,16 @@
       }
 
       let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-      const temp = document.createElement("div");
-      temp.innerHTML = contentHtml;
-      temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+     const temp = document.createElement("div");
+temp.innerHTML = contentHtml;
+
+// remove leading empty paragraphs (created by Blogger)
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
+
+temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
       let dateText = "";
       if (entry.published && entry.published.$t) {
@@ -100,8 +107,15 @@
       entries.forEach(function (entry) {
         let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
         const temp = document.createElement("div");
-        temp.innerHTML = contentHtml;
-        temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+temp.innerHTML = contentHtml;
+
+// remove leading empty paragraphs (created by Blogger)
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
+
+temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
         let dateText = "";
         if (entry.published && entry.published.$t) {
@@ -153,10 +167,16 @@
       let output = "";
       entries.forEach(function (entry) {
         let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-        const temp = document.createElement("div");
-        temp.innerHTML = contentHtml;
+      const temp = document.createElement("div");
+temp.innerHTML = contentHtml;
 
-        const imgs = temp.querySelectorAll("img");
+// remove leading empty paragraphs (just in case Blogger adds)
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
+
+const imgs = temp.querySelectorAll("img");
         if (!imgs.length) return;
 
             imgs.forEach(function (img) {
@@ -199,9 +219,16 @@
       let output = "";
       entries.forEach(function (entry) {
         let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-        const temp = document.createElement("div");
-        temp.innerHTML = contentHtml;
-        temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+       const temp = document.createElement("div");
+temp.innerHTML = contentHtml;
+
+// remove leading empty paragraphs
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
+
+temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
         let dateText = "";
         if (entry.published && entry.published.$t) {
@@ -254,10 +281,15 @@ function render_mStratagems(data) {
   entries.forEach(function (entry) {
     let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
     const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
+temp.innerHTML = contentHtml;
 
-    // remove Blogger headings
-    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+// remove leading empty paragraphs
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
+
+temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
     // date
     let dateText = "";
@@ -310,9 +342,16 @@ function render_mThoughts_archive(data) {
   let output = "";
   entries.forEach(function (entry) {
     let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-    const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
-    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+   const temp = document.createElement("div");
+temp.innerHTML = contentHtml;
+
+// remove leading empty paragraphs
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
+
+temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
     let dateText = "";
     if (entry.published && entry.published.$t) {
@@ -364,10 +403,16 @@ function render_mVisual_archive(data) {
   let output = "";
   entries.forEach(function (entry) {
     let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-    const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
+const temp = document.createElement("div");
+temp.innerHTML = contentHtml;
 
-    const imgs = temp.querySelectorAll("img");
+// remove leading empty paragraphs
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
+
+const imgs = temp.querySelectorAll("img");
     if (!imgs.length) return;
 
     imgs.forEach(function (img) {
@@ -409,9 +454,16 @@ function render_mObservation_archive(data) {
   let output = "";
   entries.forEach(function (entry) {
     let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-    const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
-    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+   const temp = document.createElement("div");
+temp.innerHTML = contentHtml;
+
+// remove leading empty paragraphs
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
+
+temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
     let dateText = "";
     if (entry.published && entry.published.$t) {
@@ -464,9 +516,15 @@ function render_mStratagems_archive(data) {
   entries.forEach(function (entry) {
     let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
     const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
+temp.innerHTML = contentHtml;
 
-    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+// remove leading empty paragraphs
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
+
+temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
     let dateText = "";
     if (entry.published && entry.published.$t) {
@@ -512,7 +570,7 @@ function render_mLetters(data) {
   if (!listEl) return;
 
   const entries = (data.feed && data.feed.entry) || [];
-  listEl.innerHTML = ""; // clear hardcoded items
+  listEl.innerHTML = ""; // clear any placeholder items
 
   if (!entries.length) {
     listEl.innerHTML = "<li>No letters yet.</li>";
@@ -521,23 +579,21 @@ function render_mLetters(data) {
   }
 
   entries.forEach(function (entry) {
-    // 1) Try Blogger title
-    let title = (entry.title && entry.title.$t ? entry.title.$t.trim() : "");
+    // Take FULL Blogger HTML content (so <br>, line breaks, everything stays)
+    const contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+    const temp = document.createElement("div");
+temp.innerHTML = contentHtml;
 
-    // 2) If empty, fall back to first 80 chars of content text
-    if (!title) {
-      const contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-      const temp = document.createElement("div");
-      temp.innerHTML = contentHtml;
-      const textOnly = (temp.textContent || temp.innerText || "").trim();
+// remove leading empty paragraphs
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
 
-      if (textOnly) {
-        title = textOnly.slice(0, 80);
-        if (textOnly.length > 80) title += "…";
-      } else {
-        title = "Untitled letter";
-      }
-    }
+// Optional: remove headings if Blogger injects titles as <h3>, etc.
+temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+
+const snippetHtml = temp.innerHTML;
 
     // date
     let dateText = "";
@@ -553,9 +609,9 @@ function render_mLetters(data) {
     }
 
     const li = document.createElement("li");
-    li.style.marginBottom = "8px";
+    li.style.marginBottom = "12px";
     li.innerHTML = `
-      <div style="font-size:13px;">${title}</div>
+      <div style="font-size:13px; margin-bottom:4px;">${snippetHtml}</div>
       <div style="font-size:11px;opacity:0.7;">${dateText}</div>
     `;
     listEl.appendChild(li);
@@ -584,29 +640,31 @@ function render_mLetters_archive(data) {
 
   const entries = (data.feed && data.feed.entry) || [];
   if (!entries.length) {
-    area.textContent = "No mLetters yet.";
+    area.innerHTML = "No mLetters yet.";
     return;
   }
 
   let output = "<ul style='list-style:none;margin:0;padding:0;'>";
+
   entries.forEach(function (entry) {
-    // title
-    let title = (entry.title && entry.title.$t ? entry.title.$t.trim() : "");
 
-    if (!title) {
-      const contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-      const temp = document.createElement("div");
-      temp.innerHTML = contentHtml;
-      const textOnly = (temp.textContent || temp.innerText || "").trim();
-      if (textOnly) {
-        title = textOnly.slice(0, 80);
-        if (textOnly.length > 80) title += "…";
-      } else {
-        title = "Untitled letter";
-      }
-    }
+    // FULL original Blogger HTML content (keeps <br>, formatting, etc.)
+    const contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+    const temp = document.createElement("div");
+temp.innerHTML = contentHtml;
 
-    // date
+// remove leading empty paragraphs
+const firstP = temp.querySelector("p");
+if (firstP && !firstP.textContent.trim()) {
+  firstP.remove();
+}
+
+// Remove any Blogger auto-heading insertion
+temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+
+const snippetHtml = temp.innerHTML;
+
+    // Format date
     let dateText = "";
     if (entry.published && entry.published.$t) {
       const published = new Date(entry.published.$t);
@@ -620,8 +678,8 @@ function render_mLetters_archive(data) {
     }
 
     output += `
-      <li style="margin-bottom:10px;">
-        <div style="font-size:13px;">${title}</div>
+      <li style="margin-bottom:16px;">
+        <div style="font-size:13px; margin-bottom:4px;">${snippetHtml}</div>
         <div style="font-size:11px;opacity:0.7;">${dateText}</div>
       </li>
     `;
