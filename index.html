@@ -133,7 +133,7 @@
     function load_mVisual() {
       const url =
         "https://msafrain.blogspot.com/feeds/posts/default/-/mVisual" +
-        "?alt=json-in-script&max-results=10&callback=render_mVisual";
+        "?alt=json-in-script&max-results=6&callback=render_mVisual";
       const script = document.createElement("script");
       script.src = url;
       document.body.appendChild(script);
@@ -175,11 +175,11 @@
       area.innerHTML = output || "No visuals yet.";
     }
 
-    /* mObservation (latest 5) */
+    /* mObservation (latest 6) */
     function load_mObservation() {
       const url =
         "https://msafrain.blogspot.com/feeds/posts/default/-/mObservation" +
-        "?alt=json-in-script&max-results=5&callback=render_mObservation";
+        "?alt=json-in-script&max-results=6&callback=render_mObservation";
       const script = document.createElement("script");
       script.src = url;
       document.body.appendChild(script);
@@ -229,11 +229,11 @@
       area.innerHTML = output;
     }
 
-  /* mStratagems (latest 10) */
+  /* mStratagems (latest 6) */
 function load_mStratagems() {
   const url =
     "https://msafrain.blogspot.com/feeds/posts/default/-/mStratagems" +
-    "?alt=json-in-script&max-results=10&callback=render_mStratagems";
+    "?alt=json-in-script&max-results=6&callback=render_mStratagems";
   const script = document.createElement("script");
   script.src = url;
   document.body.appendChild(script);
