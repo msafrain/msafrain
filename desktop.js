@@ -1,75 +1,76 @@
 // desktop.js
-// Window management for mSafrain Desktop UI
-// Uses string window IDs (data-window-id) so launchbar is simple.
+// FIXED VERSION — matched exactly to your index.html structure
+// No wrapping, no header injection, no HTML modification.
 
 (function () {
   function initDesktopUI($) {
     $(function () {
       if (!$("#mSafrain").length) return;
 
-      var i = 0,
-        minimizedWidth = [],
-        minimizedHeight = [],
-        windowTopPos = [],
-        windowLeftPos = [],
-        keyToId = {}; // map from string key -> numeric ID
+      var windowIndex = 0;
+      var keyToId = {};              // map: data-window-id → numeric id
+      var minimizedWidth = [];
+      var minimizedHeight = [];
+      var windowTopPos = [];
+      var windowLeftPos = [];
 
+      /* -----------------------------------
+         FULLSCREEN ADJUST
+      ----------------------------------- */
       function adjustFullScreenSize() {
         $("#mSafrain .fullSizeWindow .wincontent")
           .css("width", window.innerWidth - 32)
           .css("height", window.innerHeight - 98);
       }
 
-      function makeWindowActive(thisid) {
-        $("#mSafrain .window").each(function () {
-          $(this).css(
-            "z-index",
-            parseInt($(this).css("z-index") || 0, 10) - 1
-          );
-        });
-        $("#window" + thisid).css("z-index", 1000);
+      /* -----------------------------------
+         MAKE WINDOW ACTIVE
+      ----------------------------------- */
+      function makeWindowActive(id) {
+        $("#mSafrain .window").css("z-index", 900);
+        $("#window" + id).css("z-index", 1000);
+
         $("#mSafrain .window").removeClass("activeWindow");
-        $("#window" + thisid).addClass("activeWindow");
+        $("#window" + id).addClass("activeWindow");
+
         $("#mSafrain .taskbarPanel").removeClass("activeTab");
-        $("#minimPanel" + thisid).addClass("activeTab");
+        $("#minimPanel" + id).removeClass("minimizedTab").addClass("activeTab");
       }
 
+      /* -----------------------------------
+         MINIMIZE WINDOW
+      ----------------------------------- */
       function minimizeWindow(id) {
         windowTopPos[id] = $("#window" + id).css("top");
         windowLeftPos[id] = $("#window" + id).css("left");
 
         $("#window" + id).animate(
           { top: 800, left: 0 },
-          200,
+          180,
           function () {
             $("#window" + id).addClass("minimizedWindow");
             $("#minimPanel" + id)
-              .addClass("minimizedTab")
-              .removeClass("activeTab");
+              .removeClass("activeTab")
+              .addClass("minimizedTab");
           }
         );
       }
 
-      function openWindow(id) {
-        if (typeof id === "undefined" || id === null) return;
-
-        if ($("#window" + id).hasClass("minimizedWindow")) {
-          openMinimized(id);
-        } else {
-          makeWindowActive(id);
-          $("#window" + id).removeClass("closed");
-          $("#minimPanel" + id).removeClass("closed");
-        }
-      }
-
-      function closeWindwow(id) {
+      /* -----------------------------------
+         CLOSE WINDOW
+      ----------------------------------- */
+      function closeWindow(id) {
         $("#window" + id).addClass("closed");
         $("#minimPanel" + id).addClass("closed");
       }
 
+      /* -----------------------------------
+         OPEN MINIMIZED
+      ----------------------------------- */
       function openMinimized(id) {
         $("#window" + id).removeClass("minimizedWindow");
         $("#minimPanel" + id).removeClass("minimizedTab");
+
         makeWindowActive(id);
 
         $("#window" + id).animate(
@@ -78,8 +79,89 @@
         );
       }
 
+      /* -----------------------------------
+         OPEN WINDOW
+      ----------------------------------- */
+      function openWindow(id) {
+        if (id == null) return;
+
+        if ($("#window" + id).hasClass("minimizedWindow")) {
+          openMinimized(id);
+        } else {
+          $("#window" + id).removeClass("closed");
+          $("#minimPanel" + id).removeClass("closed");
+          makeWindowActive(id);
+        }
+
+        // scroll for mobile
+        if (window.innerWidth <= 768) {
+          var $t = $("#window" + id);
+          $("html, body").animate(
+            { scrollTop: $t.offset().top - 80 },
+            300
+          );
+        }
+      }
+
+      /* -----------------------------------
+         INIT WINDOWS
+      ----------------------------------- */
+      $("#mSafrain .window").each(function () {
+        var $win = $(this);
+
+        var key = $win.attr("data-window-id");  // VERY IMPORTANT
+        var id = windowIndex;
+
+        // Save mapping
+        keyToId[key] = id;
+
+        // Assign DOM id
+        $win.attr("id", "window" + id);
+        $win.attr("data-id", id);
+
+        // Save window position
+        minimizedWidth[id] = $win.width();
+        minimizedHeight[id] = $win.height();
+        windowTopPos[id] = $win.css("top");
+        windowLeftPos[id] = $win.css("left");
+
+        // TASKBAR ENTRY
+        var title =
+          $win.find(".windowTitle").text().trim() ||
+          key ||
+          "Window " + id;
+
+        $("#taskbar").append(
+          '<div class="taskbarPanel" id="minimPanel' +
+            id +
+            '" data-id="' +
+            id +
+            '">' +
+            title +
+            "</div>"
+        );
+
+        if ($win.hasClass("closed")) {
+          $("#minimPanel" + id).addClass("closed");
+        }
+
+        windowIndex++;
+      });
+
+      /* -----------------------------------
+         MAKE LAST WINDOW ACTIVE
+      ----------------------------------- */
+      if (windowIndex > 0) {
+        var last = windowIndex - 1;
+        $("#window" + last).addClass("activeWindow");
+        $("#minimPanel" + last).addClass("activeTab");
+      }
+
+      /* -----------------------------------
+         RESIZING & DRAG
+      ----------------------------------- */
       function setupInteractions() {
-        var isMobile = window.innerWidth <= 768;
+        var mobile = window.innerWidth <= 768;
 
         try {
           $("#mSafrain .window").draggable("destroy");
@@ -88,146 +170,76 @@
           $("#mSafrain .wincontent").resizable("destroy");
         } catch (e) {}
 
-        if (!isMobile) {
+        if (!mobile) {
+          $("#mSafrain .window").draggable({ handle: ".windowHeader" });
           $("#mSafrain .wincontent").resizable();
-          $("#mSafrain .window").draggable({ cancel: ".wincontent" });
         }
-      }
-
-      // INITIALISE WINDOWS
-      $("#mSafrain .window").each(function () {
-        var $win = $(this);
-        var key = $win.attr("data-window-id") || "window-" + i;
-
-        // Title priority: data-title > .windowTitle text > data-window-id
-        var title =
-          $win.attr("data-title") ||
-          $win.find(".windowTitle").text().trim() ||
-          key;
-
-        // store numeric id
-        $win.css("z-index", 1000);
-        $win.attr("data-id", i);
-
-        minimizedWidth[i] = $win.width();
-        minimizedHeight[i] = $win.height();
-        windowTopPos[i] = $win.css("top");
-        windowLeftPos[i] = $win.css("left");
-
-        keyToId[key] = i;
-
-        // Taskbar tab
-        $("#taskbar").append(
-          '<div class="taskbarPanel" id="minimPanel' +
-            i +
-            '" data-id="' +
-            i +
-            '">' +
-            title +
-            "</div>"
-        );
-
-        if ($win.hasClass("closed")) {
-          $("#minimPanel" + i).addClass("closed");
-        }
-
-        $win.attr("id", "window" + i);
-        i++;
-
-        // IMPORTANT: we DO NOT wrap or prepend headers here,
-        // because your HTML already contains .windowHeader and .wincontent.
-      });
-
-      // Last window active by default
-      if (i > 0) {
-        $("#minimPanel" + (i - 1)).addClass("activeTab");
-        $("#window" + (i - 1)).addClass("activeWindow");
       }
 
       setupInteractions();
       adjustFullScreenSize();
 
-      // EVENTS
+      /* -----------------------------------
+         EVENTS
+      ----------------------------------- */
+
+      // activate window by clicking
       $("#mSafrain").on("mousedown", ".window", function () {
-        makeWindowActive($(this).attr("data-id"));
+        makeWindowActive($(this).data("id"));
       });
 
+      // close
       $("#mSafrain").on("click", ".winclose", function () {
-        closeWindwow($(this).parent().parent().attr("data-id"));
+        closeWindow($(this).closest(".window").data("id"));
       });
 
+      // minimize
       $("#mSafrain").on("click", ".winminimize", function () {
-        minimizeWindow($(this).parent().parent().attr("data-id"));
+        minimizeWindow($(this).closest(".window").data("id"));
       });
 
+      // maximize
+      $("#mSafrain").on("click", ".winmaximize", function () {
+        var win = $(this).closest(".window");
+        var id = win.data("id");
+
+        if (win.hasClass("fullSizeWindow")) {
+          win.removeClass("fullSizeWindow");
+          win
+            .find(".wincontent")
+            .height(minimizedHeight[id])
+            .width(minimizedWidth[id]);
+        } else {
+          minimizedHeight[id] = win.find(".wincontent").height();
+          minimizedWidth[id] = win.find(".wincontent").width();
+          win.addClass("fullSizeWindow");
+          adjustFullScreenSize();
+        }
+      });
+
+      // taskbar click
       $("#mSafrain").on("click", ".taskbarPanel", function () {
-        var id = $(this).attr("data-id");
+        var id = $(this).data("id");
 
         if ($(this).hasClass("activeTab")) {
           minimizeWindow(id);
         } else if ($(this).hasClass("minimizedTab")) {
           openMinimized(id);
         } else {
-          makeWindowActive(id);
+          openWindow(id);
         }
       });
 
-      // LAUNCHBAR & hidden buttons – use data-window-id (string keys)
+      // launchbar click
       $(document).on("click", ".openWindow", function () {
-        var key = $(this).attr("data-window-id");
-        var id = keyToId[key];
-
-        if (typeof id === "undefined" || id === null) return;
-
-        openWindow(id);
-
-        // Extra: on mobile, also scroll to the window
-        if (window.innerWidth <= 768) {
-          var $target = $("#window" + id);
-          if ($target.length) {
-            $("html, body").animate(
-              { scrollTop: $target.offset().top - 80 },
-              300
-            );
-          }
-        }
+        var key = $(this).data("window-id");
+        openWindow(keyToId[key]);
       });
 
-      // DESKTOP ICONS – same mapping (mEnvelope, future icons)
+      // icon click
       $(document).on("click", ".desktop-icon", function () {
-        var key = $(this).attr("data-window-id");
-        var id = keyToId[key];
-
-        if (typeof id === "undefined" || id === null) return;
-
-        openWindow(id);
-
-        if (window.innerWidth <= 768) {
-          var $target = $("#window" + id);
-          if ($target.length) {
-            $("html, body").animate(
-              { scrollTop: $target.offset().top - 80 },
-              300
-            );
-          }
-        }
-      });
-
-      $("#mSafrain").on("click", ".winmaximize", function () {
-        var win = $(this).parent().parent();
-        var wid = win.attr("data-id");
-        if (win.hasClass("fullSizeWindow")) {
-          win.removeClass("fullSizeWindow");
-          win
-            .find(".wincontent")
-            .height(minimizedHeight[wid])
-            .width(minimizedWidth[wid]);
-        } else {
-          win.addClass("fullSizeWindow");
-          minimizedHeight[wid] = win.find(".wincontent").height();
-          minimizedWidth[wid] = win.find(".wincontent").width();
-          adjustFullScreenSize();
-        }
+        var key = $(this).data("window-id");
+        openWindow(keyToId[key]);
       });
 
       $(window).on("resize", function () {
@@ -237,13 +249,10 @@
     });
   }
 
+  // wait for jquery
   function waitForjQuery() {
-    if (window.jQuery && typeof window.jQuery === "function") {
-      initDesktopUI(window.jQuery);
-    } else {
-      setTimeout(waitForjQuery, 100);
-    }
+    if (window.jQuery) initDesktopUI(window.jQuery);
+    else setTimeout(waitForjQuery, 100);
   }
-
   waitForjQuery();
 })();
