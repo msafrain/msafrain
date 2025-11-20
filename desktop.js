@@ -23,6 +23,8 @@
       }
 
       function makeWindowActive(thisid) {
+        if (typeof thisid === "undefined" || thisid === null) return;
+
         $("#mSafrain .window").each(function () {
           $(this).css(
             "z-index",
@@ -37,6 +39,8 @@
       }
 
       function minimizeWindow(id) {
+        if (typeof id === "undefined" || id === null) return;
+
         windowTopPos[id] = $("#window" + id).css("top");
         windowLeftPos[id] = $("#window" + id).css("left");
 
@@ -52,24 +56,9 @@
         );
       }
 
-      function openWindow(id) {
+      function openMinimized(id) {
         if (typeof id === "undefined" || id === null) return;
 
-        if ($("#window" + id).hasClass("minimizedWindow")) {
-          openMinimized(id);
-        } else {
-          makeWindowActive(id);
-          $("#window" + id).removeClass("closed");
-          $("#minimPanel" + id).removeClass("closed");
-        }
-      }
-
-      function closeWindwow(id) {
-        $("#window" + id).addClass("closed");
-        $("#minimPanel" + id).addClass("closed");
-      }
-
-      function openMinimized(id) {
         $("#window" + id).removeClass("minimizedWindow");
         $("#minimPanel" + id).removeClass("minimizedTab");
         makeWindowActive(id);
@@ -78,6 +67,38 @@
           { top: windowTopPos[id], left: windowLeftPos[id] },
           200
         );
+      }
+
+      function openWindow(id) {
+        if (typeof id === "undefined" || id === null) return;
+
+        $("#window" + id).removeClass("closed");
+
+        if ($("#window" + id).hasClass("minimizedWindow")) {
+          openMinimized(id);
+        } else {
+          makeWindowActive(id);
+        }
+
+        $("#minimPanel" + id).removeClass("closed");
+
+        // Mobile: scroll to window
+        if (window.innerWidth <= 768) {
+          var $target = $("#window" + id);
+          if ($target.length) {
+            $("html, body").animate(
+              { scrollTop: $target.offset().top - 80 },
+              300
+            );
+          }
+        }
+      }
+
+      function closeWindwow(id) {
+        if (typeof id === "undefined" || id === null) return;
+
+        $("#window" + id).addClass("closed");
+        $("#minimPanel" + id).addClass("closed");
       }
 
       function setupInteractions() {
@@ -101,7 +122,6 @@
         var $win = $(this);
         var key = $win.attr("data-window-id") || "window-" + i;
 
-        // title priority: data-title > .windowTitle text > key
         var title =
           $win.attr("data-title") ||
           $win.find(".windowTitle").text().trim() ||
@@ -117,7 +137,6 @@
 
         keyToId[key] = i;
 
-        // taskbar tab
         $("#taskbar").append(
           '<div class="taskbarPanel" id="minimPanel' +
             i +
@@ -134,26 +153,17 @@
 
         $win.attr("id", "window" + i);
         i++;
-
-        // your HTML already has .windowHeader and .wincontent
       });
 
-            // Make mThoughts (single) the active window by default if present
+      // Default active window: mThoughts single if exists, otherwise last
       var defaultKey = "mthoughts-single";
       var defaultId = keyToId[defaultKey];
       if (typeof defaultId === "undefined") {
         defaultId = i > 0 ? i - 1 : null;
       }
-      if (defaultId !== null) {
+      if (defaultId !== null && typeof defaultId !== "undefined") {
         $("#minimPanel" + defaultId).addClass("activeTab");
         $("#window" + defaultId).addClass("activeWindow");
-      }
-
-      // Ensure "By mSafrain" opens on load (not closed)
-      var byId = keyToId["bysafrain"];
-      if (typeof byId !== "undefined") {
-        $("#window" + byId).removeClass("closed");
-        $("#minimPanel" + byId).removeClass("closed");
       }
 
       setupInteractions();
@@ -164,7 +174,7 @@
         makeWindowActive($(this).attr("data-id"));
       });
 
-            $("#mSafrain").on("click", ".winclose", function () {
+      $("#mSafrain").on("click", ".winclose", function () {
         var id = $(this).closest(".window").attr("data-id");
         closeWindwow(id);
       });
@@ -174,75 +184,7 @@
         minimizeWindow(id);
       });
 
-      $("#mSafrain").on("click", ".taskbarPanel", function () {
-        var id = $(this).attr("data-id");
-
-        if ($(this).hasClass("activeTab")) {
-          minimizeWindow(id);
-        } else if ($(this).hasClass("minimizedTab")) {
-          openMinimized(id);
-        } else {
-          makeWindowActive(id);
-        }
-      });
-
-            // Launchbar buttons
-      $(document).on("click", ".openWindow", function () {
-        var key = $(this).attr("data-window-id");
-
-        // Special handling: "mArchives" opens all archive windows
-        if (key === "marchives") {
-          [
-            "mthoughts-archive",
-            "mvisual-archive",
-            "mobservation-archive",
-            "mstratagems-archive",
-            "mletters-archive",
-          ].forEach(function (k) {
-            var idArchive = keyToId[k];
-            if (typeof idArchive !== "undefined" && idArchive !== null) {
-              openWindow(idArchive);
-            }
-          });
-          return; // done
-        }
-
-        var id = keyToId[key];
-        if (typeof id === "undefined" || id === null) return;
-
-        openWindow(id);
-
-        if (window.innerWidth <= 768) {
-          var $target = $("#window" + id);
-          if ($target.length) {
-            $("html, body").animate(
-              { scrollTop: $target.offset().top - 80 },
-              300
-            );
-          }
-        }
-      });
-
-      // Desktop icons (mEnvelope etc.)
-      $(document).on("click", ".desktop-icon", function () {
-        var key = $(this).attr("data-window-id");
-        var id = keyToId[key];
-        if (typeof id === "undefined" || id === null) return;
-
-        openWindow(id);
-
-        if (window.innerWidth <= 768) {
-          var $target = $("#window" + id);
-          if ($target.length) {
-            $("html, body").animate(
-              { scrollTop: $target.offset().top - 80 },
-              300
-            );
-          }
-        }
-      });
-
-            $("#mSafrain").on("click", ".winmaximize", function () {
+      $("#mSafrain").on("click", ".winmaximize", function () {
         var win = $(this).closest(".window");
         var wid = win.attr("data-id");
         if (win.hasClass("fullSizeWindow")) {
@@ -258,7 +200,54 @@
           adjustFullScreenSize();
         }
       });
-      
+
+      // Taskbar click
+      $("#mSafrain").on("click", ".taskbarPanel", function () {
+        var id = $(this).attr("data-id");
+
+        if ($(this).hasClass("closed")) {
+          openWindow(id);
+        } else if ($(this).hasClass("activeTab")) {
+          minimizeWindow(id);
+        } else if ($(this).hasClass("minimizedTab")) {
+          openMinimized(id);
+        } else {
+          makeWindowActive(id);
+        }
+      });
+
+      // Launchbar buttons
+      $(document).on("click", ".openWindow", function () {
+        var key = $(this).attr("data-window-id");
+
+        // Special: mArchives opens all archive windows
+        if (key === "marchives") {
+          [
+            "mthoughts-archive",
+            "mvisual-archive",
+            "mobservation-archive",
+            "mstratagems-archive",
+            "mletters-archive",
+          ].forEach(function (k) {
+            var idArchive = keyToId[k];
+            if (typeof idArchive !== "undefined") {
+              openWindow(idArchive);
+            }
+          });
+          return;
+        }
+
+        var id = keyToId[key];
+        openWindow(id);
+      });
+
+      // Desktop icons (mEnvelope etc.)
+      $(document).on("click", ".desktop-icon", function () {
+        var key = $(this).attr("data-window-id");
+        var id = keyToId[key];
+        openWindow(id);
+      });
+
       $(window).on("resize", function () {
         setupInteractions();
         adjustFullScreenSize();
@@ -282,12 +271,6 @@
  ***************************/
 var BLOG_BASE = "https://msafrain.blogspot.com/feeds/posts/summary";
 
-/**
- * Inject a JSONP script tag for Blogger.
- * label: string or null (for all posts)
- * maxResults: number or null
- * callbackName: global function name as string
- */
 function bloggerJsonp(label, maxResults, callbackName) {
   var src = BLOG_BASE;
   if (label) {
@@ -376,7 +359,6 @@ function handle_mThoughts_recent(json) {
 }
 
 function load_mThoughts_archive() {
-  // bigger number for archive
   bloggerJsonp("mThoughts", 50, "handle_mThoughts_archive");
 }
 
@@ -404,13 +386,13 @@ function handle_mThoughts_archive(json) {
 }
 
 /*************************
- * 4. mVisual / others   *
+ * 4. mVisual             *
  *************************/
 function load_mVisual() {
   bloggerJsonp("mVisual", 6, "handle_mVisual");
 }
 
-ffunction handle_mVisual(json) {
+function handle_mVisual(json) {
   var el = document.getElementById("mVisualContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
@@ -439,7 +421,6 @@ ffunction handle_mVisual(json) {
         img.src +
         '" alt=""></div>';
     } else {
-      // Fallback: no image, show original content
       html += content;
     }
   });
@@ -590,7 +571,6 @@ function handle_mStratagems_archive(json) {
  * 7. mLetters *
  **************/
 function load_mLetters() {
-  // label assumed "mLetters"
   bloggerJsonp("mLetters", 6, "handle_mLetters");
 }
 
@@ -611,12 +591,12 @@ function handle_mLetters(json) {
     return;
   }
 
-    var html = "";
+  var html = "";
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
 
-    // Instead of a line, just add spacing between letters
+    // spacing only, no lines
     if (idx > 0) {
       html += '<div style="height:10px;"></div>';
     }
@@ -635,7 +615,7 @@ function load_mLetters_archive() {
 }
 
 function handle_mLetters_archive(json) {
-   var el = document.getElementById("mLettersArchive");
+  var el = document.getElementById("mLettersArchive");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
     el.textContent = "No letter archives.";
