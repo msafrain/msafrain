@@ -150,7 +150,8 @@
 
 /* Window content */
 #mSafrain .wincontent {
-  padding: 10px;
+  /* IMPORTANT: no top padding → removes white gap */
+  padding: 0 10px 10px;
   width: calc(100% - 20px);
   height: calc(100% - 42px);
   overflow: auto;
@@ -179,11 +180,13 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   background: #fff;
   color: #000;
-  padding: 8px;
+  /* IMPORTANT: no top padding → text hugs top border */
+  padding: 0 8px 8px;
   font-family: "Iowan Old Style", Georgia, serif;
   font-size: 14px;
   white-space: pre-wrap;
 }
+
 /* Make sure ALL inner elements keep manual spacing & line-breaks */
 #mSafrain .poetry-area * {
   white-space: pre-wrap !important;
@@ -194,21 +197,21 @@
   margin: 0 0 0.75em !important;
 }
 
-/* Kill any top margin/padding on any first element */
+/* Kill any top margin/padding on any first element inside poetry-area */
 #mSafrain .poetry-area *:first-child {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
 
-/* Remove Blogger’s hidden wrapper margin */
+/* Remove Blogger’s hidden wrapper margin on first wrapper */
 #mSafrain .poetry-area > div:first-child {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
 
-/* Remove first blank <br> Blogger inserts */
+/* Remove extra first blank line that Blogger sometimes inserts */
 #mSafrain .poetry-area br:first-child {
-  display: none;
+  display: none !important;
 }
 
 /* Shorter mThoughts single window */
@@ -234,6 +237,12 @@
 
 #mSafrain .archive-item:hover {
   background: #f3f4f6;
+}
+
+/* Ensure the very first element inside ANY window hugs the top */
+#mSafrain .window .wincontent > *:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 /* MOBILE */
@@ -267,7 +276,7 @@
   #mSafrain #taskbar {
     position: static;
     height: auto;
-    flex-wrap: wrap;
+  flex-wrap: wrap;
     padding: 6px 8px;
   }
 
@@ -288,15 +297,15 @@
   }
 
   /* make sure CLOSED windows really hide */
-#mSafrain .window.closed {
-  display: none !important;
-}
+  #mSafrain .window.closed {
+    display: none !important;
+  }
 
   #mSafrain #taskbar {
     position: relative !important;
   }
   
- /* --- MAKE LAUNCHBAR STICKY ON MOBILE --- */
+  /* --- MAKE LAUNCHBAR STICKY ON MOBILE --- */
   #mSafrain .openWindowButtons {
     position: fixed !important;
     top: 0;
@@ -313,9 +322,16 @@
     padding-top: 70px !important;
   }
 
+  /* MOBILE repositioning for mEnvelope icon */
+  #mSafrain .desktop-icon.m-envelope {
+    right: 12px;
+    top: 120px;
+    position: fixed !important;
+    z-index: 6000 !important;
+  }
 }  /* <-- END OF MOBILE MEDIA QUERY */
 
-/* ↓↓↓ PASTE THE ICON CODE STARTING HERE ↓↓↓  */
+/* ↓↓↓ ICON CODE ↓↓↓  */
 
 /* Base style for all desktop icons */
 #mSafrain .desktop-icon {
@@ -404,19 +420,3 @@
 #mSafrain #mLettersList li div {
   white-space: pre-wrap;
 }
-
-/* MOBILE repositioning only */
-@media (max-width: 768px) {
-  #mSafrain .desktop-icon.m-envelope {
-    right: 12px;
-    top: 120px;            /* adjust as needed */
-    position: fixed !important;
-    z-index: 6000 !important;
-  }
-}
-
-/* Remove extra first blank line that Blogger sometimes inserts */
-#mSafrain .poetry-area br:first-child {
-  display: none;
-}
-/* ↑↑↑ PASTE UNTIL HERE ↑↑↑ */
