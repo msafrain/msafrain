@@ -554,11 +554,14 @@ function render_mStratagems_archive(data) {
   <button class="openWindow" data-window-id="mstratagems">mStratagems</button>
   <button class="openWindow" data-window-id="marchives">mArchives</button>
 
-  <!-- HIDDEN buttons for archives -->
+    <!-- HIDDEN buttons for archives -->
   <button class="openWindow" data-window-id="mthoughts-archive" style="display:none;"></button>
   <button class="openWindow" data-window-id="mvisual-archive" style="display:none;"></button>
   <button class="openWindow" data-window-id="mobservation-archive" style="display:none;"></button>
   <button class="openWindow" data-window-id="mstratagems-archive" style="display:none;"></button>
+
+  <!-- NEW: hidden launcher for mLetters / mEnvelope -->
+  <button class="openWindow" data-window-id="menvelope" style="display:none;"></button>
 
   <!-- 🔽 NEW: hidden launcher for Visual Meaning -->
   <button class="openWindow" data-window-id="visual-meaning" style="display:none;"></button>
@@ -682,11 +685,46 @@ function render_mStratagems_archive(data) {
      data-window-id="marchives"
      data-title="mArchives"
      style="top:180px;left:280px;width:380px;height:320px;">
-  <div class="poetry-area">
+   <div class="poetry-area">
     <div class="archive-item" data-window-id="mthoughts-archive">mThoughts Archives</div>
     <div class="archive-item" data-window-id="mvisual-archive">mVisual Archives</div>
     <div class="archive-item" data-window-id="mobservation-archive">mObservation Archives</div>
     <div class="archive-item" data-window-id="mstratagems-archive">mStratagems Archives</div>
+    <div class="archive-item" data-window-id="menvelope">mLetters</div> <!-- ← add this -->
+  </div>
+</div>
+
+ <!-- mEnvelope Desktop Icon -->
+<div class="desktop-icon m-envelope" data-window-id="menvelope">
+  <div class="icon-envelope"></div>
+  <span class="icon-label">mEnvelope</span>
+  <span class="icon-badge" id="envelope-badge">6</span>
+</div>
+
+    <!-- Window: mEnvelope / mLetters -->
+<div class="window closed"
+     data-window-id="menvelope"
+     data-title="mLetters"
+     style="top:200px;left:520px;width:420px;height:320px;">
+  <div class="poetry-area">
+    <p style="margin-bottom:8px; font-size:13px; opacity:0.8;">
+      Latest letters (max 6 shown)
+    </p>
+    <ul id="mLettersList" style="list-style:none;margin:0;padding:0;max-height:220px;overflow-y:auto;">
+      <!-- For now: hardcode up to 6, later we can auto-load from Blogger -->
+      <li style="margin-bottom:8px;">
+        <div style="font-size:11px;opacity:0.7;">14 Nov 2025</div>
+        <div style="font-size:13px;">Letter #7 – Pan Pac & Balloons</div>
+      </li>
+      <li style="margin-bottom:8px;">
+        <div style="font-size:11px;opacity:0.7;">…</div>
+        <div style="font-size:13px;">Letter #6 – …</div>
+      </li>
+      <!-- up to 6 items total -->
+    </ul>
+    <p style="margin-top:6px;font-size:11px;opacity:0.75;">
+      View all mLetters inside mArchives.
+    </p>
   </div>
 </div>
 
