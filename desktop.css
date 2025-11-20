@@ -17,65 +17,92 @@
 #mSafrain .openWindowButtons {
   position: fixed;
   top: 10px;
-  left: 10px;
+  right: 10px;
+  z-index: 99999;
   display: flex;
-  gap: 8px;
-  z-index: 2100;
+  flex-wrap: wrap;
+  gap: 4px;
 }
 
-#mSafrain .openWindowButtons .openWindow {
-  background: #f3f4f6;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-#mSafrain .openWindowButtons .openWindow:hover {
-  background: #e5e7eb;
-}
-
-/* TASKBAR */
-#mSafrain #taskbar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40px;
-  background: rgba(0, 0, 0, 0.06);
-  display: flex;
-  align-items: center;
+#mSafrain .openWindowButtons button {
+  border: none;
   padding: 4px 8px;
-  gap: 6px;
-  border-top: 1px solid rgba(0, 0, 0, 0.15);
-  z-index: 2000;
-}
-
-#mSafrain .taskbarPanel {
-  padding: 4px 10px;
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 6px;
-  font-size: 12px;
+  border-radius: 4px;
+  background: #111827;
+  color: #f9fafb;
+  font-size: 11px;
   cursor: pointer;
-  white-space: nowrap;
+  opacity: 0.75;
 }
 
-#mSafrain .taskbarPanel:hover {
-  background: rgba(0, 0, 0, 0.12);
+#mSafrain .openWindowButtons button:hover {
+  opacity: 1;
 }
 
-#mSafrain .taskbarPanel.activeTab {
-  background: rgba(76, 175, 80, 0.18);
-  border: 1px solid rgba(76, 175, 80, 0.7);
+/* DESKTOP ROOT */
+#mSafrain .desktop-root {
+  position: relative;
+  min-height: 100vh;
+  padding: 16px;
 }
 
-#mSafrain .taskbarPanel.minimizedTab {
-  opacity: 0.5;
+/* DESKTOP ICONS WRAPPER */
+#mSafrain .desktop-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-#mSafrain .taskbarPanel.closed {
-  display: none;
+/* DESKTOP ICONS */
+#mSafrain .desktop-icon {
+  width: 70px;
+  text-align: center;
+  cursor: pointer;
+  color: #111827;
+}
+
+#mSafrain .desktop-icon:hover .icon-label {
+  text-decoration: underline;
+}
+
+/* Example envelope icon */
+#mSafrain .icon-envelope {
+  width: 48px;
+  height: 32px;
+  margin: 0 auto 4px auto;
+  border-radius: 4px;
+  border: 2px solid #111827;
+  position: relative;
+}
+#mSafrain .icon-envelope::before,
+#mSafrain .icon-envelope::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-top: 2px solid #111827;
+  border-radius: 4px;
+}
+#mSafrain .icon-envelope::before {
+  transform: skewY(20deg);
+}
+#mSafrain .icon-envelope::after {
+  transform: skewY(-20deg);
+}
+
+#mSafrain .icon-label {
+  display: block;
+  font-size: 11px;
+}
+
+/* small green badge (for envelope unread count) */
+#mSafrain .icon-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #10b981;
+  color: #ffffff;
+  margin-left: 4px;
 }
 
 /* WINDOWS */
@@ -107,77 +134,56 @@
 #mSafrain .windowHeader {
   height: 32px;
   background: #e5e7eb;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
-  color: #111;
+  padding: 0 6px;
+}
+
+#mSafrain .windowTitle {
+  flex: 1;
   font-size: 13px;
-  cursor: move;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  color: #111827;
 }
 
-#mSafrain .windowHeader span.winclose,
-#mSafrain .windowHeader span.winmaximize,
-#mSafrain .windowHeader span.winminimize {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  margin-left: 6px;
-  border-radius: 4px;
-  font-size: 12px;
-  line-height: 18px;
-  text-align: center;
+/* Window buttons (left: small circles) */
+#mSafrain .windowButtons {
+  display: flex;
+  gap: 4px;
+  margin-right: 6px;
+}
+
+#mSafrain .windowButtons .win-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: none;
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.08);
-  color: #111;
 }
 
-#mSafrain .windowHeader span.winclose:hover {
+#mSafrain .windowButtons .btn-close {
   background: #ef4444;
-  color: #fff;
 }
 
-#mSafrain .windowHeader span.winmaximize:hover {
+#mSafrain .windowButtons .btn-minimize {
+  background: #facc15;
+}
+
+#mSafrain .windowButtons .btn-maximize {
   background: #22c55e;
-  color: #fff;
 }
 
-#mSafrain .windowHeader span.winminimize:hover {
-  background: #eab308;
-  color: #111;
-}
-
-/* Window content */
-#mSafrain .wincontent {
-  /* remove top padding so content hugs header */
-  padding: 0 10px 10px;
-  width: calc(100% - 20px);
-  height: calc(100% - 42px);
+/* Window content area */
+#mSafrain .winContent {
+  position: relative;
+  height: calc(100% - 32px);
   overflow: auto;
-  background: #ffffff;
+  background: #f3f4f6;
+  padding: 8px;
 }
 
-/* Make first child inside any window hug the top */
-#mSafrain .window .wincontent > *:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Fullscreen window */
-#mSafrain .fullSizeWindow {
-  position: fixed !important;
-  top: 10px !important;
-  left: 10px !important;
-  right: 10px !important;
-  bottom: 50px !important;
-  width: auto !important;
-  height: auto !important;
-  border-radius: 10px;
-  box-shadow: none !important;
-}
-
-/* Poetry / content area (inner white box) */
+/* poetry-area used by all text windows */
 #mSafrain .poetry-area {
   width: 100%;
   height: auto;
@@ -186,7 +192,7 @@
   border: 1px solid rgba(0, 0, 0, 0.2);
   background: #fff;
   color: #000;
-  /* no top padding → NO big white gap */
+  /* no big top padding; content sits nicely */
   padding: 0 8px 8px;
   font-family: "Iowan Old Style", Georgia, serif;
   font-size: 14px;
@@ -200,14 +206,17 @@
   padding-top: 0 !important;
 }
 
-/* Normal paragraph spacing: only bottom margin */
+/* paragraphs inside poetry */
 #mSafrain .poetry-area p {
-  margin: 0 0 0.75em !important;
+  margin-bottom: 0.75em;
 }
 
-/* Remove Blogger’s extra first <br> that creates fake blank line */
-#mSafrain .poetry-area br:first-child {
-  display: none !important;
+/* headings inside poetry */
+#mSafrain .poetry-area h1,
+#mSafrain .poetry-area h2,
+#mSafrain .poetry-area h3,
+#mSafrain .poetry-area h4 {
+  margin: 0 0 0.5em 0;
 }
 
 /* Handle Blogger wrappers (div > div > p etc.) */
@@ -238,6 +247,7 @@
   border-bottom: none;
 }
 
+/* highlight on hover */
 #mSafrain .archive-item:hover {
   background: #f3f4f6;
 }
@@ -245,11 +255,13 @@
 /* mLetters list layout */
 #mSafrain #mLettersList {
   margin: 0;
-  padding: 0;
+  padding: 12px 0 20px;   /* top & bottom breathing room */
+  list-style: none;
 }
 
 #mSafrain #mLettersList li {
   list-style: none;
+  margin-bottom: 16px;     /* space between letters */
 }
 
 /* preserve Blogger line-breaks inside letters */
@@ -276,24 +288,36 @@
 
   #mSafrain .openWindowButtons {
     position: static;
-    padding: 10px;
-    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+
+  #mSafrain .desktop-root {
+    padding: 8px;
   }
 
   #mSafrain .window {
-    position: relative !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
+    width: 100%;
     left: 0 !important;
-    top: 0 !important;
-    margin: 10px 0;
+    right: 0 !important;
+    margin: 0 auto;
   }
 
-  #mSafrain .wincontent {
-    width: 100% !important;
-    height: auto !important;
-    max-height: none !important;
+  #mSafrain .window[data-window-id="mthoughts-recent"],
+  #mSafrain .window[data-window-id="mvisual"],
+  #mSafrain .window[data-window-id="mobservation"],
+  #mSafrain .window[data-window-id="mstratagems"],
+  #mSafrain .window[data-window-id="mthoughts-archive"],
+  #mSafrain .window[data-window-id="mvisual-archive"],
+  #mSafrain .window[data-window-id="mobservation-archive"],
+  #mSafrain .window[data-window-id="mstratagems-archive"],
+  #mSafrain .window[data-window-id="menvelope"] {
+    width: 100%;
+    max-width: none;
+    left: 0 !important;
+  }
+
+  #mSafrain .poetry-area {
+    min-height: 300px;
   }
 
   #mSafrain #taskbar {
@@ -307,124 +331,5 @@
     margin-bottom: 4px;
   }
 
-  /* --- EXTRA FIX FOR MOBILE WINDOWS AND SCROLLING --- */
-  #mSafrain .window {
-    position: relative !important;
-    inset: auto !important;
-    transform: none !important;
-    margin: 20px 0 !important;
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-  }
-
-  /* make sure CLOSED windows really hide */
-  #mSafrain .window.closed {
-    display: none !important;
-  }
-
-  #mSafrain #taskbar {
-    position: relative !important;
-  }
-  
-  /* --- MAKE LAUNCHBAR STICKY ON MOBILE --- */
-  #mSafrain .openWindowButtons {
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: #ffffff;
-    padding: 10px;
-    z-index: 5000;
-    border-bottom: 1px solid rgba(0,0,0,0.15);
-  }
-
-  /* Push content down so windows aren't hidden under sticky bar */
-  #mSafrain {
-    padding-top: 70px !important;
-  }
-
-  /* MOBILE repositioning for mEnvelope icon */
-  #mSafrain .desktop-icon.m-envelope {
-    right: 12px;
-    top: 120px;
-    position: fixed !important;
-    z-index: 6000 !important;
-  }
-}
-
-/* ↓↓↓ ICON CODE ↓↓↓  */
-
-/* Base style for all desktop icons */
-#mSafrain .desktop-icon {
-  position: absolute;
-  width: 72px;
-  text-align: center;
-  font-size: 11px;
-  color: #111;
-  cursor: pointer;
-  user-select: none;
-  z-index: 1200;
-}
-
-/* Specific position for mEnvelope on DESKTOP */
-#mSafrain .desktop-icon.m-envelope {
-  right: 3vw;
-  top: 24vh;
-}
-
-/* Envelope graphic */
-#mSafrain .icon-envelope {
-  width: 48px;
-  height: 36px;
-  margin: 0 auto 4px auto;
-  border: 2px solid rgba(0, 0, 0, 0.8);
-  border-radius: 4px;
-  position: relative;
-  background: rgba(0, 0, 0, 0.05);
-}
-
-/* Diagonal flap lines */
-#mSafrain .icon-envelope::before,
-#mSafrain .icon-envelope::after {
-  content: "";
-  position: absolute;
-  left: 6px;
-  right: 6px;
-  top: 10px;
-  border-top: 2px solid rgba(0, 0, 0, 0.7);
-}
-
-#mSafrain .icon-envelope::before {
-  transform: skewY(18deg);
-}
-
-#mSafrain .icon-envelope::after {
-  transform: skewY(-18deg);
-}
-
-/* Label under icon */
-#mSafrain .icon-label {
-  display: block;
-  margin-top: 2px;
-  font-size: 11px;
-  opacity: 0.9;
-}
-
-/* Red badge */
-#mSafrain .icon-badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  border-radius: 999px;
-  background: #ff4d4f;
-  color: #fff;
-  font-size: 10px;
-  line-height: 18px;
-  text-align: center;
-  font-weight: 600;
+  /* --- EXTRA FIXES IF NEEDED ON MOBILE --- */
 }
