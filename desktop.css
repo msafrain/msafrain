@@ -187,10 +187,12 @@
 
 /* Normalise paragraphs inside poetry-area */
 #mSafrain .poetry-area p {
-  margin: 0 0 0.75em;    /* no top margin, only bottom spacing */
+  margin: 0 0 0.75em !important;  /* override Blogger inline margins */
 }
-#mSafrain .poetry-area p:first-child {
-  margin-top: 0;         /* extra safety */
+
+#mSafrain .poetry-area > *:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
 /* Shorter mThoughts single window */
@@ -398,7 +400,8 @@
 }
 
 /* Remove extra first blank line that Blogger inserts */
-#mSafrain .poetry-area > *:first-child > br:first-child {
+#mSafrain .poetry-area > br:first-child,
+#mSafrain .poetry-area > div > br:first-child {
   display: none;
 }
 /* ↑↑↑ PASTE UNTIL HERE ↑↑↑ */
