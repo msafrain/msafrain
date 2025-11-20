@@ -216,28 +216,11 @@
         }
       });
 
-      // Launchbar buttons
+            // Launchbar buttons (top buttons)
       $(document).on("click", ".openWindow", function () {
         var key = $(this).attr("data-window-id");
-
-        // Special: mArchives opens all archive windows
-        if (key === "marchives") {
-          [
-            "mthoughts-archive",
-            "mvisual-archive",
-            "mobservation-archive",
-            "mstratagems-archive",
-            "mletters-archive",
-          ].forEach(function (k) {
-            var idArchive = keyToId[k];
-            if (typeof idArchive !== "undefined") {
-              openWindow(idArchive);
-            }
-          });
-          return;
-        }
-
         var id = keyToId[key];
+        if (typeof id === "undefined") return;
         openWindow(id);
       });
 
