@@ -159,12 +159,6 @@
   white-space: pre-line;       /* NEW: keep Blogger line breaks */
 }
 
-/* Force left alignment for all window content */
-#mSafrain .wincontent,
-#mSafrain .wincontent * {
-  text-align: left !important;
-}
-
 /* FULL SCREEN */
 #mSafrain .fullSizeWindow {
   position: fixed !important;
@@ -192,14 +186,14 @@
   white-space: pre-wrap;
 }
 
-/* Remove BLANK first <br> from Blogger */
-#mSafrain .poetry-area br:first-child {
-  display: none !important;
-}
-
 /* Normal paragraph spacing */
 #mSafrain .poetry-area p {
   margin: 0 0 0.75em !important;
+}
+
+/* Force ONLY By mSafrain window to be left-aligned */
+#mSafrain .window[data-window-id="bysafrain"] .poetry-area {
+  text-align: left;
 }
 
 /* mThoughts single window (special height) */
