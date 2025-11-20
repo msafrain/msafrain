@@ -287,4 +287,89 @@
     padding-top: 70px !important;
   }
 
-}  /* <-- THIS IS THE END OF YOUR MOBILE MEDIA QUERY */
+}  /* <-- END OF MOBILE MEDIA QUERY */
+
+/* ↓↓↓ PASTE THE ICON CODE STARTING HERE ↓↓↓  */
+
+/* Base style for all desktop icons */
+#mSafrain .desktop-icon {
+  position: absolute;
+  width: 72px;
+  text-align: center;
+  font-size: 11px;
+  color: #111;
+  cursor: pointer;
+  user-select: none;
+  z-index: 1200;
+}
+
+/* Specific position for mEnvelope on DESKTOP */
+#mSafrain .desktop-icon.m-envelope {
+  right: 3vw;
+  top: 24vh;
+}
+
+/* Envelope graphic */
+#mSafrain .icon-envelope {
+  width: 48px;
+  height: 36px;
+  margin: 0 auto 4px auto;
+  border: 2px solid rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Diagonal flap lines */
+#mSafrain .icon-envelope::before,
+#mSafrain .icon-envelope::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 10px;
+  border-top: 2px solid rgba(0, 0, 0, 0.7);
+}
+
+#mSafrain .icon-envelope::before {
+  transform: skewY(18deg);
+}
+
+#mSafrain .icon-envelope::after {
+  transform: skewY(-18deg);
+}
+
+/* Label under icon */
+#mSafrain .icon-label {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+/* Red badge */
+#mSafrain .icon-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #ff4d4f;
+  color: #fff;
+  font-size: 10px;
+  line-height: 18px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* MOBILE repositioning only */
+@media (max-width: 768px) {
+  #mSafrain .desktop-icon.m-envelope {
+    right: 12px;
+    top: 80px;
+  }
+}
+
+/* ↑↑↑ PASTE UNTIL HERE ↑↑↑ */
