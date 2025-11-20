@@ -555,8 +555,8 @@ function render_mLetters(data) {
     const li = document.createElement("li");
     li.style.marginBottom = "8px";
     li.innerHTML = `
-      <div style="font-size:11px;opacity:0.7;">${dateText}</div>
       <div style="font-size:13px;">${title}</div>
+      <div style="font-size:11px;opacity:0.7;">${dateText}</div>
     `;
     listEl.appendChild(li);
   });
@@ -856,9 +856,6 @@ function render_mLetters_archive(data) {
      data-title="mLetters"
      style="top:200px;left:520px;width:420px;height:320px;">
   <div class="poetry-area">
-    <p style="margin-bottom:8px; font-size:13px; opacity:0.8;">
-      Latest letters (max 6 shown)
-    </p>
 
     <!-- 🔽 ADD THIS BLOCK BACK -->
     <ul id="mLettersList"
@@ -867,9 +864,6 @@ function render_mLetters_archive(data) {
     </ul>
     <!-- 🔼 ADD THIS BLOCK BACK -->
 
-    <p style="margin-top:6px;font-size:11px;opacity:0.75;">
-      View all mLetters inside mArchives.
-    </p>
   </div>
 </div>
 
