@@ -364,6 +364,16 @@
   font-weight: 600;
 }
 
+/* mLetters list layout */
+#mSafrain #mLettersList {
+  margin: 0;
+  padding: 0;
+}
+
+#mSafrain #mLettersList li {
+  list-style: none;
+}
+
 /* MOBILE repositioning only */
 @media (max-width: 768px) {
   #mSafrain .desktop-icon.m-envelope {
