@@ -99,6 +99,13 @@
         var $win = $(this);
         var key = $win.attr("data-window-id") || "window-" + i;
 
+        // Title priority: data-title > .windowTitle text > data-window-id
+        var title =
+          $win.attr("data-title") ||
+          $win.find(".windowTitle").text().trim() ||
+          key;
+
+        // store numeric id
         $win.css("z-index", 1000);
         $win.attr("data-id", i);
 
@@ -109,13 +116,14 @@
 
         keyToId[key] = i;
 
+        // Taskbar tab
         $("#taskbar").append(
           '<div class="taskbarPanel" id="minimPanel' +
             i +
             '" data-id="' +
             i +
             '">' +
-            $win.attr("data-title") +
+            title +
             "</div>"
         );
 
@@ -126,12 +134,8 @@
         $win.attr("id", "window" + i);
         i++;
 
-        $win.wrapInner('<div class="wincontent"></div>');
-        $win.prepend(
-          '<div class="windowHeader"><strong>' +
-            $win.attr("data-title") +
-            '</strong><span class="winminimize">–</span><span class="winmaximize">□</span><span class="winclose">x</span></div>'
-        );
+        // IMPORTANT: we DO NOT wrap or prepend headers here,
+        // because your HTML already contains .windowHeader and .wincontent.
       });
 
       // Last window active by default
