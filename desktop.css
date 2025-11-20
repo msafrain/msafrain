@@ -148,15 +148,12 @@
   color: #111;
 }
 
-/* Window content */
 #mSafrain .wincontent {
   padding: 10px;               /* FIXED uniform spacing */
   width: calc(100% - 20px);
   height: calc(100% - 42px);
   overflow: auto;
   background: #ffffff;
-  text-align: left;            /* NEW: force left alignment */
-  white-space: pre-line;       /* NEW: keep Blogger line breaks */
 }
 
 /* FULL SCREEN */
