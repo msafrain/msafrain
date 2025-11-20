@@ -672,6 +672,35 @@ function render_mLetters_archive(data) {
   output += "</ul>";
   area.innerHTML = output;
 }
+
+  ffunction fixTopGap(winEl) {
+  const area = winEl.querySelector(".poetry-area");
+  if (!area) return;
+
+  // remove stray <br> at very top if Blogger pushes one in
+  while (area.firstChild && area.firstChild.nodeName === "BR") {
+    area.removeChild(area.firstChild);
+  }
+
+  // first visible element inside poetry-area
+  const first = area.firstElementChild;
+  if (first) {
+    first.style.marginTop = "0";
+    first.style.paddingTop = "0";
+
+    // also flatten one more level in case Blogger wraps again
+    const inner = first.firstElementChild;
+    if (inner) {
+      inner.style.marginTop = "0";
+      inner.style.paddingTop = "0";
+    }
+  }
+}
+
+// run this after Blogger feed loads
+setTimeout(() => {
+  document.querySelectorAll(".window").forEach(fixTopGap);
+}, 800);
   </script>
 
 <!-- Google tag (gtag.js) -->
