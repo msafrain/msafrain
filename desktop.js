@@ -224,6 +224,14 @@
         openWindow(id);
       });
 
+            // Clicking items inside the mArchives window opens that archive
+      $(document).on("click", "#mArchivesList li", function () {
+        var key = $(this).attr("data-archive-target");
+        var id = keyToId[key];
+        if (typeof id === "undefined") return;
+        openWindow(id);
+      });
+
       // Desktop icons (mEnvelope etc.)
       $(document).on("click", ".desktop-icon", function () {
         var key = $(this).attr("data-window-id");
@@ -267,6 +275,23 @@ function bloggerJsonp(label, maxResults, callbackName) {
   s.type = "text/javascript";
   s.src = src;
   document.body.appendChild(s);
+}
+
+function extractContent(entry) {
+  if (!entry) return "";
+  if (entry.content && entry.content.$t) return entry.content.$t;
+  if (entry.summary && entry.summary.$t) return entry.summary.$t;
+  return "";
+}
+
+function formatDate(entry) {
+  if (!entry || !entry.published || !entry.published.$t) return "";
+  var d = new Date(entry.published.$t);
+  if (isNaN(d.getTime())) return "";
+  var day = String(d.getDate()).padStart(2, "0");
+  var month = d.toLocaleString("en-US", { month: "short" });
+  var year = d.getFullYear();
+  return day + " " + month + " " + year;
 }
 
 function stripHtml(html) {
@@ -355,8 +380,8 @@ function handle_mThoughts_archive(json) {
     return;
   }
 
-  var html = "";
-  j  json.feed.entry.forEach(function (entry) {
+    var html = "";
+    json.feed.entry.forEach(function (entry) {
     var title = getTitleOrSnippet(entry);
     var dateStr = formatDate(entry);
     html += '<div class="archive-item">';
