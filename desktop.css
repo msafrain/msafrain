@@ -150,21 +150,14 @@
 
 /* Window content */
 #mSafrain .wincontent {
-  /* remove top padding so content hugs header */
-  padding: 0 10px 10px;
+  padding: 10px;               /* FIXED uniform spacing */
   width: calc(100% - 20px);
   height: calc(100% - 42px);
   overflow: auto;
   background: #ffffff;
 }
 
-/* Make first child inside any window hug the top */
-#mSafrain .window .wincontent > *:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Fullscreen window */
+/* FULL SCREEN */
 #mSafrain .fullSizeWindow {
   position: fixed !important;
   top: 10px !important;
@@ -177,47 +170,31 @@
   box-shadow: none !important;
 }
 
-/* Poetry / content area (inner white box) */
+/* CONTENT (poetry-area) */
 #mSafrain .poetry-area {
   width: 100%;
-  height: auto;
-  min-height: 500px;
+  min-height: 200px;          /* FIXED reduced min-height */
   border-radius: 6px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   background: #fff;
   color: #000;
-  /* no top padding â†’ NO big white gap */
-  padding: 0 8px 8px;
+  padding: 8px 10px 10px;     /* FIXED spacing */
   font-family: "Iowan Old Style", Georgia, serif;
   font-size: 14px;
   white-space: pre-wrap;
 }
 
-/* Kill ALL top margin/padding inside poetry-area (for every element) */
-#mSafrain .poetry-area,
-#mSafrain .poetry-area * {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Normal paragraph spacing: only bottom margin */
-#mSafrain .poetry-area p {
-  margin: 0 0 0.75em !important;
-}
-
-/* Remove Bloggerâ€™s extra first <br> that creates fake blank line */
+/* Remove BLANK first <br> from Blogger */
 #mSafrain .poetry-area br:first-child {
   display: none !important;
 }
 
-/* Handle Blogger wrappers (div > div > p etc.) */
-#mSafrain .poetry-area > div,
-#mSafrain .poetry-area > div > div {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
+/* Normal paragraph spacing */
+#mSafrain .poetry-area p {
+  margin: 0 0 0.75em !important;
 }
 
-/* mThoughts single window a bit shorter */
+/* mThoughts single window (special height) */
 #mSafrain .window[data-window-id="mthoughts-single"] {
   height: 300px;
 }
@@ -226,7 +203,7 @@
   min-height: 240px;
 }
 
-/* mArchives list items */
+/* mArchives list */
 #mSafrain .archive-item {
   padding: 8px 10px;
   border-bottom: 1px solid rgba(0,0,0,0.08);
@@ -242,7 +219,7 @@
   background: #f3f4f6;
 }
 
-/* mLetters list layout */
+/* Letters list */
 #mSafrain #mLettersList {
   margin: 0;
   padding: 0;
@@ -252,42 +229,42 @@
   list-style: none;
 }
 
-/* preserve Blogger line-breaks inside letters */
 #mSafrain #mLettersList li div {
   white-space: pre-wrap;
 }
 
-/* Ensure UL in poetry-area has no default padding causing gap */
+/* no UL padding */
 #mSafrain .poetry-area ul {
   margin: 0 !important;
   padding: 0 !important;
-}
-
-#mSafrain .poetry-area ul li {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
 }
 
 /* MOBILE */
 @media (max-width: 768px) {
   #mSafrain {
     min-height: auto;
+    padding-top: 70px !important; /* push down */
   }
 
   #mSafrain .openWindowButtons {
-    position: static;
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
     padding: 10px;
+    z-index: 5000;
     flex-wrap: wrap;
   }
 
   #mSafrain .window {
     position: relative !important;
     width: 100% !important;
-    max-width: 100% !important;
     height: auto !important;
     left: 0 !important;
     top: 0 !important;
-    margin: 10px 0;
+    margin: 20px 0 !important;
+    max-width: 100% !important;
   }
 
   #mSafrain .wincontent {
@@ -297,55 +274,12 @@
   }
 
   #mSafrain #taskbar {
-    position: static;
+    position: relative !important;
     height: auto;
     flex-wrap: wrap;
     padding: 6px 8px;
   }
 
-  #mSafrain .taskbarPanel {
-    margin-bottom: 4px;
-  }
-
-  /* --- EXTRA FIX FOR MOBILE WINDOWS AND SCROLLING --- */
-  #mSafrain .window {
-    position: relative !important;
-    inset: auto !important;
-    transform: none !important;
-    margin: 20px 0 !important;
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-  }
-
-  /* make sure CLOSED windows really hide */
-  #mSafrain .window.closed {
-    display: none !important;
-  }
-
-  #mSafrain #taskbar {
-    position: relative !important;
-  }
-  
-  /* --- MAKE LAUNCHBAR STICKY ON MOBILE --- */
-  #mSafrain .openWindowButtons {
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: #ffffff;
-    padding: 10px;
-    z-index: 5000;
-    border-bottom: 1px solid rgba(0,0,0,0.15);
-  }
-
-  /* Push content down so windows aren't hidden under sticky bar */
-  #mSafrain {
-    padding-top: 70px !important;
-  }
-
-  /* MOBILE repositioning for mEnvelope icon */
   #mSafrain .desktop-icon.m-envelope {
     right: 12px;
     top: 120px;
@@ -354,9 +288,7 @@
   }
 }
 
-/* â†“â†“â†“ ICON CODE â†“â†“â†“  */
-
-/* Base style for all desktop icons */
+/* ICONS */
 #mSafrain .desktop-icon {
   position: absolute;
   width: 72px;
@@ -368,13 +300,11 @@
   z-index: 1200;
 }
 
-/* Specific position for mEnvelope on DESKTOP */
 #mSafrain .desktop-icon.m-envelope {
   right: 3vw;
   top: 24vh;
 }
 
-/* Envelope graphic */
 #mSafrain .icon-envelope {
   width: 48px;
   height: 36px;
@@ -385,7 +315,6 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
-/* Diagonal flap lines */
 #mSafrain .icon-envelope::before,
 #mSafrain .icon-envelope::after {
   content: "";
@@ -404,7 +333,6 @@
   transform: skewY(-18deg);
 }
 
-/* Label under icon */
 #mSafrain .icon-label {
   display: block;
   margin-top: 2px;
@@ -412,7 +340,6 @@
   opacity: 0.9;
 }
 
-/* Red badge */
 #mSafrain .icon-badge {
   position: absolute;
   top: -6px;
