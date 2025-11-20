@@ -36,7 +36,10 @@ function stripLeadingEmptyBlocks(temp) {
     const name = node.nodeName;
 
     // always allow blocks that contain images
-    if ((name === "P" || name === "DIV") && node.querySelector("img")) {
+    if (
+      (name === "P" || name === "DIV") &&
+      node.querySelector("img")
+    ) {
       break;
     }
 
@@ -81,37 +84,17 @@ function stripLeadingEmptyBlocks(temp) {
       const temp = document.createElement("div");
       temp.innerHTML = contentHtml;
 
-      // remove leading empties & headings
+      // strip leading empty blocks
       stripLeadingEmptyBlocks(temp);
-      temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
-      let dateText = "";
-      if (entry.published && entry.published.$t) {
-        const published = new Date(entry.published.$t);
-        if (!isNaN(published.getTime())) {
-          dateText = published.toLocaleDateString("en-SG", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric"
-          });
-        }
-      }
-
-      const dateHTML = dateText
-        ? `<div style="margin-top:12px; font-size:12px; color:#666;">${dateText}</div>`
-        : "";
-
-      area.innerHTML = `
-        <div>${temp.innerHTML}</div>
-        ${dateHTML}
-      `;
+      area.innerHTML = temp.innerHTML;
     }
 
-    /* mThoughts RECENT (latest 6) */
+    /* mThoughts RECENT (multiple) */
     function load_mThoughts_recent() {
       const url =
         "https://msafrain.blogspot.com/feeds/posts/default/-/mThoughts" +
-        "?alt=json-in-script&max-results=6&callback=render_mThoughts_recent";
+        "?alt=json-in-script&max-results=20&callback=render_mThoughts_recent";
       const script = document.createElement("script");
       script.src = url;
       document.body.appendChild(script);
@@ -121,42 +104,33 @@ function stripLeadingEmptyBlocks(temp) {
       const area = document.getElementById("mThoughtsRecent");
       if (!area) return;
 
-      const entries = (data.feed && data.feed.entry) || [];
-      if (!entries.length) {
-        area.textContent = "No mThoughts yet.";
+      const entries = data.feed && data.feed.entry;
+      if (!entries || !entries.length) {
+        area.textContent = "No recent mThoughts.";
         return;
       }
 
       let output = "";
-      entries.forEach(function (entry) {
+      entries.forEach((entry) => {
+        const title = entry.title && entry.title.$t ? entry.title.$t : "";
+        const link =
+          entry.link && entry.link.length
+            ? entry.link.find((l) => l.rel === "alternate")
+            : null;
+        const href = link ? link.href : "#";
+
         let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
         const temp = document.createElement("div");
         temp.innerHTML = contentHtml;
 
-        // remove leading empties & headings
         stripLeadingEmptyBlocks(temp);
-        temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
-
-        let dateText = "";
-        if (entry.published && entry.published.$t) {
-          const published = new Date(entry.published.$t);
-          if (!isNaN(published.getTime())) {
-            dateText = published.toLocaleDateString("en-SG", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric"
-            });
-          }
-        }
-
-        const dateHTML = dateText
-          ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
-          : "";
 
         output += `
           <article style="margin-bottom:24px;">
+            <h3 style="margin:0 0 4px 0;font-size:16px;">
+              <a href="${href}" target="_blank" rel="noopener noreferrer">${title}</a>
+            </h3>
             <div>${temp.innerHTML}</div>
-            ${dateHTML}
           </article>
         `;
       });
@@ -168,7 +142,7 @@ function stripLeadingEmptyBlocks(temp) {
     function load_mVisual() {
       const url =
         "https://msafrain.blogspot.com/feeds/posts/default/-/mVisual" +
-        "?alt=json-in-script&max-results=6&callback=render_mVisual";
+        "?alt=json-in-script&max-results=50&callback=render_mVisual";
       const script = document.createElement("script");
       script.src = url;
       document.body.appendChild(script);
@@ -178,46 +152,47 @@ function stripLeadingEmptyBlocks(temp) {
       const area = document.getElementById("mVisualContent");
       if (!area) return;
 
-      const entries = (data.feed && data.feed.entry) || [];
-      if (!entries.length) {
-        area.textContent = "No visuals yet.";
+      const entries = data.feed && data.feed.entry;
+      if (!entries || !entries.length) {
+        area.textContent = "No mVisual posts yet.";
         return;
       }
 
-      let output = "";
-      entries.forEach(function (entry) {
+      let out = "";
+      entries.forEach((entry) => {
         let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
         const temp = document.createElement("div");
         temp.innerHTML = contentHtml;
-
-        // remove leading empties
         stripLeadingEmptyBlocks(temp);
 
-        const imgs = temp.querySelectorAll("img");
-        if (!imgs.length) return;
+        const rawDate = entry.published && entry.published.$t ? entry.published.$t : "";
+        let dateHTML = "";
+        if (rawDate) {
+          const d = new Date(rawDate);
+          const dateStr = d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+          dateHTML = `<p style="margin-top:8px;font-size:12px;color:#6b7280;">${dateStr}</p>`;
+        }
 
-        imgs.forEach(function (img) {
-          const meaning = img.getAttribute("alt") || "";  // take explanation from alt text
-
-          output += `
-            <div style="margin-bottom:20px;">
-              <img 
-                src="${img.src}"
-                data-meaning="${meaning.replace(/"/g, '&quot;')}"
-                style="width:100%; border-radius:8px; display:block; cursor:pointer;">
-            </div>
-          `;
-        });
+        out += `
+          <article style="margin-bottom:24px;">
+            <div>${temp.innerHTML}</div>
+            ${dateHTML}
+          </article>
+        `;
       });
 
-      area.innerHTML = output || "No visuals yet.";
+      area.innerHTML = out;
     }
 
-    /* mObservation (latest 6) */
+    /* mObservation */
     function load_mObservation() {
       const url =
         "https://msafrain.blogspot.com/feeds/posts/default/-/mObservation" +
-        "?alt=json-in-script&max-results=6&callback=render_mObservation";
+        "?alt=json-in-script&max-results=50&callback=render_mObservation";
       const script = document.createElement("script");
       script.src = url;
       document.body.appendChild(script);
@@ -227,39 +202,32 @@ function stripLeadingEmptyBlocks(temp) {
       const area = document.getElementById("mObservationContent");
       if (!area) return;
 
-      const entries = (data.feed && data.feed.entry) || [];
-      if (!entries.length) {
-        area.textContent = "No observations yet.";
+      const entries = data.feed && data.feed.entry;
+      if (!entries || !entries.length) {
+        area.textContent = "No mObservation posts yet.";
         return;
       }
 
-      let output = "";
-      entries.forEach(function (entry) {
+      let out = "";
+      entries.forEach((entry) => {
         let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
         const temp = document.createElement("div");
         temp.innerHTML = contentHtml;
-
-        // remove leading empties & headings
         stripLeadingEmptyBlocks(temp);
-        temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
-        let dateText = "";
-        if (entry.published && entry.published.$t) {
-          const published = new Date(entry.published.$t);
-          if (!isNaN(published.getTime())) {
-            dateText = published.toLocaleDateString("en-SG", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric"
-            });
-          }
+        const rawDate = entry.published && entry.published.$t ? entry.published.$t : "";
+        let dateHTML = "";
+        if (rawDate) {
+          const d = new Date(rawDate);
+          const dateStr = d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+          dateHTML = `<p style="margin-top:8px;font-size:12px;color:#6b7280;">${dateStr}</p>`;
         }
 
-        const dateHTML = dateText
-          ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
-          : "";
-
-        output += `
+        out += `
           <article style="margin-bottom:24px;">
             <div>${temp.innerHTML}</div>
             ${dateHTML}
@@ -267,679 +235,576 @@ function stripLeadingEmptyBlocks(temp) {
         `;
       });
 
-      area.innerHTML = output;
+      area.innerHTML = out;
     }
 
-  /* mStratagems (latest 6) */
-function load_mStratagems() {
-  const url =
-    "https://msafrain.blogspot.com/feeds/posts/default/-/mStratagems" +
-    "?alt=json-in-script&max-results=6&callback=render_mStratagems";
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
-}
+    /* mStratagems */
+    function load_mStratagems() {
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mStratagems" +
+        "?alt=json-in-script&max-results=50&callback=render_mStratagems";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
 
-function render_mStratagems(data) {
-  const area = document.getElementById("mStratagemsContent");
-  if (!area) return;
+    function render_mStratagems(data) {
+      const area = document.getElementById("mStratagemsContent");
+      if (!area) return;
 
-  const entries = (data.feed && data.feed.entry) || [];
-  if (!entries.length) {
-    area.textContent = "No mStratagems yet.";
-    return;
-  }
-
-  let output = "";
-  entries.forEach(function (entry) {
-    let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-    const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
-
-    // remove leading empties & headings
-    stripLeadingEmptyBlocks(temp);
-    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
-
-    // date
-    let dateText = "";
-    if (entry.published && entry.published.$t) {
-      const published = new Date(entry.published.$t);
-      if (!isNaN(published.getTime())) {
-        dateText = published.toLocaleDateString("en-SG", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        });
+      const entries = data.feed && data.feed.entry;
+      if (!entries || !entries.length) {
+        area.textContent = "No mStratagems posts yet.";
+        return;
       }
+
+      let out = "";
+      entries.forEach((entry) => {
+        let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+        const temp = document.createElement("div");
+        temp.innerHTML = contentHtml;
+        stripLeadingEmptyBlocks(temp);
+
+        const rawDate = entry.published && entry.published.$t ? entry.published.$t : "";
+        let dateHTML = "";
+        if (rawDate) {
+          const d = new Date(rawDate);
+          const dateStr = d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+          dateHTML = `<p style="margin-top:8px;font-size:12px;color:#6b7280;">${dateStr}</p>`;
+        }
+
+        out += `
+          <article style="margin-bottom:24px;">
+            <div>${temp.innerHTML}</div>
+            ${dateHTML}
+          </article>
+        `;
+      });
+
+      area.innerHTML = out;
     }
 
-    const dateHTML = dateText
-      ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
-      : "";
+    /* ARCHIVES HELPERS (for side windows) */
+    function load_mThoughts_archive() {
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mThoughts" +
+        "?alt=json-in-script&max-results=999&callback=render_mThoughts_archive";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
 
-    output += `
-      <article style="margin-bottom:24px;">
-        <div>${temp.innerHTML}</div>
-        ${dateHTML}
-      </article>
-    `;
-  });
+    function render_mThoughts_archive(data) {
+      const area = document.getElementById("mThoughtsArchive");
+      if (!area) return;
 
-  area.innerHTML = output;
-}
-
-    /* mThoughts ARCHIVE (all posts) */
-function load_mThoughts_archive() {
-  const url =
-    "https://msafrain.blogspot.com/feeds/posts/default/-/mThoughts" +
-    "?alt=json-in-script&max-results=999&callback=render_mThoughts_archive";
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
-}
-
-function render_mThoughts_archive(data) {
-  const area = document.getElementById("mThoughtsArchiveContent");
-  if (!area) return;
-
-  const entries = (data.feed && data.feed.entry) || [];
-  if (!entries.length) {
-    area.textContent = "No mThoughts yet.";
-    return;
-  }
-
-  let output = "";
-  entries.forEach(function (entry) {
-    let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-    const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
-
-    // remove leading empties & headings
-    stripLeadingEmptyBlocks(temp);
-    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
-
-    let dateText = "";
-    if (entry.published && entry.published.$t) {
-      const published = new Date(entry.published.$t);
-      if (!isNaN(published.getTime())) {
-        dateText = published.toLocaleDateString("en-SG", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        });
+      const entries = data.feed && data.feed.entry;
+      if (!entries || !entries.length) {
+        area.textContent = "No mThoughts archives yet.";
+        return;
       }
+
+      let out = "";
+      entries.forEach((entry) => {
+        const title = entry.title && entry.title.$t ? entry.title.$t : "";
+        const link =
+          entry.link && entry.link.length
+            ? entry.link.find((l) => l.rel === "alternate")
+            : null;
+        const href = link ? link.href : "#";
+
+        const rawDate = entry.published && entry.published.$t ? entry.published.$t : "";
+        let dateStr = "";
+        if (rawDate) {
+          const d = new Date(rawDate);
+          dateStr = d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        }
+
+        out += `
+          <div class="archive-item">
+            <div style="font-weight:500;">${title}</div>
+            <div style="font-size:12px;color:#6b7280;">${dateStr}</div>
+            <a href="${href}" target="_blank" rel="noopener noreferrer" style="font-size:12px;">Open</a>
+          </div>
+        `;
+      });
+
+      area.innerHTML = out;
     }
 
-    const dateHTML = dateText
-      ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
-      : "";
+    function load_mVisual_archive() {
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mVisual" +
+        "?alt=json-in-script&max-results=999&callback=render_mVisual_archive";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
 
-    output += `
-      <article style="margin-bottom:24px;">
-        <div>${temp.innerHTML}</div>
-        ${dateHTML}
-      </article>
-    `;
-  });
+    function render_mVisual_archive(data) {
+      const area = document.getElementById("mVisualArchive");
+      if (!area) return;
 
-  area.innerHTML = output;
-}
-
-/* mVisual ARCHIVE (all posts) */
-function load_mVisual_archive() {
-  const url =
-    "https://msafrain.blogspot.com/feeds/posts/default/-/mVisual" +
-    "?alt=json-in-script&max-results=999&callback=render_mVisual_archive";
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
-}
-
-function render_mVisual_archive(data) {
-  const area = document.getElementById("mVisualArchiveContent");
-  if (!area) return;
-
-  const entries = (data.feed && data.feed.entry) || [];
-  if (!entries.length) {
-    area.textContent = "No mVisual posts yet.";
-    return;
-  }
-
-  let output = "";
-  entries.forEach(function (entry) {
-    let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-    const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
-
-    // remove leading empties
-    stripLeadingEmptyBlocks(temp);
-
-    const imgs = temp.querySelectorAll("img");
-    if (!imgs.length) return;
-
-    imgs.forEach(function (img) {
-      const meaning = img.getAttribute("alt") || "";
-      output += `
-        <div style="margin-bottom:20px;">
-          <img 
-            src="${img.src}"
-            data-meaning="${meaning.replace(/"/g, '&quot;')}"
-            style="width:100%; border-radius:8px; display:block; cursor:pointer;">
-        </div>
-      `;
-    });
-  });
-
-  area.innerHTML = output || "No visuals yet.";
-}
-
-/* mObservation ARCHIVE (all posts) */
-function load_mObservation_archive() {
-  const url =
-    "https://msafrain.blogspot.com/feeds/posts/default/-/mObservation" +
-    "?alt=json-in-script&max-results=999&callback=render_mObservation_archive";
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
-}
-
-function render_mObservation_archive(data) {
-  const area = document.getElementById("mObservationArchiveContent");
-  if (!area) return;
-
-  const entries = (data.feed && data.feed.entry) || [];
-  if (!entries.length) {
-    area.textContent = "No observations yet.";
-    return;
-  }
-
-  let output = "";
-  entries.forEach(function (entry) {
-    let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-    const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
-
-    // remove leading empties & headings
-    stripLeadingEmptyBlocks(temp);
-    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
-
-    let dateText = "";
-    if (entry.published && entry.published.$t) {
-      const published = new Date(entry.published.$t);
-      if (!isNaN(published.getTime())) {
-        dateText = published.toLocaleDateString("en-SG", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        });
+      const entries = data.feed && data.feed.entry;
+      if (!entries || !entries.length) {
+        area.textContent = "No mVisual archives yet.";
+        return;
       }
+
+      let out = "";
+      entries.forEach((entry) => {
+        const title = entry.title && entry.title.$t ? entry.title.$t : "";
+        const link =
+          entry.link && entry.link.length
+            ? entry.link.find((l) => l.rel === "alternate")
+            : null;
+        const href = link ? link.href : "#";
+
+        const rawDate = entry.published && entry.published.$t ? entry.published.$t : "";
+        let dateStr = "";
+        if (rawDate) {
+          const d = new Date(rawDate);
+          dateStr = d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        }
+
+        out += `
+          <div class="archive-item">
+            <div style="font-weight:500;">${title}</div>
+            <div style="font-size:12px;color:#6b7280;">${dateStr}</div>
+            <a href="${href}" target="_blank" rel="noopener noreferrer" style="font-size:12px;">Open</a>
+          </div>
+        `;
+      });
+
+      area.innerHTML = out;
     }
 
-    const dateHTML = dateText
-      ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
-      : "";
+    function load_mObservation_archive() {
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mObservation" +
+        "?alt=json-in-script&max-results=999&callback=render_mObservation_archive";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
 
-    output += `
-      <article style="margin-bottom:24px;">
-        <div>${temp.innerHTML}</div>
-        ${dateHTML}
-      </article>
-    `;
-  });
+    function render_mObservation_archive(data) {
+      const area = document.getElementById("mObservationArchiveContent");
+      if (!area) return;
 
-  area.innerHTML = output;
-}
-
-/* mStratagems ARCHIVE (all posts) */
-function load_mStratagems_archive() {
-  const url =
-    "https://msafrain.blogspot.com/feeds/posts/default/-/mStratagems" +
-    "?alt=json-in-script&max-results=999&callback=render_mStratagems_archive";
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
-}
-
-function render_mStratagems_archive(data) {
-  const area = document.getElementById("mStratagemsArchiveContent");
-  if (!area) return;
-
-  const entries = (data.feed && data.feed.entry) || [];
-  if (!entries.length) {
-    area.textContent = "No mStratagems yet.";
-    return;
-  }
-
-  let output = "";
-  entries.forEach(function (entry) {
-    let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-    const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
-
-    // remove leading empties & headings
-    stripLeadingEmptyBlocks(temp);
-    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
-
-    let dateText = "";
-    if (entry.published && entry.published.$t) {
-      const published = new Date(entry.published.$t);
-      if (!isNaN(published.getTime())) {
-        dateText = published.toLocaleDateString("en-SG", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        });
+      const entries = data.feed && data.feed.entry;
+      if (!entries || !entries.length) {
+        area.textContent = "No mObservation archives yet.";
+        return;
       }
+
+      let out = "";
+      entries.forEach((entry) => {
+        const title = entry.title && entry.title.$t ? entry.title.$t : "";
+        const link =
+          entry.link && entry.link.length
+            ? entry.link.find((l) => l.rel === "alternate")
+            : null;
+        const href = link ? link.href : "#";
+
+        const rawDate = entry.published && entry.published.$t ? entry.published.$t : "";
+        let dateStr = "";
+        if (rawDate) {
+          const d = new Date(rawDate);
+          dateStr = d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        }
+
+        out += `
+          <div class="archive-item">
+            <div style="font-weight:500;">${title}</div>
+            <div style="font-size:12px;color:#6b7280;">${dateStr}</div>
+            <a href="${href}" target="_blank" rel="noopener noreferrer" style="font-size:12px;">Open</a>
+          </div>
+        `;
+      });
+
+      area.innerHTML = out;
     }
 
-    const dateHTML = dateText
-      ? `<div style="margin-top:8px; font-size:12px; color:#666;">${dateText}</div>`
-      : "";
+    function load_mStratagems_archive() {
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mStratagems" +
+        "?alt=json-in-script&max-results=999&callback=render_mStratagems_archive";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
 
-    output += `
-      <article style="margin-bottom:24px;">
-        <div>${temp.innerHTML}</div>
-        ${dateHTML}
-      </article>
-    `;
-  });
+    function render_mStratagems_archive(data) {
+      const area = document.getElementById("mStratagemsArchiveContent");
+      if (!area) return;
 
-  area.innerHTML = output;
-}
-
-/* mLetters (latest 6 from label mLetters) */
-function load_mLetters() {
-  const url =
-    "https://msafrain.blogspot.com/feeds/posts/default/-/mLetters" +
-    "?alt=json-in-script&max-results=6&callback=render_mLetters";
-
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
-}
-
-function render_mLetters(data) {
-  const listEl = document.getElementById("mLettersList");
-  const badgeEl = document.getElementById("envelope-badge");
-  if (!listEl) return;
-
-  const entries = (data.feed && data.feed.entry) || [];
-  listEl.innerHTML = ""; // clear any placeholder items
-
-  if (!entries.length) {
-    listEl.innerHTML = "<li>No letters yet.</li>";
-    if (badgeEl) badgeEl.textContent = "0";
-    return;
-  }
-
-  entries.forEach(function (entry) {
-    // Take FULL Blogger HTML content (so <br>, line breaks, everything stays)
-    const contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-    const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
-
-    // remove leading empties & headings
-    stripLeadingEmptyBlocks(temp);
-    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
-
-    const snippetHtml = temp.innerHTML;
-
-    // date
-    let dateText = "";
-    if (entry.published && entry.published.$t) {
-      const published = new Date(entry.published.$t);
-      if (!isNaN(published.getTime())) {
-        dateText = published.toLocaleDateString("en-SG", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        });
+      const entries = data.feed && data.feed.entry;
+      if (!entries || !entries.length) {
+        area.textContent = "No mStratagems archives yet.";
+        return;
       }
+
+      let out = "";
+      entries.forEach((entry) => {
+        const title = entry.title && entry.title.$t ? entry.title.$t : "";
+        const link =
+          entry.link && entry.link.length
+            ? entry.link.find((l) => l.rel === "alternate")
+            : null;
+        const href = link ? link.href : "#";
+
+        const rawDate = entry.published && entry.published.$t ? entry.published.$t : "";
+        let dateStr = "";
+        if (rawDate) {
+          const d = new Date(rawDate);
+          dateStr = d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        }
+
+        out += `
+          <div class="archive-item">
+            <div style="font-weight:500;">${title}</div>
+            <div style="font-size:12px;color:#6b7280;">${dateStr}</div>
+            <a href="${href}" target="_blank" rel="noopener noreferrer" style="font-size:12px;">Open</a>
+          </div>
+        `;
+      });
+
+      area.innerHTML = out;
     }
 
-    const li = document.createElement("li");
-    li.style.marginBottom = "12px";
-    li.innerHTML = `
-      <div style="font-size:13px; margin-bottom:4px;">${snippetHtml}</div>
-      <div style="font-size:11px;opacity:0.7;">${dateText}</div>
-    `;
-    listEl.appendChild(li);
-  });
+    /* mLetters: recent 6 for mEnvelope window */
+    function load_mLetters() {
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mLetters" +
+        "?alt=json-in-script&max-results=6&callback=render_mLetters";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
+    }
 
-  // badge
-  if (badgeEl) {
-    const count = entries.length;
-    badgeEl.textContent = count > 9 ? "9+" : String(count);
-  }
-}
-/* mLetters ARCHIVE (all posts) */
-function load_mLetters_archive() {
-  const url =
-    "https://msafrain.blogspot.com/feeds/posts/default/-/mLetters" +
-    "?alt=json-in-script&max-results=999&callback=render_mLetters_archive";
+    function render_mLetters(data) {
+      const list = document.getElementById("mLettersList");
+      const badge = document.getElementById("envelope-badge");
+      if (!list || !badge) return;
 
-  const script = document.createElement("script");
-  script.src = url;
-  document.body.appendChild(script);
-}
-
-function render_mLetters_archive(data) {
-  const area = document.getElementById("mLettersArchiveContent");
-  if (!area) return;
-
-  const entries = (data.feed && data.feed.entry) || [];
-  if (!entries.length) {
-    area.innerHTML = "No mLetters yet.";
-    return;
-  }
-
-  let output = "<ul style='list-style:none;margin:0;padding:0;'>";
-
-  entries.forEach(function (entry) {
-
-    // FULL original Blogger HTML content (keeps <br>, formatting, etc.)
-    const contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-    const temp = document.createElement("div");
-    temp.innerHTML = contentHtml;
-
-    // remove leading empties & headings
-    stripLeadingEmptyBlocks(temp);
-    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
-
-    const snippetHtml = temp.innerHTML;
-
-    // Format date
-    let dateText = "";
-    if (entry.published && entry.published.$t) {
-      const published = new Date(entry.published.$t);
-      if (!isNaN(published.getTime())) {
-        dateText = published.toLocaleDateString("en-SG", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric"
-        });
+      const entries = data.feed && data.feed.entry;
+      if (!entries || !entries.length) {
+        list.innerHTML = "<li>No letters yet.</li>";
+        badge.textContent = "0";
+        return;
       }
+
+      badge.textContent = entries.length.toString();
+
+      let out = "";
+      entries.forEach((entry) => {
+        let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
+        const temp = document.createElement("div");
+        temp.innerHTML = contentHtml;
+        stripLeadingEmptyBlocks(temp);
+
+        const rawDate = entry.published && entry.published.$t ? entry.published.$t : "";
+        let dateStr = "";
+        if (rawDate) {
+          const d = new Date(rawDate);
+          dateStr = d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        }
+
+        out += `
+          <li style="margin-bottom:16px;">
+            <div>${temp.innerHTML}</div>
+            <p style="margin-top:8px;font-size:12px;color:#6b7280;">${dateStr}</p>
+          </li>
+        `;
+      });
+
+      list.innerHTML = out;
     }
 
-    output += `
-      <li style="margin-bottom:16px;">
-        <div style="font-size:13px; margin-bottom:4px;">${snippetHtml}</div>
-        <div style="font-size:11px;opacity:0.7;">${dateText}</div>
-      </li>
-    `;
-  });
-
-  output += "</ul>";
-  area.innerHTML = output;
-}
-
-  function fixTopGap(winEl) {
-  const area = winEl.querySelector(".poetry-area");
-  if (!area) return;
-
-  // remove stray <br> at very top if Blogger pushes one in
-  while (area.firstChild && area.firstChild.nodeName === "BR") {
-    area.removeChild(area.firstChild);
-  }
-
-  // first visible element inside poetry-area
-  const first = area.firstElementChild;
-  if (first) {
-    first.style.marginTop = "0";
-    first.style.paddingTop = "0";
-
-    // also flatten one more level in case Blogger wraps again
-    const inner = first.firstElementChild;
-    if (inner) {
-      inner.style.marginTop = "0";
-      inner.style.paddingTop = "0";
+    /* mLetters ARCHIVES: ALL letters */
+    function load_mLetters_archive() {
+      const url =
+        "https://msafrain.blogspot.com/feeds/posts/default/-/mLetters" +
+        "?alt=json-in-script&max-results=999&callback=render_mLetters_archive";
+      const script = document.createElement("script");
+      script.src = url;
+      document.body.appendChild(script);
     }
-  }
-}
 
-// run this after Blogger feed loads
-setTimeout(() => {
-  document.querySelectorAll(".window").forEach(fixTopGap);
-}, 800);
+    function render_mLetters_archive(data) {
+      const area = document.getElementById("mLettersArchiveContent");
+      if (!area) return;
+
+      const entries = data.feed && data.feed.entry;
+      if (!entries || !entries.length) {
+        area.textContent = "No letters archives yet.";
+        return;
+      }
+
+      let out = "";
+      entries.forEach((entry) => {
+        const title = entry.title && entry.title.$t ? entry.title.$t : "";
+        const link =
+          entry.link && entry.link.length
+            ? entry.link.find((l) => l.rel === "alternate")
+            : null;
+        const href = link ? link.href : "#";
+
+        const rawDate = entry.published && entry.published.$t ? entry.published.$t : "";
+        let dateStr = "";
+        if (rawDate) {
+          const d = new Date(rawDate);
+          dateStr = d.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        }
+
+        out += `
+          <div class="archive-item">
+            <div style="font-weight:500;">${title}</div>
+            <div style="font-size:12px;color:#6b7280;">${dateStr}</div>
+            <a href="${href}" target="_blank" rel="noopener noreferrer" style="font-size:12px;">Open</a>
+          </div>
+        `;
+      });
+
+      area.innerHTML = out;
+    }
   </script>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-D2X3W8CYNC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-D2X3W8CYNC');
-
-  // 🔽 Simplified Visual Meaning handler
-  document.addEventListener("click", function (e) {
-    const img = e.target.closest("img[data-meaning]");
-    if (!img) return;
-
-    const meaning = img.getAttribute("data-meaning") || "No explanation yet.";
-
-    // Put the meaning text into the Visual Meaning window
-    const contentEl = document.getElementById("visualMeaningContent");
-    if (contentEl) {
-      contentEl.textContent = meaning;
-    }
-
-    // Use the existing window system via hidden button
-    const btn = document.querySelector(
-      'button.openWindow[data-window-id="visual-meaning"]'
-    );
-    if (btn) {
-      btn.click();  // uses your normal openWindow logic (z-index, taskbar, scroll, etc.)
-    }
-  });
-
-  // 🔽 Archive list click handler (inside mArchives window)
-  document.addEventListener("click", function (e) {
-    const item = e.target.closest(".archive-item");
-    if (!item) return;
-
-    const targetKey = item.getAttribute("data-window-id");
-    if (!targetKey) return;
-
-    const btn = document.querySelector(
-      'button.openWindow[data-window-id="' + targetKey + '"]'
-    );
-    if (btn) {
-      btn.click();
-    }
-  });
-</script>
 </head>
 <body onload="loadAllFeeds()">
-
   <div id="mSafrain">
-
-    <!-- TOP LAUNCHBAR (uses data-window-id, not numbers) -->
- <div class="openWindowButtons">
-  <button class="openWindow" data-window-id="by-main">By mSafrain</button>
-  <button class="openWindow" data-window-id="mthoughts-recent">mThoughts</button>
-  <button class="openWindow" data-window-id="mvisual">mVisual</button>
-  <button class="openWindow" data-window-id="mobservation">mObservation</button>
-  <button class="openWindow" data-window-id="mstratagems">mStratagems</button>
-  <button class="openWindow" data-window-id="marchives">mArchives</button>
-
-    <!-- HIDDEN buttons for archives -->
-  <button class="openWindow" data-window-id="mthoughts-archive" style="display:none;"></button>
-  <button class="openWindow" data-window-id="mvisual-archive" style="display:none;"></button>
-  <button class="openWindow" data-window-id="mobservation-archive" style="display:none;"></button>
-  <button class="openWindow" data-window-id="mstratagems-archive" style="display:none;"></button>
-  <button class="openWindow" data-window-id="mletters-archive" style="display:none;"></button>
-
-  <!-- NEW: hidden launcher for mLetters / mEnvelope -->
-  <button class="openWindow" data-window-id="menvelope" style="display:none;"></button>
-
-  <!-- 🔽 NEW: hidden launcher for Visual Meaning -->
-  <button class="openWindow" data-window-id="visual-meaning" style="display:none;"></button>
-</div>
-
-    <!-- Window: 0 – By mSafrain -->
-    <div class="window"
-         data-window-id="by-main"
-         data-title="By mSafrain"
-         style="top:80px;left:40px;">
-      <p>Here lie the windows of my thoughts...</p>
-      <p>
-        You may read my books on
-        <a href="https://www.wattpad.com/user/msafrain" target="_blank">Wattpad</a>.
-      </p>
+    <div class="openWindowButtons">
+      <button data-open-window="mthoughts-single">mThoughts</button>
+      <button data-open-window="mthoughts-recent">mThoughts – Recent</button>
+      <button data-open-window="mvisual">mVisual</button>
+      <button data-open-window="visual-meaning">Visual Meaning</button>
+      <button data-open-window="mobservation">mObservation</button>
+      <button data-open-window="mstratagems">mStratagems</button>
+      <button data-open-window="mthoughts-archive">mThoughts Archives</button>
+      <button data-open-window="mvisual-archive">mVisual Archives</button>
+      <button data-open-window="mobservation-archive">mObservation Archives</button>
+      <button data-open-window="mstratagems-archive">mStratagems Archives</button>
+      <button data-open-window="menvelope">mEnvelope</button>
+      <button data-open-window="mletters-archive">mLetters Archives</button>
     </div>
 
-    <!-- Window: 1 – mThoughts SINGLE -->
-    <div class="window"
-         data-window-id="mthoughts-single"
-         data-title="mThoughts"
-         style="top:80px;left:520px;height:300px;">
-      <div class="poetry-area" id="mThoughtsSingle">
-        Loading mThoughts...
+    <div class="desktop-root">
+      <div class="desktop-icons">
+        <!-- mThoughts Desktop Icon -->
+        <div class="desktop-icon" data-window-id="mthoughts-single">
+          <div class="icon-doc"></div>
+          <span class="icon-label">mThoughts</span>
+        </div>
+
+        <!-- mVisual Desktop Icon -->
+        <div class="desktop-icon" data-window-id="mvisual">
+          <div class="icon-doc"></div>
+          <span class="icon-label">mVisual</span>
+        </div>
+
+        <!-- mObservation Desktop Icon -->
+        <div class="desktop-icon" data-window-id="mobservation">
+          <div class="icon-doc"></div>
+          <span class="icon-label">mObservation</span>
+        </div>
+
+        <!-- mStratagems Desktop Icon -->
+        <div class="desktop-icon" data-window-id="mstratagems">
+          <div class="icon-doc"></div>
+          <span class="icon-label">mStratagems</span>
+        </div>
+
+        <!-- mThoughts Archive Desktop Icon -->
+        <div class="desktop-icon" data-window-id="mthoughts-archive">
+          <div class="icon-doc"></div>
+          <span class="icon-label">mThoughts Archives</span>
+        </div>
+
+        <!-- mVisual Archive Desktop Icon -->
+        <div class="desktop-icon" data-window-id="mvisual-archive">
+          <div class="icon-doc"></div>
+          <span class="icon-label">mVisual Archives</span>
+        </div>
+
+        <!-- mObservation Archive Desktop Icon -->
+        <div class="desktop-icon" data-window-id="mobservation-archive">
+          <div class="icon-doc"></div>
+          <span class="icon-label">mObservation Archives</span>
+        </div>
+
+        <!-- mStratagems Archive Desktop Icon -->
+        <div class="desktop-icon" data-window-id="mstratagems-archive">
+          <div class="icon-doc"></div>
+          <span class="icon-label">mStratagems Archives</span>
+        </div>
+
+        <!-- mEnvelope Desktop Icon -->
+        <div class="desktop-icon m-envelope" data-window-id="menvelope">
+          <div class="icon-envelope"></div>
+          <span class="icon-label">mEnvelope</span>
+          <span class="icon-badge" id="envelope-badge">0</span>
+        </div>
+
+        <!-- mLetters Archive Desktop Icon -->
+        <div class="desktop-icon" data-window-id="mletters-archive">
+          <div class="icon-doc"></div>
+          <span class="icon-label">mLetters Archives</span>
+        </div>
       </div>
-    </div>
 
-    <!-- Window: 2 – mThoughts RECENT -->
-    <div class="window closed"
-         data-window-id="mthoughts-recent"
-         data-title="mThoughts – Recent"
-         style="top:260px;left:220px;height:600px;">
-      <div class="poetry-area" id="mThoughtsRecent">
-        Loading recent mThoughts...
+      <!-- Window: 1 – mThoughts SINGLE -->
+      <div class="window"
+           data-window-id="mthoughts-single"
+           data-title="mThoughts"
+           style="top:80px;left:520px;height:300px;">
+        <div class="poetry-area" id="mThoughtsSingle">
+          Loading mThoughts...
+        </div>
       </div>
-    </div>
 
-    <!-- Window: 3 – mVisual -->
-    <div class="window closed"
-         data-window-id="mvisual"
-         data-title="mVisual"
-         style="top:120px;left:60px;height:600px;">
-      <div class="poetry-area" id="mVisualContent">
-        Loading mVisual...
+      <!-- Window: 2 – mThoughts RECENT -->
+      <div class="window closed"
+           data-window-id="mthoughts-recent"
+           data-title="mThoughts – Recent"
+           style="top:260px;left:220px;height:600px;">
+        <div class="poetry-area" id="mThoughtsRecent">
+          Loading recent mThoughts...
+        </div>
       </div>
-    </div>
 
-    <!-- Window: Visual Meaning -->
-    <div class="window closed"
-         data-window-id="visual-meaning"
-         data-title="Visual Meaning"
-         style="top:220px;left:360px;width:420px;height:260px;">
-      <div class="poetry-area" id="visualMeaningContent">
-        Click a visual to see its meaning.
+      <!-- Window: 3 – mVisual -->
+      <div class="window closed"
+           data-window-id="mvisual"
+           data-title="mVisual"
+           style="top:120px;left:60px;height:600px;">
+        <div class="poetry-area" id="mVisualContent">
+          Loading mVisual...
+        </div>
       </div>
-    </div>
 
-
-    <!-- Window: 4 – mObservation -->
-    <div class="window closed"
-         data-window-id="mobservation"
-         data-title="mObservation"
-         style="top:150px;left:680px;height:600px;">
-      <div class="poetry-area" id="mObservationContent">
-        Loading mObservation...
+      <!-- Window: Visual Meaning -->
+      <div class="window closed"
+           data-window-id="visual-meaning"
+           data-title="Visual Meaning"
+           style="top:220px;left:360px;width:420px;height:260px;">
+        <div class="poetry-area" id="visualMeaningContent">
+          Click a visual to see its meaning.
+        </div>
       </div>
+
+      <!-- Window: 4 – mObservation -->
+      <div class="window closed"
+           data-window-id="mobservation"
+           data-title="mObservation"
+           style="top:150px;left:680px;height:600px;">
+        <div class="poetry-area" id="mObservationContent">
+          Loading mObservation...
+        </div>
+      </div>
+
+      <!-- Window: 5 – mStratagems -->
+      <div class="window closed"
+           data-window-id="mstratagems"
+           data-title="mStratagems"
+           style="top:220px;left:260px;height:600px;">
+        <div class="poetry-area" id="mStratagemsContent">
+          Loading mStratagems...
+        </div>
+      </div>
+
+      <!-- Window: mThoughts Archives -->
+      <div class="window closed"
+           data-window-id="mthoughts-archive"
+           data-title="mThoughts Archives"
+           style="top:220px;left:120px;height:600px;">
+        <div class="poetry-area" id="mThoughtsArchive">
+          Loading mThoughts Archives...
+        </div>
+      </div>
+
+      <!-- Window: mVisual Archives -->
+      <div class="window closed"
+           data-window-id="mvisual-archive"
+           data-title="mVisual Archives"
+           style="top:220px;left:140px;height:600px;">
+        <div class="poetry-area" id="mVisualArchive">
+          Loading mVisual Archives...
+        </div>
+      </div>
+
+      <!-- Window: mObservation Archives -->
+      <div class="window closed"
+           data-window-id="mobservation-archive"
+           data-title="mObservation Archives"
+           style="top:220px;left:160px;height:600px;">
+        <div class="poetry-area" id="mObservationArchiveContent">
+          Loading mObservation Archives...
+        </div>
+      </div>
+
+      <!-- Window: mStratagems Archives -->
+      <div class="window closed"
+           data-window-id="mstratagems-archive"
+           data-title="mStratagems Archives"
+           style="top:220px;left:180px;height:600px;">
+        <div class="poetry-area" id="mStratagemsArchiveContent">
+          Loading mStratagems Archives...
+        </div>
+      </div>
+
+      <!-- Window: mEnvelope / mLetters -->
+      <div class="window closed"
+           data-window-id="menvelope"
+           data-title="mLetters"
+           style="top:200px;left:520px;width:420px;height:320px;">
+        <div class="poetry-area">
+          <ul id="mLettersList">
+            <!-- will be auto-filled by render_mLetters -->
+          </ul>
+        </div>
+      </div>
+
+      <!-- Window: mLetters Archives -->
+      <div class="window closed"
+           data-window-id="mletters-archive"
+           data-title="mLetters Archives"
+           style="top:220px;left:200px;height:600px;">
+        <div class="poetry-area" id="mLettersArchiveContent">
+          Loading mLetters Archives...
+        </div>
+      </div>
+
+      <!-- TASKBAR -->
+      <div id="taskbar"></div>
     </div>
-
-    <!-- Window: 5 – mStratagems -->
-<div class="window closed"
-     data-window-id="mstratagems"
-     data-title="mStratagems"
-     style="top:220px;left:360px;height:600px;">
-  <div class="poetry-area" id="mStratagemsContent">
-    Loading mStratagems...
-  </div>
-</div>
-
-    <!-- Window: mThoughts Archives -->
-<div class="window closed"
-     data-window-id="mthoughts-archive"
-     data-title="mThoughts Archives"
-     style="top:200px;left:80px;height:600px;">
-  <div class="poetry-area" id="mThoughtsArchiveContent">
-    Loading mThoughts Archives...
-  </div>
-</div>
-
-<!-- Window: mVisual Archives -->
-<div class="window closed"
-     data-window-id="mvisual-archive"
-     data-title="mVisual Archives"
-     style="top:200px;left:520px;height:600px;">
-  <div class="poetry-area" id="mVisualArchiveContent">
-    Loading mVisual Archives...
-  </div>
-</div>
-
-<!-- Window: mObservation Archives -->
-<div class="window closed"
-     data-window-id="mobservation-archive"
-     data-title="mObservation Archives"
-     style="top:220px;left:160px;height:600px;">
-  <div class="poetry-area" id="mObservationArchiveContent">
-    Loading mObservation Archives...
-  </div>
-</div>
-
-<!-- Window: mStratagems Archives -->
-<div class="window closed"
-     data-window-id="mstratagems-archive"
-     data-title="mStratagems Archives"
-     style="top:220px;left:600px;height:600px;">
-  <div class="poetry-area" id="mStratagemsArchiveContent">
-    Loading mStratagems Archives...
-  </div>
-</div>
-
-    <!-- Window: mLetters Archives -->
-<div class="window closed"
-     data-window-id="mletters-archive"
-     data-title="mLetters Archives"
-     style="top:220px;left:320px;height:600px;">
-  <div class="poetry-area" id="mLettersArchiveContent">
-    Loading mLetters Archives...
-  </div>
-</div>
-
-<!-- Window: mArchives -->
-<div class="window closed"
-     data-window-id="marchives"
-     data-title="mArchives"
-     style="top:180px;left:280px;width:380px;height:320px;">
-   <div class="poetry-area">
-    <div class="archive-item" data-window-id="mthoughts-archive">mThoughts Archives</div>
-    <div class="archive-item" data-window-id="mvisual-archive">mVisual Archives</div>
-    <div class="archive-item" data-window-id="mobservation-archive">mObservation Archives</div>
-    <div class="archive-item" data-window-id="mstratagems-archive">mStratagems Archives</div>
-    <div class="archive-item" data-window-id="mletters-archive">mLetters Archives</div>
-  </div>
-</div>
-
- <!-- mEnvelope Desktop Icon -->
-<div class="desktop-icon m-envelope" data-window-id="menvelope">
-  <div class="icon-envelope"></div>
-  <span class="icon-label">mEnvelope</span>
-  <span class="icon-badge" id="envelope-badge">0</span>
-</div>
-
-    <!-- Window: mEnvelope / mLetters -->
-<div class="window closed"
-     data-window-id="menvelope"
-     data-title="mLetters"
-     style="top:200px;left:520px;width:420px;height:320px;">
-  <div class="poetry-area">
-
-    <!-- 🔽 ADD THIS BLOCK BACK -->
-    <ul id="mLettersList"
-        style="list-style:none;margin:0;padding:0;max-height:220px;overflow-y:auto;">
-      <!-- will be auto-filled by render_mLetters -->
-    </ul>
-    <!-- 🔼 ADD THIS BLOCK BACK -->
-
-  </div>
-</div>
-
-    <!-- TASKBAR -->
-    <div id="taskbar"></div>
   </div>
 
   <!-- Desktop window logic -->
