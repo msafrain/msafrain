@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>mSafrain</title>
+  <title>mSafrain – Desktop UI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- jQuery & jQuery UI -->
+  <!-- jQuery & jQuery UI (for dragging/resizing windows) -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css" />
 
-  <!-- Desktop CSS -->
+  <!-- Our CSS -->
   <link rel="stylesheet" href="desktop.css" />
 
-  <!-- Blogger feed loader calls -->
+  <!-- Blogger feed loader -->
   <script>
     function loadAllFeeds() {
       load_mThoughts_single();
@@ -29,30 +29,15 @@
       load_mLetters_archive();
     }
   </script>
+
 </head>
 
 <body onload="loadAllFeeds()">
+
   <div id="mSafrain">
-
-    <!-- Quick launch buttons -->
-    <div class="openWindowButtons">
-      <button data-open-window="mthoughts-single">mThoughts</button>
-      <button data-open-window="mthoughts-recent">mThoughts – Recent</button>
-      <button data-open-window="mvisual">mVisual</button>
-      <button data-open-window="visual-meaning">Visual Meaning</button>
-      <button data-open-window="mobservation">mObservation</button>
-      <button data-open-window="mstratagems">mStratagems</button>
-      <button data-open-window="mthoughts-archive">mThoughts Archives</button>
-      <button data-open-window="mvisual-archive">mVisual Archives</button>
-      <button data-open-window="mobservation-archive">mObservation Archives</button>
-      <button data-open-window="mstratagems-archive">mStratagems Archives</button>
-      <button data-open-window="menvelope">mEnvelope</button>
-      <button data-open-window="mletters-archive">mLetters Archives</button>
-    </div>
-
     <div class="desktop-root">
 
-      <!-- Desktop icons -->
+      <!-- DESKTOP ICONS -->
       <div class="desktop-icons">
 
         <div class="desktop-icon" data-window-id="mthoughts-single">
@@ -107,103 +92,123 @@
         </div>
       </div>
 
-      <!-- Windows -->
+      <!-- WINDOWS -->
 
       <div class="window"
            data-window-id="mthoughts-single"
            data-title="mThoughts"
-           style="top:80px;left:520px;height:300px;">
-        <div class="poetry-area" id="mThoughtsSingle">Loading mThoughts...</div>
+           style="top:140px; left:520px;">
+        <div class="winContent">
+          <div id="mThoughtsSingle" class="poetry-area">Loading...</div>
+        </div>
       </div>
 
       <div class="window closed"
            data-window-id="mthoughts-recent"
            data-title="mThoughts – Recent"
-           style="top:260px;left:220px;height:600px;">
-        <div class="poetry-area" id="mThoughtsRecent">Loading recent mThoughts...</div>
+           style="top:180px; left:260px;">
+        <div class="winContent">
+          <div id="mThoughtsRecent" class="poetry-area">Loading recent...</div>
+        </div>
       </div>
 
       <div class="window closed"
            data-window-id="mvisual"
            data-title="mVisual"
-           style="top:120px;left:60px;height:600px;">
-        <div class="poetry-area" id="mVisualContent">Loading mVisual...</div>
+           style="top:200px; left:80px;">
+        <div class="winContent">
+          <div id="mVisualContent" class="poetry-area">Loading...</div>
+        </div>
       </div>
 
       <div class="window closed"
            data-window-id="visual-meaning"
            data-title="Visual Meaning"
-           style="top:220px;left:360px;width:420px;height:260px;">
-        <div class="poetry-area" id="visualMeaningContent">Click a visual to see its meaning.</div>
+           style="top:220px; left:360px;">
+        <div class="winContent">
+          <div id="visualMeaningContent" class="poetry-area">Click an image...</div>
+        </div>
       </div>
 
       <div class="window closed"
            data-window-id="mobservation"
            data-title="mObservation"
-           style="top:150px;left:680px;height:600px;">
-        <div class="poetry-area" id="mObservationContent">Loading mObservation...</div>
+           style="top:200px; left:640px;">
+        <div class="winContent">
+          <div id="mObservationContent" class="poetry-area">Loading...</div>
+        </div>
       </div>
 
       <div class="window closed"
            data-window-id="mstratagems"
            data-title="mStratagems"
-           style="top:220px;left:260px;height:600px;">
-        <div class="poetry-area" id="mStratagemsContent">Loading mStratagems...</div>
+           style="top:230px; left:300px;">
+        <div class="winContent">
+          <div id="mStratagemsContent" class="poetry-area">Loading...</div>
+        </div>
       </div>
 
       <div class="window closed"
            data-window-id="mthoughts-archive"
            data-title="mThoughts Archives"
-           style="top:220px;left:120px;height:600px;">
-        <div class="poetry-area" id="mThoughtsArchive">Loading mThoughts Archives...</div>
+           style="top:240px; left:120px;">
+        <div class="winContent">
+          <div id="mThoughtsArchive" class="poetry-area">Loading...</div>
+        </div>
       </div>
 
       <div class="window closed"
            data-window-id="mvisual-archive"
            data-title="mVisual Archives"
-           style="top:220px;left:140px;height:600px;">
-        <div class="poetry-area" id="mVisualArchive">Loading mVisual Archives...</div>
+           style="top:240px; left:140px;">
+        <div class="winContent">
+          <div id="mVisualArchive" class="poetry-area">Loading...</div>
+        </div>
       </div>
 
       <div class="window closed"
            data-window-id="mobservation-archive"
            data-title="mObservation Archives"
-           style="top:220px;left:160px;height:600px;">
-        <div class="poetry-area" id="mObservationArchiveContent">Loading mObservation Archives...</div>
+           style="top:240px; left:160px;">
+        <div class="winContent">
+          <div id="mObservationArchiveContent" class="poetry-area">Loading...</div>
+        </div>
       </div>
 
       <div class="window closed"
            data-window-id="mstratagems-archive"
            data-title="mStratagems Archives"
-           style="top:220px;left:180px;height:600px;">
-        <div class="poetry-area" id="mStratagemsArchiveContent">Loading mStratagems Archives...</div>
+           style="top:240px; left:180px;">
+        <div class="winContent">
+          <div id="mStratagemsArchiveContent" class="poetry-area">Loading...</div>
+        </div>
       </div>
 
-      <!-- FIXED mLetters window -->
       <div class="window closed"
            data-window-id="menvelope"
            data-title="mLetters"
-           style="top:200px;left:520px;width:420px;height:320px;">
-        <div class="poetry-area">
-          <ul id="mLettersList" style="list-style:none;margin:0;padding:12px 0 20px;">
-            <!-- auto-filled by Blogger feed -->
-          </ul>
+           style="top:260px; left:500px;">
+        <div class="winContent">
+          <ul id="mLettersList" class="poetry-area"></ul>
         </div>
       </div>
 
       <div class="window closed"
            data-window-id="mletters-archive"
            data-title="mLetters Archives"
-           style="top:220px;left:200px;height:600px;">
-        <div class="poetry-area" id="mLettersArchiveContent">Loading mLetters Archives...</div>
+           style="top:240px; left:200px;">
+        <div class="winContent">
+          <div id="mLettersArchiveContent" class="poetry-area">Loading...</div>
+        </div>
       </div>
 
-      <!-- Taskbar -->
+      <!-- TASKBAR -->
       <div id="taskbar"></div>
 
     </div>
   </div>
 
+  <!-- JS -->
   <script src="desktop.js"></script>
 </body>
 </html>
