@@ -155,6 +155,13 @@
   height: calc(100% - 42px);
   overflow: auto;
   background: #ffffff;
+  text-align: left;            /* NEW: force left alignment */
+  white-space: pre-line;       /* NEW: keep Blogger line breaks */
+}
+
+/* Ensure nested Blogger elements don’t override alignment */
+#mSafrain .wincontent * {
+  text-align: left !important;
 }
 
 /* FULL SCREEN */
@@ -203,6 +210,14 @@
   min-height: 240px;
 }
 
+/* mVisual images */
+#mSafrain #mVisual img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 12px;
+}
+
 /* mArchives list */
 #mSafrain .archive-item {
   padding: 8px 10px;
@@ -233,10 +248,24 @@
   white-space: pre-wrap;
 }
 
+/* Remove horizontal lines between letters */
+#mSafrain #mLettersList hr {
+  display: none !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
 /* no UL padding */
 #mSafrain .poetry-area ul {
   margin: 0 !important;
   padding: 0 !important;
+}
+
+/* Date line for posts (e.g., mThoughts, mObservation) */
+#mSafrain .post-date {
+  font-size: 12px;
+  margin-bottom: 6px;
+  opacity: 0.7;
 }
 
 /* MOBILE */
