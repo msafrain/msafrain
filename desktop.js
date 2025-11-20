@@ -138,10 +138,22 @@
         // your HTML already has .windowHeader and .wincontent
       });
 
-      // last window active by default
-      if (i > 0) {
-        $("#minimPanel" + (i - 1)).addClass("activeTab");
-        $("#window" + (i - 1)).addClass("activeWindow");
+            // Make mThoughts (single) the active window by default if present
+      var defaultKey = "mthoughts-single";
+      var defaultId = keyToId[defaultKey];
+      if (typeof defaultId === "undefined") {
+        defaultId = i > 0 ? i - 1 : null;
+      }
+      if (defaultId !== null) {
+        $("#minimPanel" + defaultId).addClass("activeTab");
+        $("#window" + defaultId).addClass("activeWindow");
+      }
+
+      // Ensure "By mSafrain" opens on load (not closed)
+      var byId = keyToId["bysafrain"];
+      if (typeof byId !== "undefined") {
+        $("#window" + byId).removeClass("closed");
+        $("#minimPanel" + byId).removeClass("closed");
       }
 
       setupInteractions();
@@ -152,12 +164,14 @@
         makeWindowActive($(this).attr("data-id"));
       });
 
-      $("#mSafrain").on("click", ".winclose", function () {
-        closeWindwow($(this).parent().parent().attr("data-id"));
+            $("#mSafrain").on("click", ".winclose", function () {
+        var id = $(this).closest(".window").attr("data-id");
+        closeWindwow(id);
       });
 
       $("#mSafrain").on("click", ".winminimize", function () {
-        minimizeWindow($(this).parent().parent().attr("data-id"));
+        var id = $(this).closest(".window").attr("data-id");
+        minimizeWindow(id);
       });
 
       $("#mSafrain").on("click", ".taskbarPanel", function () {
@@ -172,9 +186,27 @@
         }
       });
 
-      // Launchbar buttons
+            // Launchbar buttons
       $(document).on("click", ".openWindow", function () {
         var key = $(this).attr("data-window-id");
+
+        // Special handling: "mArchives" opens all archive windows
+        if (key === "marchives") {
+          [
+            "mthoughts-archive",
+            "mvisual-archive",
+            "mobservation-archive",
+            "mstratagems-archive",
+            "mletters-archive",
+          ].forEach(function (k) {
+            var idArchive = keyToId[k];
+            if (typeof idArchive !== "undefined" && idArchive !== null) {
+              openWindow(idArchive);
+            }
+          });
+          return; // done
+        }
+
         var id = keyToId[key];
         if (typeof id === "undefined" || id === null) return;
 
@@ -210,8 +242,8 @@
         }
       });
 
-      $("#mSafrain").on("click", ".winmaximize", function () {
-        var win = $(this).parent().parent();
+            $("#mSafrain").on("click", ".winmaximize", function () {
+        var win = $(this).closest(".window");
         var wid = win.attr("data-id");
         if (win.hasClass("fullSizeWindow")) {
           win.removeClass("fullSizeWindow");
@@ -226,7 +258,7 @@
           adjustFullScreenSize();
         }
       });
-
+      
       $(window).on("resize", function () {
         setupInteractions();
         adjustFullScreenSize();
@@ -603,7 +635,7 @@ function load_mLetters_archive() {
 }
 
 function handle_mLetters_archive(json) {
-  var el = document.getElementById("mLettersArchiveContent");
+   var el = document.getElementById("mLettersArchive");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
     el.textContent = "No letter archives.";
