@@ -184,15 +184,31 @@
   font-size: 14px;
   white-space: pre-wrap;
 }
+/* Make sure ALL inner elements keep manual spacing & line-breaks */
+#mSafrain .poetry-area * {
+  white-space: pre-wrap !important;
+}
 
 /* Normalise paragraphs inside poetry-area */
 #mSafrain .poetry-area p {
-  margin: 0 0 0.75em !important;  /* override Blogger inline margins */
+  margin: 0 0 0.75em !important;
 }
 
-#mSafrain .poetry-area > *:first-child {
+/* Kill any top margin/padding on any first element */
+#mSafrain .poetry-area *:first-child {
   margin-top: 0 !important;
   padding-top: 0 !important;
+}
+
+/* Remove Blogger’s hidden wrapper margin */
+#mSafrain .poetry-area > div:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Remove first blank <br> Blogger inserts */
+#mSafrain .poetry-area br:first-child {
+  display: none;
 }
 
 /* Shorter mThoughts single window */
@@ -399,9 +415,8 @@
   }
 }
 
-/* Remove extra first blank line that Blogger inserts */
-#mSafrain .poetry-area > br:first-child,
-#mSafrain .poetry-area > div > br:first-child {
+/* Remove extra first blank line that Blogger sometimes inserts */
+#mSafrain .poetry-area br:first-child {
   display: none;
 }
 /* ↑↑↑ PASTE UNTIL HERE ↑↑↑ */
