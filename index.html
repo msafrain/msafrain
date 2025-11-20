@@ -21,10 +21,11 @@
   load_mVisual();
   load_mObservation();
   load_mStratagems();
-  load_mThoughts_archive();      // NEW
-  load_mVisual_archive();        // NEW
-  load_mObservation_archive();   // NEW
-  load_mStratagems_archive();    // NEW
+  load_mThoughts_archive();
+  load_mVisual_archive();
+  load_mObservation_archive();
+  load_mStratagems_archive();
+  load_mLetters(); // NEW
 }
 
     /* mThoughts SINGLE (latest 1) */
@@ -492,6 +493,65 @@ function render_mStratagems_archive(data) {
 
   area.innerHTML = output;
 }
+
+/* mLetters (latest 6 from label mLetters) */
+function load_mLetters() {
+  const url =
+    "https://msafrain.blogspot.com/feeds/posts/default/-/mLetters" +
+    "?alt=json-in-script&max-results=6&callback=render_mLetters";
+
+  const script = document.createElement("script");
+  script.src = url;
+  document.body.appendChild(script);
+}
+
+function render_mLetters(data) {
+  const listEl = document.getElementById("mLettersList");
+  const badgeEl = document.getElementById("envelope-badge");
+  if (!listEl) return;
+
+  const entries = (data.feed && data.feed.entry) || [];
+  listEl.innerHTML = ""; // clear hardcoded items
+
+  if (!entries.length) {
+    listEl.innerHTML = "<li>No letters yet.</li>";
+    if (badgeEl) badgeEl.textContent = "0";
+    return;
+  }
+
+  entries.forEach(function (entry) {
+    const title = entry.title && entry.title.$t ? entry.title.$t : "Untitled letter";
+
+    let dateText = "";
+    if (entry.published && entry.published.$t) {
+      const published = new Date(entry.published.$t);
+      if (!isNaN(published.getTime())) {
+        dateText = published.toLocaleDateString("en-SG", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        });
+      }
+    }
+
+    // build a list item
+    const li = document.createElement("li");
+    li.style.marginBottom = "8px";
+
+    li.innerHTML = `
+      <div style="font-size:11px;opacity:0.7;">${dateText}</div>
+      <div style="font-size:13px;">${title}</div>
+    `;
+
+    listEl.appendChild(li);
+  });
+
+  // Update badge with number of letters (capped at 9+ if you want)
+  if (badgeEl) {
+    const count = entries.length;
+    badgeEl.textContent = count > 9 ? "9+" : String(count);
+  }
+}
   </script>
 
 <!-- Google tag (gtag.js) -->
@@ -710,18 +770,14 @@ function render_mStratagems_archive(data) {
     <p style="margin-bottom:8px; font-size:13px; opacity:0.8;">
       Latest letters (max 6 shown)
     </p>
-    <ul id="mLettersList" style="list-style:none;margin:0;padding:0;max-height:220px;overflow-y:auto;">
-      <!-- For now: hardcode up to 6, later we can auto-load from Blogger -->
-      <li style="margin-bottom:8px;">
-        <div style="font-size:11px;opacity:0.7;">14 Nov 2025</div>
-        <div style="font-size:13px;">Letter #7 – Pan Pac & Balloons</div>
-      </li>
-      <li style="margin-bottom:8px;">
-        <div style="font-size:11px;opacity:0.7;">…</div>
-        <div style="font-size:13px;">Letter #6 – …</div>
-      </li>
-      <!-- up to 6 items total -->
+
+    <!-- 🔽 ADD THIS BLOCK BACK -->
+    <ul id="mLettersList"
+        style="list-style:none;margin:0;padding:0;max-height:220px;overflow-y:auto;">
+      <!-- will be auto-filled by render_mLetters -->
     </ul>
+    <!-- 🔼 ADD THIS BLOCK BACK -->
+
     <p style="margin-top:6px;font-size:11px;opacity:0.75;">
       View all mLetters inside mArchives.
     </p>
