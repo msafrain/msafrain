@@ -304,7 +304,17 @@ function handle_mThoughts_single(json) {
     return;
   }
 
-  el.innerHTML = extractContent(json.feed.entry[0]);
+  var entry = json.feed.entry[0];
+  var content = extractContent(entry);
+  var dateStr = formatDate(entry);
+
+  var html = "";
+  if (dateStr) {
+    html += '<div class="post-date">' + dateStr + "</div>";
+  }
+  html += content;
+
+  el.innerHTML = html;
 }
 
 function load_mThoughts_recent() {
@@ -368,7 +378,7 @@ function load_mVisual() {
   bloggerJsonp("mVisual", 6, "handle_mVisual");
 }
 
-function handle_mVisual(json) {
+ffunction handle_mVisual(json) {
   var el = document.getElementById("mVisualContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
@@ -380,11 +390,26 @@ function handle_mVisual(json) {
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
+    // Parse HTML to extract first image
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var img = temp.querySelector("img");
+
     if (idx > 0) html += "<hr>";
     if (dateStr) {
       html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
-    html += content;
+
+    if (img && img.src) {
+      html +=
+        '<div class="mvisual-item"><img src="' +
+        img.src +
+        '" alt=""></div>';
+    } else {
+      // Fallback: no image, show original content
+      html += content;
+    }
   });
 
   el.innerHTML = html;
@@ -554,11 +579,16 @@ function handle_mLetters(json) {
     return;
   }
 
-  var html = "";
+    var html = "";
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
-    if (idx > 0) html += "<hr>";
+
+    // Instead of a line, just add spacing between letters
+    if (idx > 0) {
+      html += '<div style="height:10px;"></div>';
+    }
+
     if (dateStr) {
       html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
