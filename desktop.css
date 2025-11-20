@@ -420,3 +420,22 @@
 #mSafrain #mLettersList li div {
   white-space: pre-wrap;
 }
+
+/* FINAL FIX: remove top gap from ALL windows */
+#mSafrain .poetry-area > ul,
+#mSafrain .poetry-area > ul * {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* also kill UL default padding */
+#mSafrain .poetry-area ul {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* remove LI top spacing */
+#mSafrain .poetry-area ul li {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
