@@ -29,6 +29,26 @@
   load_mLetters_archive();  // ALL letters (for mLetters Archives)
 }
 
+    /* Helper: strip leading empty blocks (p/div/br) */
+    function stripLeadingEmptyBlocks(temp) {
+      while (
+        temp.firstChild &&
+        (
+          temp.firstChild.nodeName === "BR" ||
+          (
+            temp.firstChild.nodeName === "DIV" &&
+            !temp.firstChild.textContent.trim()
+          ) ||
+          (
+            temp.firstChild.nodeName === "P" &&
+            !temp.firstChild.textContent.trim()
+          )
+        )
+      ) {
+        temp.removeChild(temp.firstChild);
+      }
+    }
+
     /* mThoughts SINGLE (latest 1) */
     function load_mThoughts_single() {
       const url =
@@ -50,16 +70,12 @@
       }
 
       let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-     const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+      const temp = document.createElement("div");
+      temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs (created by Blogger)
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
-
-temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+      // remove leading empties & headings
+      stripLeadingEmptyBlocks(temp);
+      temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
       let dateText = "";
       if (entry.published && entry.published.$t) {
@@ -107,15 +123,11 @@ temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
       entries.forEach(function (entry) {
         let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
         const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+        temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs (created by Blogger)
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
-
-temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+        // remove leading empties & headings
+        stripLeadingEmptyBlocks(temp);
+        temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
         let dateText = "";
         if (entry.published && entry.published.$t) {
@@ -167,30 +179,27 @@ temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
       let output = "";
       entries.forEach(function (entry) {
         let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-      const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+        const temp = document.createElement("div");
+        temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs (just in case Blogger adds)
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
+        // remove leading empties
+        stripLeadingEmptyBlocks(temp);
 
-const imgs = temp.querySelectorAll("img");
+        const imgs = temp.querySelectorAll("img");
         if (!imgs.length) return;
 
-            imgs.forEach(function (img) {
-      const meaning = img.getAttribute("alt") || "";  // take explanation from alt text
+        imgs.forEach(function (img) {
+          const meaning = img.getAttribute("alt") || "";  // take explanation from alt text
 
-      output += `
-        <div style="margin-bottom:20px;">
-          <img 
-            src="${img.src}"
-            data-meaning="${meaning.replace(/"/g, '&quot;')}"
-            style="width:100%; border-radius:8px; display:block; cursor:pointer;">
-        </div>
-      `;
-    });
+          output += `
+            <div style="margin-bottom:20px;">
+              <img 
+                src="${img.src}"
+                data-meaning="${meaning.replace(/"/g, '&quot;')}"
+                style="width:100%; border-radius:8px; display:block; cursor:pointer;">
+            </div>
+          `;
+        });
       });
 
       area.innerHTML = output || "No visuals yet.";
@@ -219,16 +228,12 @@ const imgs = temp.querySelectorAll("img");
       let output = "";
       entries.forEach(function (entry) {
         let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-       const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+        const temp = document.createElement("div");
+        temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
-
-temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+        // remove leading empties & headings
+        stripLeadingEmptyBlocks(temp);
+        temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
         let dateText = "";
         if (entry.published && entry.published.$t) {
@@ -281,15 +286,11 @@ function render_mStratagems(data) {
   entries.forEach(function (entry) {
     let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
     const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+    temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
-
-temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+    // remove leading empties & headings
+    stripLeadingEmptyBlocks(temp);
+    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
     // date
     let dateText = "";
@@ -342,16 +343,12 @@ function render_mThoughts_archive(data) {
   let output = "";
   entries.forEach(function (entry) {
     let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-   const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+    const temp = document.createElement("div");
+    temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
-
-temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+    // remove leading empties & headings
+    stripLeadingEmptyBlocks(temp);
+    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
     let dateText = "";
     if (entry.published && entry.published.$t) {
@@ -403,16 +400,13 @@ function render_mVisual_archive(data) {
   let output = "";
   entries.forEach(function (entry) {
     let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+    const temp = document.createElement("div");
+    temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
+    // remove leading empties
+    stripLeadingEmptyBlocks(temp);
 
-const imgs = temp.querySelectorAll("img");
+    const imgs = temp.querySelectorAll("img");
     if (!imgs.length) return;
 
     imgs.forEach(function (img) {
@@ -454,16 +448,12 @@ function render_mObservation_archive(data) {
   let output = "";
   entries.forEach(function (entry) {
     let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
-   const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+    const temp = document.createElement("div");
+    temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
-
-temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+    // remove leading empties & headings
+    stripLeadingEmptyBlocks(temp);
+    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
     let dateText = "";
     if (entry.published && entry.published.$t) {
@@ -516,15 +506,11 @@ function render_mStratagems_archive(data) {
   entries.forEach(function (entry) {
     let contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
     const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+    temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
-
-temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
+    // remove leading empties & headings
+    stripLeadingEmptyBlocks(temp);
+    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
     let dateText = "";
     if (entry.published && entry.published.$t) {
@@ -582,18 +568,13 @@ function render_mLetters(data) {
     // Take FULL Blogger HTML content (so <br>, line breaks, everything stays)
     const contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
     const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+    temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
+    // remove leading empties & headings
+    stripLeadingEmptyBlocks(temp);
+    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
-// Optional: remove headings if Blogger injects titles as <h3>, etc.
-temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
-
-const snippetHtml = temp.innerHTML;
+    const snippetHtml = temp.innerHTML;
 
     // date
     let dateText = "";
@@ -651,18 +632,13 @@ function render_mLetters_archive(data) {
     // FULL original Blogger HTML content (keeps <br>, formatting, etc.)
     const contentHtml = entry.content && entry.content.$t ? entry.content.$t : "";
     const temp = document.createElement("div");
-temp.innerHTML = contentHtml;
+    temp.innerHTML = contentHtml;
 
-// remove leading empty paragraphs
-const firstP = temp.querySelector("p");
-if (firstP && !firstP.textContent.trim()) {
-  firstP.remove();
-}
+    // remove leading empties & headings
+    stripLeadingEmptyBlocks(temp);
+    temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
 
-// Remove any Blogger auto-heading insertion
-temp.querySelectorAll("h1,h2,h3,h4,h5,h6").forEach(h => h.remove());
-
-const snippetHtml = temp.innerHTML;
+    const snippetHtml = temp.innerHTML;
 
     // Format date
     let dateText = "";
