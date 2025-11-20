@@ -1,415 +1,194 @@
-/* Scope everything inside this root so it doesn't mess up the rest of the page */
-#mSafrain * {
-  box-sizing: border-box;
+/* GENERAL RESETS */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+/* ROOT */
+#msafrain {
+  position: relative;
+  min-height: 100vh;
+  background: #ffffff;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-#mSafrain {
-  background: #ffffff;
-  min-height: 100vh;
+/* DESKTOP ICONS */
+.desktop-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.desktop-icon {
+  width: 80px;
+  text-align: center;
+  cursor: pointer;
   color: #111;
+}
+
+.icon-doc {
+  width: 40px;
+  height: 50px;
+  border: 2px solid #111;
+  border-radius: 4px;
+  margin: 0 auto 4px auto;
+}
+
+.icon-envelope {
+  width: 50px;
+  height: 32px;
+  border: 2px solid #111;
+  border-radius: 4px;
+  margin: 0 auto 4px auto;
   position: relative;
 }
 
-/* QUICK LAUNCH BUTTONS */
-#mSafrain .openWindowButtons {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  display: flex;
-  gap: 8px;
-  z-index: 2100;
+.icon-envelope::before,
+.icon-envelope::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 2px solid #111;
 }
 
-#mSafrain .openWindowButtons .openWindow {
-  background: #f3f4f6;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  padding: 6px 12px;
-  border-radius: 6px;
+.icon-envelope::before {
+  top: 0;
+  transform: skewY(20deg);
+}
+
+.icon-envelope::after {
+  top: 0;
+  transform: skewY(-20deg);
+}
+
+.icon-label {
   font-size: 12px;
+}
+
+.icon-badge {
+  background: #ef4444;
+  color: #fff;
+  padding: 0 5px;
+  font-size: 10px;
+  border-radius: 999px;
+  margin-left: 4px;
+}
+
+/* WINDOWS */
+.window {
+  position: absolute;
+  width: 420px;
+  height: 260px;
+  background: #f9fafb;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.window.closed {
+  display: none;
+}
+
+.window.minimizedWindow {
+  pointer-events: none;
+}
+
+/* WINDOW HEADER */
+.window .windowHeader {
+  height: 32px;
+  background: #e5e7eb;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+}
+
+.windowTitle {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* WINDOW BUTTONS */
+.windowButtons {
+  display: flex;
+  gap: 6px;
+}
+
+.win-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-close {
+  background: #ef4444;
+}
+
+.btn-minimize {
+  background: #facc15;
+}
+
+.btn-maximize {
+  background: #22c55e;
+}
+
+/* WINDOW CONTENT */
+.winContent {
+  height: calc(100% - 32px);
+  overflow-y: auto;
+  background: #ffffff;
+  padding: 0;
+}
+
+/* 🔥 CLEAN TEXT SPACING FIX — the only modification */
+.poetry-area {
+  width: 100%;
+  min-height: 100%;
+  background: #ffffff;
+  color: #000000;
+  white-space: pre-wrap;
+  padding: 12px 14px !important;   /* ← clean top/bottom/side spacing */
+  font-family: "Iowan Old Style", Georgia, serif;
+  font-size: 15px;
+}
+
+/* ARCHIVE LISTS */
+.archive-item {
+  padding: 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
   cursor: pointer;
 }
 
-#mSafrain .openWindowButtons .openWindow:hover {
-  background: #e5e7eb;
+.archive-item:hover {
+  background: #f3f4f6;
+}
+
+/* mLetters UL RESET */
+#mLettersList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 /* TASKBAR */
-#mSafrain #taskbar {
+#taskbar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 40px;
-  background: rgba(0, 0, 0, 0.06);
-  display: flex;
-  align-items: center;
-  padding: 4px 8px;
-  gap: 6px;
-  border-top: 1px solid rgba(0, 0, 0, 0.15);
-  z-index: 2000;
-}
-
-#mSafrain .taskbarPanel {
-  padding: 4px 10px;
-  background: rgba(0, 0, 0, 0.06);
-  border-radius: 6px;
-  font-size: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-#mSafrain .taskbarPanel:hover {
-  background: rgba(0, 0, 0, 0.12);
-}
-
-#mSafrain .taskbarPanel.activeTab {
-  background: rgba(76, 175, 80, 0.18);
-  border: 1px solid rgba(76, 175, 80, 0.7);
-}
-
-#mSafrain .taskbarPanel.minimizedTab {
-  opacity: 0.5;
-}
-
-#mSafrain .taskbarPanel.closed {
-  display: none;
-}
-
-/* WINDOWS */
-#mSafrain .window {
-  position: absolute;
-  width: 420px;
-  height: 250px;
-  background: #f9fafb;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  overflow: hidden;
-  box-shadow: none !important;
-}
-
-#mSafrain .window.activeWindow {
-  border-color: rgba(76, 175, 80, 0.4);
-  box-shadow: none !important;
-}
-
-#mSafrain .window.closed {
-  display: none;
-}
-
-#mSafrain .window.minimizedWindow {
-  pointer-events: none;
-}
-
-/* Window header */
-#mSafrain .windowHeader {
-  height: 32px;
-  background: #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
-  color: #111;
-  font-size: 13px;
-  cursor: move;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-#mSafrain .windowHeader span.winclose,
-#mSafrain .windowHeader span.winmaximize,
-#mSafrain .windowHeader span.winminimize {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  margin-left: 6px;
-  border-radius: 4px;
-  font-size: 12px;
-  line-height: 18px;
-  text-align: center;
-  cursor: pointer;
-  background: rgba(0, 0, 0, 0.08);
-  color: #111;
-}
-
-#mSafrain .windowHeader span.winclose:hover {
-  background: #ef4444;
-  color: #fff;
-}
-
-#mSafrain .windowHeader span.winmaximize:hover {
-  background: #22c55e;
-  color: #fff;
-}
-
-#mSafrain .windowHeader span.winminimize:hover {
-  background: #eab308;
-  color: #111;
-}
-
-/* Window content */
-#mSafrain .wincontent {
-  /* remove top padding so content hugs header */
-  padding: 0 10px 10px;
-  width: calc(100% - 20px);
-  height: calc(100% - 42px);
-  overflow: auto;
-  background: #ffffff;
-}
-
-/* Make first child inside any window hug the top */
-#mSafrain .window .wincontent > *:first-child {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Fullscreen window */
-#mSafrain .fullSizeWindow {
-  position: fixed !important;
-  top: 10px !important;
-  left: 10px !important;
-  right: 10px !important;
-  bottom: 50px !important;
-  width: auto !important;
-  height: auto !important;
-  border-radius: 10px;
-  box-shadow: none !important;
-}
-
-/* Poetry / content area (inner white box) */
-#mSafrain .poetry-area { padding: 4px 8px 8px 8px; width:100%; background:#fff; color:#000; white-space:pre-wrap; }
-
-/* Kill ALL top margin/padding inside poetry-area (for every element) */
-#mSafrain .poetry-area,
-#mSafrain .poetry-area * {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* Normal paragraph spacing: only bottom margin */
-#mSafrain .poetry-area p {
-  margin: 0 0 0.75em !important;
-}
-
-/* Remove Bloggerâ€™s extra first <br> that creates fake blank line */
-#mSafrain .poetry-area br:first-child {
-  display: none !important;
-}
-
-/* Handle Blogger wrappers (div > div > p etc.) */
-#mSafrain .poetry-area > div,
-#mSafrain .poetry-area > div > div {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* mThoughts single window a bit shorter */
-#mSafrain .window[data-window-id="mthoughts-single"] {
-  height: 300px;
-}
-
-#mSafrain .window[data-window-id="mthoughts-single"] .poetry-area { padding: 4px 8px 8px 8px; width:100%; background:#fff; color:#000; white-space:pre-wrap; }
-
-/* mArchives list items */
-#mSafrain .archive-item {
-  padding: 8px 10px;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-  cursor: pointer;
-  font-size: 14px;
-}
-
-#mSafrain .archive-item:last-child {
-  border-bottom: none;
-}
-
-#mSafrain .archive-item:hover {
-  background: #f3f4f6;
-}
-
-/* mLetters list layout */
-#mSafrain #mLettersList {
-  margin: 0;
-  padding: 0;
-}
-
-#mSafrain #mLettersList li {
-  list-style: none;
-}
-
-/* preserve Blogger line-breaks inside letters */
-#mSafrain #mLettersList li div {
-  white-space: pre-wrap;
-}
-
-/* Ensure UL in poetry-area has no default padding causing gap */
-#mSafrain .poetry-area ul {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-#mSafrain .poetry-area ul li {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-  #mSafrain {
-    min-height: auto;
-  }
-
-  #mSafrain .openWindowButtons {
-    position: static;
-    padding: 10px;
-    flex-wrap: wrap;
-  }
-
-  #mSafrain .window {
-    position: relative !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-    left: 0 !important;
-    top: 0 !important;
-    margin: 10px 0;
-  }
-
-  #mSafrain .wincontent {
-    width: 100% !important;
-    height: auto !important;
-    max-height: none !important;
-  }
-
-  #mSafrain #taskbar {
-    position: static;
-    height: auto;
-    flex-wrap: wrap;
-    padding: 6px 8px;
-  }
-
-  #mSafrain .taskbarPanel {
-    margin-bottom: 4px;
-  }
-
-  /* --- EXTRA FIX FOR MOBILE WINDOWS AND SCROLLING --- */
-  #mSafrain .window {
-    position: relative !important;
-    inset: auto !important;
-    transform: none !important;
-    margin: 20px 0 !important;
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: auto !important;
-  }
-
-  /* make sure CLOSED windows really hide */
-  #mSafrain .window.closed {
-    display: none !important;
-  }
-
-  #mSafrain #taskbar {
-    position: relative !important;
-  }
-  
-  /* --- MAKE LAUNCHBAR STICKY ON MOBILE --- */
-  #mSafrain .openWindowButtons {
-    position: fixed !important;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: #ffffff;
-    padding: 10px;
-    z-index: 5000;
-    border-bottom: 1px solid rgba(0,0,0,0.15);
-  }
-
-  /* Push content down so windows aren't hidden under sticky bar */
-  #mSafrain {
-    padding-top: 70px !important;
-  }
-
-  /* MOBILE repositioning for mEnvelope icon */
-  #mSafrain .desktop-icon.m-envelope {
-    right: 12px;
-    top: 120px;
-    position: fixed !important;
-    z-index: 6000 !important;
-  }
-}
-
-/* â†“â†“â†“ ICON CODE â†“â†“â†“  */
-
-/* Base style for all desktop icons */
-#mSafrain .desktop-icon {
-  position: absolute;
-  width: 72px;
-  text-align: center;
-  font-size: 11px;
-  color: #111;
-  cursor: pointer;
-  user-select: none;
-  z-index: 1200;
-}
-
-/* Specific position for mEnvelope on DESKTOP */
-#mSafrain .desktop-icon.m-envelope {
-  right: 3vw;
-  top: 24vh;
-}
-
-/* Envelope graphic */
-#mSafrain .icon-envelope {
-  width: 48px;
   height: 36px;
-  margin: 0 auto 4px auto;
-  border: 2px solid rgba(0, 0, 0, 0.8);
-  border-radius: 4px;
-  position: relative;
-  background: rgba(0, 0, 0, 0.05);
-}
-
-/* Diagonal flap lines */
-#mSafrain .icon-envelope::before,
-#mSafrain .icon-envelope::after {
-  content: "";
-  position: absolute;
-  left: 6px;
-  right: 6px;
-  top: 10px;
-  border-top: 2px solid rgba(0, 0, 0, 0.7);
-}
-
-#mSafrain .icon-envelope::before {
-  transform: skewY(18deg);
-}
-
-#mSafrain .icon-envelope::after {
-  transform: skewY(-18deg);
-}
-
-/* Label under icon */
-#mSafrain .icon-label {
-  display: block;
-  margin-top: 2px;
-  font-size: 11px;
-  opacity: 0.9;
-}
-
-/* Red badge */
-#mSafrain .icon-badge {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  border-radius: 999px;
-  background: #ff4d4f;
-  color: #fff;
-  font-size: 10px;
-  line-height: 18px;
-  text-align: center;
-  font-weight: 600;
+  background: #e5e7eb;
+  border-top: 1px solid rgba(0,0,0,0.18);
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  z-index: 99999;
 }
