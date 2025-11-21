@@ -239,6 +239,28 @@
         openWindow(id);
       });
 
+            // mVisual: click image to show alt-text popup
+      $(document).on("click", "#mVisualContent img", function () {
+        var alt =
+          $(this).attr("alt") ||
+          $(this).attr("title") ||
+          $(this).data("alt") ||
+          "";
+
+        // Fallback: use post title if no alt at all
+        if (!alt) {
+          alt = "Visual from mVisual post.";
+        }
+
+        $("#mSafrain .mvisual-modal-text").text(alt);
+        $("#mSafrain .mvisual-modal").addClass("show");
+      });
+
+      // Close modal when clicking anywhere on overlay
+      $(document).on("click", ".mvisual-modal", function () {
+        $(this).removeClass("show");
+      });
+
       $(window).on("resize", function () {
         setupInteractions();
         adjustFullScreenSize();
@@ -380,16 +402,19 @@ function handle_mThoughts_archive(json) {
     return;
   }
 
-    var html = "";
-    json.feed.entry.forEach(function (entry) {
-    var title = getTitleOrSnippet(entry);
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
     var dateStr = formatDate(entry);
-    html += '<div class="archive-item">';
+
+    if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:2px;">' + dateStr + "</div>";
+      html +=
+        '<div style="font-size:11px;margin-bottom:4px;">' +
+        dateStr +
+        "</div>";
     }
-    html += "<div>" + title + "</div>";
-    html += "</div>";
+    html += content;
   });
 
   el.innerHTML = html;
@@ -414,26 +439,19 @@ function handle_mVisual(json) {
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
-
-    // Parse HTML to extract first image
-    var temp = document.createElement("div");
-    temp.innerHTML = content;
-    var img = temp.querySelector("img");
+    var title =
+      entry && entry.title && entry.title.$t ? entry.title.$t.trim() : "";
 
     if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+      html +=
+        '<div style="font-size:11px;margin-bottom:4px;">' +
+        dateStr +
+        "</div>";
     }
 
-    if (img && img.src) {
-      html +=
-        '<div class="mvisual-item"><img src="' +
-        img.src +
-        '" alt=""></div>';
-    } else {
-      // fallback if post had no image
-      html += content;
-    }
+    // Inject the full content (all images, captions, etc.)
+    html += content;
   });
 
   el.innerHTML = html;
@@ -452,15 +470,18 @@ function handle_mVisual_archive(json) {
   }
 
   var html = "";
-  json.feed.entry.forEach(function (entry) {
-    var title = getTitleOrSnippet(entry);    
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
     var dateStr = formatDate(entry);
-    html += '<div class="archive-item">';
+
+    if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:2px;">' + dateStr + "</div>";
+      html +=
+        '<div style="font-size:11px;margin-bottom:4px;">' +
+        dateStr +
+        "</div>";
     }
-    html += "<div>" + title + "</div>";
-    html += "</div>";
+    html += content;
   });
 
   el.innerHTML = html;
@@ -473,11 +494,11 @@ function load_mObservation() {
   bloggerJsonp("mObservation", 6, "handle_mObservation");
 }
 
-function handle_mObservation(json) {
-  var el = document.getElementById("mObservationContent");
+function handle_mObservation_archive(json) {
+  var el = document.getElementById("mObservationArchiveContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mObservation posts.";
+    el.textContent = "No archives.";
     return;
   }
 
@@ -485,9 +506,13 @@ function handle_mObservation(json) {
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+      html +=
+        '<div style="font-size:11px;margin-bottom:4px;">' +
+        dateStr +
+        "</div>";
     }
     html += content;
   });
@@ -564,15 +589,18 @@ function handle_mStratagems_archive(json) {
   }
 
   var html = "";
-  json.feed.entry.forEach(function (entry) {
-    var title = getTitleOrSnippet(entry);    
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
     var dateStr = formatDate(entry);
-    html += '<div class="archive-item">';
+
+    if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:2px;">' + dateStr + "</div>";
+      html +=
+        '<div style="font-size:11px;margin-bottom:4px;">' +
+        dateStr +
+        "</div>";
     }
-    html += "<div>" + title + "</div>";
-    html += "</div>";
+    html += content;
   });
 
   el.innerHTML = html;
@@ -634,15 +662,21 @@ function handle_mLetters_archive(json) {
   }
 
   var html = "";
-  json.feed.entry.forEach(function (entry) {
-    var title = getTitleOrSnippet(entry);
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
     var dateStr = formatDate(entry);
-    html += '<div class="archive-item">';
-    if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:2px;">' + dateStr + "</div>";
+
+    if (idx > 0) {
+      html += '<div style="height:10px;"></div>';
     }
-    html += "<div>" + title + "</div>";
-    html += "</div>";
+
+    if (dateStr) {
+      html +=
+        '<div style="font-size:11px;margin-bottom:4px;">' +
+        dateStr +
+        "</div>";
+    }
+    html += content;
   });
 
   el.innerHTML = html;
