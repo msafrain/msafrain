@@ -211,6 +211,28 @@
 }
 
 /* mArchives list */
+/* mArchives main list */
+#mSafrain #mArchivesList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#mSafrain #mArchivesList li {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#mSafrain #mArchivesList li:last-child {
+  border-bottom: none;
+}
+
+#mSafrain #mArchivesList li:hover {
+  background: #f3f4f6;
+}
+
 #mSafrain .archive-item {
   padding: 8px 10px;
   border-bottom: 1px solid rgba(0,0,0,0.08);
