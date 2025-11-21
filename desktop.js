@@ -436,9 +436,22 @@ function handle_mVisual(json) {
     var dateStr = formatDate(entry);
 
     var temp = document.createElement("div");
-    temp.innerHTML = content;
-    var imgs = temp.querySelectorAll("img");
-    var altText = temp.textContent.trim(); // explanation text in the post
+temp.innerHTML = content;
+var imgs = temp.querySelectorAll("img");
+
+// 1) try body text
+var altText = temp.textContent.trim();
+
+// 2) if empty, try post title
+if (!altText && entry.title && entry.title.$t) {
+  altText = entry.title.$t.trim();
+}
+
+// 3) if still empty, try first image alt attribute
+if (!altText && imgs.length > 0) {
+  var imgAlt = imgs[0].getAttribute("alt") || "";
+  altText = imgAlt.trim();
+}
 
     if (idx > 0) html += "<hr>";
     if (dateStr) {
@@ -485,10 +498,22 @@ function handle_mVisual_archive(json) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
 
-    var temp = document.createElement("div");
-    temp.innerHTML = content;
-    var imgs = temp.querySelectorAll("img");
-    var altText = temp.textContent.trim();
+var temp = document.createElement("div");
+temp.innerHTML = content;
+var imgs = temp.querySelectorAll("img");
+var altText = temp.textContent.trim();
+
+// 1) try body text
+// 2) if empty, try post title
+if (!altText && entry.title && entry.title.$t) {
+  altText = entry.title.$t.trim();
+}
+
+// 3) if still empty, try first image alt attribute
+if (!altText && imgs.length > 0) {
+  var imgAlt = imgs[0].getAttribute("alt") || "";
+  altText = imgAlt.trim();
+}
 
     if (idx > 0) html += "<hr>";
     if (dateStr) {
