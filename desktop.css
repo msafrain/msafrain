@@ -188,9 +188,18 @@
   margin: 0 0 0.75em !important;
 }
 
-/* Force ONLY By mSafrain window to be left-aligned */
+/* By mSafrain window: simple text, no big gap */
+#mSafrain .window[data-window-id="bysafrain"] .wincontent {
+  padding: 8px 10px;      /* a bit of breathing space only */
+}
+
 #mSafrain .window[data-window-id="bysafrain"] .poetry-area {
-  text-align: left !important;
+  border: none;
+  background: transparent;
+  padding: 0;
+  min-height: auto;
+  text-align: left;
+  white-space: normal;    /* collapse the blank line between the two sentences */
 }
 
 /* mThoughts single window (special height) */
