@@ -188,20 +188,6 @@
   margin: 0 0 0.75em !important;
 }
 
-/* By mSafrain window: simple text, no big gap */
-#mSafrain .window[data-window-id="bysafrain"] .wincontent {
-  padding: 8px 10px;      /* a bit of breathing space only */
-}
-
-#mSafrain .window[data-window-id="bysafrain"] .poetry-area {
-  border: none;
-  background: transparent;
-  padding: 0;
-  min-height: auto;
-  text-align: left;
-  white-space: normal;    /* collapse the blank line between the two sentences */
-}
-
 /* mThoughts single window (special height) */
 #mSafrain .window[data-window-id="mthoughts-single"] {
   height: 300px;
@@ -440,4 +426,16 @@
   line-height: 18px;
   text-align: center;
   font-weight: 600;
+}
+
+/* --- FIX: By mSafrain spacing --- */
+#mSafrain .window[data-window-id="bysafrain"] .wincontent {
+  padding: 6px 10px 8px;
+  text-align: left;
+  line-height: 1.55;
+}
+
+/* Remove extra top space + reduce gap between sentences */
+#mSafrain .window[data-window-id="bysafrain"] .wincontent p {
+  margin: 0 0 4px;
 }
