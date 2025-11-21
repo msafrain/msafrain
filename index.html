@@ -180,7 +180,7 @@
 
     <!-- =============== ARCHIVES WINDOWS =============== -->
         <!-- mArchives main window (list of archive categories) -->
-    <div class="window closed" data-window-id="marchives" style="top:120px; left:40px;">
+        <div class="window closed" data-window-id="marchives" style="top:120px; left:40px;">
       <div class="windowHeader">
         <span class="windowTitle">mArchives</span>
         <div>
@@ -190,14 +190,12 @@
         </div>
       </div>
       <div class="wincontent">
-        <div class="poetry-area">
-          <ul id="mArchivesList">
-            <li data-archive-target="mthoughts-archive">mThoughts Archives</li>
-            <li data-archive-target="mvisual-archive">mVisual Archives</li>
-            <li data-archive-target="mobservation-archive">mObservation Archives</li>
-            <li data-archive-target="mstratagems-archive">mStratagems Archives</li>
-            <li data-archive-target="mletters-archive">mLetters Archives</li>
-          </ul>
+        <div class="poetry-area" id="mArchivesList">
+          <div class="archive-item" data-archive-target="mthoughts-archive">mThoughts Archives</div>
+          <div class="archive-item" data-archive-target="mvisual-archive">mVisual Archives</div>
+          <div class="archive-item" data-archive-target="mobservation-archive">mObservation Archives</div>
+          <div class="archive-item" data-archive-target="mstratagems-archive">mStratagems Archives</div>
+          <div class="archive-item" data-archive-target="mletters-archive">mLetters Archives</div>
         </div>
       </div>
     </div>
@@ -271,13 +269,14 @@
       </div>
     </div>
 
-    <!-- mVisual alt-text modal -->
-<div class="mvisual-modal">
-  <div class="mvisual-modal-inner">
-    <div class="mvisual-modal-text"></div>
-  </div>
-</div>
-
+       <!-- mVisual alt-text modal -->
+    <div id="mVisualAltModal">
+      <div class="modal-inner">
+        <div class="modal-close">×</div>
+        <div id="mVisualAltModalText"></div>
+      </div>
+    </div>
+    
     <!-- =============== TASKBAR =============== -->
     <div id="taskbar"></div>
 
