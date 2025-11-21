@@ -439,3 +439,12 @@
 #mSafrain .window[data-window-id="bysafrain"] .wincontent p {
   margin: 0 0 4px;
 }
+
+/* By mSafrain: no inner box, just plain text */
+#mSafrain .window[data-window-id="bysafrain"] .poetry-area {
+  border: none;
+  background: transparent;
+  padding: 0;
+  min-height: auto;
+  box-shadow: none;
+}
