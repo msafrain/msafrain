@@ -190,7 +190,7 @@
 
 /* Force ONLY By mSafrain window to be left-aligned */
 #mSafrain .window[data-window-id="bysafrain"] .poetry-area {
-  text-align: left;
+  text-align: left !important;
 }
 
 /* mThoughts single window (special height) */
