@@ -224,13 +224,13 @@
         openWindow(id);
       });
 
-            // Clicking items inside the mArchives window opens that archive
-      $(document).on("click", "#mArchivesList li", function () {
-        var key = $(this).attr("data-archive-target");
-        var id = keyToId[key];
-        if (typeof id === "undefined") return;
-        openWindow(id);
-      });
+                       // Clicking items inside the mArchives window opens that archive
+     $(document).on("click", "#mArchivesList li", function () {
+  var key = $(this).attr("data-archive-target");
+  var id = keyToId[key];
+  if (typeof id === "undefined") return;
+  openWindow(id);
+});
 
       // Desktop icons (mEnvelope etc.)
       $(document).on("click", ".desktop-icon", function () {
@@ -240,30 +240,19 @@
       });
 
             // mVisual: click image to show alt-text popup
-      $(document).on("click", "#mVisualContent img", function () {
-        var alt =
-          $(this).attr("alt") ||
-          $(this).attr("title") ||
-          $(this).data("alt") ||
-          "";
 
-        // Fallback: use post title if no alt at all
-        if (!alt) {
-          alt = "Visual from mVisual post.";
+            // mVisual alt-text modal
+      $(document).on("click", ".mvisual-item img", function () {
+        var alt = $(this).closest(".mvisual-item").attr("data-alt") || "";
+        if (!alt) return;
+        $("#mVisualAltModalText").text(alt);
+        $("#mVisualAltModal").addClass("open");
+      });
+
+      $(document).on("click", "#mVisualAltModal, #mVisualAltModal .modal-close", function (e) {
+        if (e.target.id === "mVisualAltModal" || $(e.target).hasClass("modal-close")) {
+          $("#mVisualAltModal").removeClass("open");
         }
-
-        $("#mSafrain .mvisual-modal-text").text(alt);
-        $("#mSafrain .mvisual-modal").addClass("show");
-      });
-
-      // Close modal when clicking anywhere on overlay
-      $(document).on("click", ".mvisual-modal", function () {
-        $(this).removeClass("show");
-      });
-
-      $(window).on("resize", function () {
-        setupInteractions();
-        adjustFullScreenSize();
       });
     });
   }
@@ -319,6 +308,16 @@ function formatDate(entry) {
 function stripHtml(html) {
   if (!html) return "";
   return html.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim();
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 // Use title if available, otherwise first 80 chars of content
@@ -406,13 +405,9 @@ function handle_mThoughts_archive(json) {
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
-
     if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html +=
-        '<div style="font-size:11px;margin-bottom:4px;">' +
-        dateStr +
-        "</div>";
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
     html += content;
   });
@@ -439,19 +434,35 @@ function handle_mVisual(json) {
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
-    var title =
-      entry && entry.title && entry.title.$t ? entry.title.$t.trim() : "";
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+    var altText = temp.textContent.trim(); // explanation text in the post
 
     if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html +=
-        '<div style="font-size:11px;margin-bottom:4px;">' +
-        dateStr +
-        "</div>";
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
 
-    // Inject the full content (all images, captions, etc.)
-    html += content;
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+  var src =
+    img.getAttribute("src") ||
+    img.getAttribute("data-src") ||
+    img.getAttribute("data-original") ||
+    "";
+
+  html +=
+    '<div class="mvisual-item" data-alt="' +
+    escapeHtml(altText) +
+    '"><img src="' +
+    src +
+    '" alt=""></div>';
+});
+    } else {
+      html += content;
+    }
   });
 
   el.innerHTML = html;
@@ -474,14 +485,34 @@ function handle_mVisual_archive(json) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
 
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+    var altText = temp.textContent.trim();
+
     if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html +=
-        '<div style="font-size:11px;margin-bottom:4px;">' +
-        dateStr +
-        "</div>";
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
-    html += content;
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+  var src =
+    img.getAttribute("src") ||
+    img.getAttribute("data-src") ||
+    img.getAttribute("data-original") ||
+    "";
+
+  html +=
+    '<div class="mvisual-item" data-alt="' +
+    escapeHtml(altText) +
+    '"><img src="' +
+    src +
+    '" alt=""></div>';
+});
+    } else {
+      html += content;
+    }
   });
 
   el.innerHTML = html;
@@ -494,11 +525,11 @@ function load_mObservation() {
   bloggerJsonp("mObservation", 6, "handle_mObservation");
 }
 
-function handle_mObservation_archive(json) {
-  var el = document.getElementById("mObservationArchiveContent");
+function handle_mObservation(json) {
+  var el = document.getElementById("mObservationContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No archives.";
+    el.textContent = "No mObservation posts.";
     return;
   }
 
@@ -506,13 +537,9 @@ function handle_mObservation_archive(json) {
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
-
     if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html +=
-        '<div style="font-size:11px;margin-bottom:4px;">' +
-        dateStr +
-        "</div>";
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
     html += content;
   });
@@ -533,15 +560,14 @@ function handle_mObservation_archive(json) {
   }
 
   var html = "";
-  json.feed.entry.forEach(function (entry) {
-    var title = getTitleOrSnippet(entry);    
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
     var dateStr = formatDate(entry);
-    html += '<div class="archive-item">';
+    if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:2px;">' + dateStr + "</div>";
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
-    html += "<div>" + title + "</div>";
-    html += "</div>";
+    html += content;
   });
 
   el.innerHTML = html;
@@ -592,13 +618,9 @@ function handle_mStratagems_archive(json) {
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
-
     if (idx > 0) html += "<hr>";
     if (dateStr) {
-      html +=
-        '<div style="font-size:11px;margin-bottom:4px;">' +
-        dateStr +
-        "</div>";
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
     html += content;
   });
@@ -671,10 +693,7 @@ function handle_mLetters_archive(json) {
     }
 
     if (dateStr) {
-      html +=
-        '<div style="font-size:11px;margin-bottom:4px;">' +
-        dateStr +
-        "</div>";
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
     html += content;
   });
