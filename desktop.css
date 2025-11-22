@@ -448,3 +448,9 @@
   min-height: auto;
   box-shadow: none;
 }
+
+/* Make mVisual window larger so images are easier to see */
+#mSafrain .window[data-window-id="mvisual"] {
+  width: 650px !important;
+  height: 520px !important;
+}
