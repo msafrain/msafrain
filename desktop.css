@@ -454,3 +454,18 @@
   width: 650px !important;
   height: 520px !important;
 }
+
+@media (max-width: 768px) {
+
+  /* Enable scrolling in ALL windows on mobile */
+  #mSafrain .wincontent {
+    max-height: 70vh !important;   /* Adjust window height */
+    overflow-y: auto !important;   /* Enable vertical scroll */
+  }
+
+  /* Ensure window container itself doesn't limit scrolling */
+  #mSafrain .window {
+    height: auto !important;
+    max-height: none !important;
+  }
+}
