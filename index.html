@@ -25,21 +25,28 @@
   <script src="desktop.js"></script>
 
   <script>
-    function loadAllFeeds() {
-      load_mThoughts_single();
-      load_mThoughts_recent();
-      load_mVisual();
-      load_mObservation();
-      load_mStratagems();
-      load_mLetters();
+  function loadAllFeeds() {
+    // mMe single post (new)
+    load_mMe_single();
 
-      load_mThoughts_archive();
-      load_mVisual_archive();
-      load_mObservation_archive();
-      load_mStratagems_archive();
-      load_mLetters_archive();
-    }
-  </script>
+    // mThoughts list (6 posts)
+    load_mThoughts_recent();
+
+    // Other main windows
+    load_mVisual();
+    load_mObservation();
+    load_mStratagems();
+    load_mLetters();
+
+    // Archives
+    load_mMe_archive();
+    load_mThoughts_archive();
+    load_mVisual_archive();
+    load_mObservation_archive();
+    load_mStratagems_archive();
+    load_mLetters_archive();
+  }
+</script>
 </head>
 
 <body onload="loadAllFeeds()">
