@@ -48,14 +48,14 @@
 
   <!-- =============== TOP LAUNCHBAR =============== -->
   <div class="openWindowButtons">
-    <button class="openWindow" data-window-id="bysafrain">By mSafrain</button>
-    <button class="openWindow" data-window-id="mthoughts-single">mThoughts</button>
-    <button class="openWindow" data-window-id="mthoughts-recent">mThoughts – Recent</button>
-    <button class="openWindow" data-window-id="mvisual">mVisual</button>
-    <button class="openWindow" data-window-id="mobservation">mObservation</button>
-    <button class="openWindow" data-window-id="mstratagems">mStratagems</button>
-    <button class="openWindow" data-window-id="marchives">mArchives</button>
-  </div>
+  <button class="openWindow" data-window-id="bysafrain">By mSafrain</button>
+  <button class="openWindow" data-window-id="mme">mMe</button>
+  <button class="openWindow" data-window-id="mthoughts-recent">mThoughts</button>
+  <button class="openWindow" data-window-id="mvisual">mVisual</button>
+  <button class="openWindow" data-window-id="mobservation">mObservation</button>
+  <button class="openWindow" data-window-id="mstratagems">mStratagems</button>
+  <button class="openWindow" data-window-id="marchives">mArchives</button>
+</div>
 
 
   <!-- =============== DESKTOP ROOT WRAPPER =============== -->
@@ -92,8 +92,23 @@
 </div>
 </div>
 
-    <!-- mThoughts – Single -->
-    <div class="window" data-window-id="mthoughts-single" style="top:180px; left:460px;">
+        <!-- mMe – Single -->
+    <div class="window" data-window-id="mme" style="top:180px; left:460px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mMe</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mMeSingle" class="poetry-area">Loading mMe...</div>
+      </div>
+    </div>
+
+    <!-- mThoughts – List -->
+    <div class="window closed" data-window-id="mthoughts-recent" style="top:160px; left:780px;">
       <div class="windowHeader">
         <span class="windowTitle">mThoughts</span>
         <div>
@@ -103,26 +118,9 @@
         </div>
       </div>
       <div class="wincontent">
-        <div id="mThoughtsSingle" class="poetry-area">Loading...</div>
+        <div id="mThoughtsRecent" class="poetry-area">Loading mThoughts...</div>
       </div>
     </div>
-
-
-    <!-- mThoughts – Recent -->
-    <div class="window closed" data-window-id="mthoughts-recent" style="top:160px; left:780px;">
-      <div class="windowHeader">
-        <span class="windowTitle">mThoughts – Recent</span>
-        <div>
-          <span class="winminimize">–</span>
-          <span class="winmaximize">□</span>
-          <span class="winclose">x</span>
-        </div>
-      </div>
-      <div class="wincontent">
-        <div id="mThoughtsRecent" class="poetry-area">Loading recent...</div>
-      </div>
-    </div>
-
 
     <!-- mVisual -->
     <div class="window closed" data-window-id="mvisual" style="top:200px; left:220px;">
@@ -200,8 +198,9 @@
         </div>
       </div>
       <div class="wincontent">
-  <ul class="poetry-area" id="mArchivesList">
+    <ul class="poetry-area" id="mArchivesList">
     <li class="archive-item" data-archive-target="mthoughts-archive">mThoughts Archives</li>
+    <li class="archive-item" data-archive-target="mme-archive">mMe Archives</li>
     <li class="archive-item" data-archive-target="mvisual-archive">mVisual Archives</li>
     <li class="archive-item" data-archive-target="mobservation-archive">mObservation Archives</li>
     <li class="archive-item" data-archive-target="mstratagems-archive">mStratagems Archives</li>
@@ -220,6 +219,19 @@
       </div>
       <div class="wincontent">
         <div id="mThoughtsArchive" class="poetry-area">Loading mThoughts Archives...</div>
+      </div>
+    </div>
+      <div class="window closed" data-window-id="mme-archive" style="top:170px; left:190px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mMe Archives</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mMeArchive" class="poetry-area">Loading mMe Archives...</div>
       </div>
     </div>
 
