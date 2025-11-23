@@ -338,31 +338,6 @@ function getTitleOrSnippet(entry) {
 /******************************
  * 3. mThoughts – SINGLE/LIST *
  ******************************/
-function load_mThoughts_single() {
-  bloggerJsonp("mThoughts", 6, "handle_mThoughts_single");
-}
-
-function handle_mThoughts_single(json) {
-  var el = document.getElementById("mThoughtsSingle");
-  if (!el) return;
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No posts yet.";
-    return;
-  }
-
-  var entry = json.feed.entry[0];
-  var content = extractContent(entry);
-  var dateStr = formatDate(entry);
-
-  var html = "";
-  if (dateStr) {
-    html += '<div class="post-date">' + dateStr + "</div>";
-  }
-  html += content;
-
-  el.innerHTML = html;
-}
-
 function load_mThoughts_recent() {
   bloggerJsonp("mThoughts", 6, "handle_mThoughts_recent");
 }
@@ -430,15 +405,19 @@ function handle_mMe_single(json) {
     return;
   }
 
-  var entry = json.feed.entry[0];
-  var content = extractContent(entry);
-  var dateStr = formatDate(entry);
-
   var html = "";
-  if (dateStr) {
-    html += '<div class="post-date">' + dateStr + "</div>";
-  }
-  html += content;
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+
+    if (dateStr) {
+      html += '<div class="post-date">' + dateStr + "</div>";
+    }
+
+    html += content;
+  });
 
   el.innerHTML = html;
 }
