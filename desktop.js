@@ -415,6 +415,61 @@ function handle_mThoughts_archive(json) {
   el.innerHTML = html;
 }
 
+/******************************
+ *  NEW: mMe – SINGLE & ARCHIVE
+ ******************************/
+function load_mMe_single() {
+  bloggerJsonp("mMe", 1, "handle_mMe_single");
+}
+
+function handle_mMe_single(json) {
+  var el = document.getElementById("mMeSingle");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mMe post yet.";
+    return;
+  }
+
+  var entry = json.feed.entry[0];
+  var content = extractContent(entry);
+  var dateStr = formatDate(entry);
+
+  var html = "";
+  if (dateStr) {
+    html += '<div class="post-date">' + dateStr + "</div>";
+  }
+  html += content;
+
+  el.innerHTML = html;
+}
+
+function load_mMe_archive() {
+  bloggerJsonp("mMe", 50, "handle_mMe_archive");
+}
+
+function handle_mMe_archive(json) {
+  var el = document.getElementById("mMeArchive");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mMe archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
 /*************************
  * 4. mVisual             *
  *************************/
