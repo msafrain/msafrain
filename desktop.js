@@ -156,7 +156,7 @@
       });
 
       // Default active window: mThoughts single if exists, otherwise last
-      var defaultKey = "mthoughts-single";
+      var defaultKey = "bysafrain";
       var defaultId = keyToId[defaultKey];
       if (typeof defaultId === "undefined") {
         defaultId = i > 0 ? i - 1 : null;
@@ -339,7 +339,7 @@ function getTitleOrSnippet(entry) {
  * 3. mThoughts – SINGLE/LIST *
  ******************************/
 function load_mThoughts_single() {
-  bloggerJsonp("mThoughts", 1, "handle_mThoughts_single");
+  bloggerJsonp("mThoughts", 6, "handle_mThoughts_single");
 }
 
 function handle_mThoughts_single(json) {
@@ -419,7 +419,7 @@ function handle_mThoughts_archive(json) {
  *  NEW: mMe – SINGLE & ARCHIVE
  ******************************/
 function load_mMe_single() {
-  bloggerJsonp("mMe", 1, "handle_mMe_single");
+  bloggerJsonp("mMe", 6, "handle_mMe_single");
 }
 
 function handle_mMe_single(json) {
