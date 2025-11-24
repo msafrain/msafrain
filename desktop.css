@@ -35,6 +35,15 @@
 
 /* DROPDOWN MENUS UNDER mMind / mBody */
 #mSafrain .top-dropdown {
+
+  /* Position each dropdown roughly under its button on DESKTOP */
+#mSafrain #mind-menu {
+  left: 120px;   /* adjust if you want it more centred under "mMind" */
+}
+
+#mSafrain #body-menu {
+  left: 200px;   /* adjust for "mBody" */
+}
   position: fixed;          /* follow the top bar */
   top: 36px;                /* a bit under the launchbar row */
   background: #f9fafb;
@@ -533,11 +542,11 @@
   }
 
   /* tweak these left values if you want to align them nicer */
-  #mSafrain #mind {
+  #mSafrain #mind-menu {
     left: 12px;
   }
 
-  #mSafrain #body {
+  #mSafrain #body-menu {
     left: 100px;
   }
 }
