@@ -559,3 +559,12 @@
   height: 100%;
   border: 0;
 }
+
+/* Force all iframes inside mSafrain to fit on mobile */
+@media (max-width: 768px) {
+  #mSafrain iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block;
+  }
+}
