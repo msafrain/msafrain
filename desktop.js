@@ -280,8 +280,13 @@
         e.stopPropagation();
       });
 
-      $(document).on("click", function () {
-        $(".top-dropdown").removeClass("open");
+   $(".openWindow").on("click", function () {
+
+      // 🔥 CLOSE ANY OPEN DROPDOWN (mMind / mBody)
+      $(".top-dropdown").removeClass("open");
+
+      var winId = $(this).data("window-id");
+      openWindow(winId);
       });
     });
 
