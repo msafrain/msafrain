@@ -23,6 +23,54 @@
   z-index: 2100;
 }
 
+/* TOP MENU BUTTONS (mMind / mBody) */
+#mSafrain .openWindowButtons .topMenuButton {
+  background: #f3f4f6;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* DROPDOWN MENUS UNDER mMind / mBody */
+#mSafrain .top-dropdown {
+  position: fixed;          /* so they follow the top bar */
+  top: 36px;                /* a bit under the launchbar row */
+  background: #f9fafb;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.2);
+  padding: 4px;
+  display: none;            /* hidden by default */
+  z-index: 2101;            /* above windows, just above launchbar */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* When JS adds .open */
+#mSafrain .top-dropdown.open {
+  display: flex;
+}
+
+/* Position each dropdown roughly under its button */
+#mSafrain #mind-menu {
+  left: 120px;  /* tweak if needed to sit under "mMind" */
+}
+
+#mSafrain #body-menu {
+  left: 200px;  /* tweak if needed to sit under "mBody" */
+}
+
+/* Buttons inside dropdown */
+#mSafrain .top-dropdown .openWindow {
+  margin: 0 4px;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+#mSafrain .openWindowButtons .topMenuButton:hover {
+  background: #e5e7eb;
+}
+
 #mSafrain .openWindowButtons .openWindow {
   background: #f3f4f6;
   border: 1px solid rgba(0, 0, 0, 0.2);
