@@ -155,7 +155,7 @@
         i++;
       });
 
-      // Default active window: mThoughts single if exists, otherwise last
+      // Default active window: By mSafrain single if exists, otherwise last
       var defaultKey = "bysafrain";
       var defaultId = keyToId[defaultKey];
       if (typeof defaultId === "undefined") {
@@ -336,14 +336,76 @@ function getTitleOrSnippet(entry) {
 }
 
 /******************************
- * 3. mThoughts – SINGLE/LIST *
+ *  NEW: mMe – LIST & ARCHIVE *
  ******************************/
-function load_mThoughts_recent() {
-  bloggerJsonp("mThoughts", 6, "handle_mThoughts_recent");
+function load_mMe() {
+  bloggerJsonp("mMe", 6, "handle_mMe");
 }
 
-function handle_mThoughts_recent(json) {
-  var el = document.getElementById("mThoughtsRecent");
+function handle_mMe(json) {
+  var el = document.getElementById("mMeContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mMe posts yet.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mMe_archive() {
+  bloggerJsonp("mMe", 50, "handle_mMe_archive");
+}
+
+function handle_mMe_archive(json) {
+  var el = document.getElementById("mMeArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mMe archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+/******************************
+ * 3. mThoughts – LIST        *
+ ******************************/
+function load_mThoughts() {
+  bloggerJsonp("mThoughts", 6, "handle_mThoughts");
+}
+
+function handle_mThoughts(json) {
+  var el = document.getElementById("mThoughts");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
     el.textContent = "No recent mThoughts.";
@@ -371,8 +433,9 @@ function load_mThoughts_archive() {
 function handle_mThoughts_archive(json) {
   var el = document.getElementById("mThoughtsArchive");
   if (!el) return;
+
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No archives.";
+    el.textContent = "No mThoughts archives.";
     return;
   }
 
@@ -380,7 +443,53 @@ function handle_mThoughts_archive(json) {
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += "<hr>";
+
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+/**************
+ * 7. mLetters *
+ **************/
+function load_mLetters() {
+  bloggerJsonp("mLetters", 6, "handle_mLetters");
+}
+
+function handle_mLetters(json) {
+  var el = document.getElementById("mLettersContent");
+  var badge = document.getElementById("envelope-badge");
+
+  if (badge) {
+    var count =
+      json && json.feed && json.feed.entry ? json.feed.entry.length : 0;
+    if (count > 6) count = 6;
+    badge.textContent = count;
+  }
+
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No letters.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    // spacing only, no lines
+    if (idx > 0) {
+      html += '<div style="height:10px;"></div>';
+    }
+
     if (dateStr) {
       html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
@@ -390,18 +499,15 @@ function handle_mThoughts_archive(json) {
   el.innerHTML = html;
 }
 
-/******************************
- *  NEW: mMe – SINGLE & ARCHIVE
- ******************************/
-function load_mMe_single() {
-  bloggerJsonp("mMe", 6, "handle_mMe_single");
+function load_mLetters_archive() {
+  bloggerJsonp("mLetters", 50, "handle_mLetters_archive");
 }
 
-function handle_mMe_single(json) {
-  var el = document.getElementById("mMeSingle");
+function handle_mLetters_archive(json) {
+  var el = document.getElementById("mLettersArchive");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mMe post yet.";
+    el.textContent = "No letter archives.";
     return;
   }
 
@@ -410,27 +516,31 @@ function handle_mMe_single(json) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
 
-    if (idx > 0) html += "<hr>";
-
-    if (dateStr) {
-      html += '<div class="post-date">' + dateStr + "</div>";
+    if (idx > 0) {
+      html += '<div style="height:10px;"></div>';
     }
 
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
     html += content;
   });
 
   el.innerHTML = html;
 }
 
-function load_mMe_archive() {
-  bloggerJsonp("mMe", 50, "handle_mMe_archive");
+/*****************
+ * 8. mArt       *
+ *****************/
+function load_mArt() {
+  bloggerJsonp("mArt", 6, "handle_mArt");
 }
 
-function handle_mMe_archive(json) {
-  var el = document.getElementById("mMeArchive");
+function handle_mArt(json) {
+  var el = document.getElementById("mArtContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mMe archives.";
+    el.textContent = "No mArt posts.";
     return;
   }
 
@@ -439,11 +549,230 @@ function handle_mMe_archive(json) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
 
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    // 1) try body text
+    var altText = temp.textContent.trim();
+
+    // 2) if empty, try post title
+    if (!altText && entry.title && entry.title.$t) {
+      altText = entry.title.$t.trim();
+    }
+
+    // 3) if still empty, try first image alt attribute
+    if (!altText && imgs.length > 0) {
+      var imgAlt = imgs[0].getAttribute("alt") || "";
+      altText = imgAlt.trim();
+    }
+
     if (idx > 0) html += "<hr>";
     if (dateStr) {
       html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
-    html += content;
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src =
+          img.getAttribute("src") ||
+          img.getAttribute("data-src") ||
+          img.getAttribute("data-original") ||
+          "";
+
+        html +=
+          '<div class="mvisual-item" data-alt="' +
+          escapeHtml(altText) +
+          '"><img src="' +
+          src +
+          '" alt=""></div>';
+      });
+    } else {
+      // fallback if no images
+      html += content;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mArt_archive() {
+  bloggerJsonp("mArt", 50, "handle_mArt_archive");
+}
+
+function handle_mArt_archive(json) {
+  var el = document.getElementById("mArtArchive");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mArt archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    var altText = temp.textContent.trim();
+    if (!altText && entry.title && entry.title.$t) {
+      altText = entry.title.$t.trim();
+    }
+    if (!altText && imgs.length > 0) {
+      var imgAlt = imgs[0].getAttribute("alt") || "";
+      altText = imgAlt.trim();
+    }
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src =
+          img.getAttribute("src") ||
+          img.getAttribute("data-src") ||
+          img.getAttribute("data-original") ||
+          "";
+
+        html +=
+          '<div class="mvisual-item" data-alt="' +
+          escapeHtml(altText) +
+          '"><img src="' +
+          src +
+          '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+/*****************
+ * 9. mStory     *
+ *****************/
+function load_mStory() {
+  bloggerJsonp("mStory", 6, "handle_mStory");
+}
+
+function handle_mStory(json) {
+  var el = document.getElementById("mStoryContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mStory posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    // 1) body text
+    var altText = temp.textContent.trim();
+
+    // 2) if empty, use title
+    if (!altText && entry.title && entry.title.$t) {
+      altText = entry.title.$t.trim();
+    }
+
+    // 3) if still empty, first image alt
+    if (!altText && imgs.length > 0) {
+      var imgAlt = imgs[0].getAttribute("alt") || "";
+      altText = imgAlt.trim();
+    }
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src =
+          img.getAttribute("src") ||
+          img.getAttribute("data-src") ||
+          img.getAttribute("data-original") ||
+          "";
+
+        html +=
+          '<div class="mvisual-item" data-alt="' +
+          escapeHtml(altText) +
+          '"><img src="' +
+          src +
+          '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mStory_archive() {
+  bloggerJsonp("mStory", 50, "handle_mStory_archive");
+}
+
+function handle_mStory_archive(json) {
+  var el = document.getElementById("mStoryArchive");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mStory archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    var altText = temp.textContent.trim();
+    if (!altText && entry.title && entry.title.$t) {
+      altText = entry.title.$t.trim();
+    }
+    if (!altText && imgs.length > 0) {
+      var imgAlt = imgs[0].getAttribute("alt") || "";
+      altText = imgAlt.trim();
+    }
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src =
+          img.getAttribute("src") ||
+          img.getAttribute("data-src") ||
+          img.getAttribute("data-original") ||
+          "";
+
+        html +=
+          '<div class="mvisual-item" data-alt="' +
+          escapeHtml(altText) +
+          '"><img src="' +
+          src +
+          '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
   });
 
   el.innerHTML = html;
@@ -577,61 +906,6 @@ if (!altText && imgs.length > 0) {
   el.innerHTML = html;
 }
 
-/**********************
- * 5. mObservation    *
- **********************/
-function load_mObservation() {
-  bloggerJsonp("mObservation", 6, "handle_mObservation");
-}
-
-function handle_mObservation(json) {
-  var el = document.getElementById("mObservationContent");
-  if (!el) return;
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mObservation posts.";
-    return;
-  }
-
-  var html = "";
-  json.feed.entry.forEach(function (entry, idx) {
-    var content = extractContent(entry);
-    var dateStr = formatDate(entry);
-    if (idx > 0) html += "<hr>";
-    if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
-    }
-    html += content;
-  });
-
-  el.innerHTML = html;
-}
-
-function load_mObservation_archive() {
-  bloggerJsonp("mObservation", 50, "handle_mObservation_archive");
-}
-
-function handle_mObservation_archive(json) {
-  var el = document.getElementById("mObservationArchiveContent");
-  if (!el) return;
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No archives.";
-    return;
-  }
-
-  var html = "";
-  json.feed.entry.forEach(function (entry, idx) {
-    var content = extractContent(entry);
-    var dateStr = formatDate(entry);
-    if (idx > 0) html += "<hr>";
-    if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
-    }
-    html += content;
-  });
-
-  el.innerHTML = html;
-}
-
 /*******************
  * 6. mStratagems  *
  *******************/
@@ -687,27 +961,18 @@ function handle_mStratagems_archive(json) {
   el.innerHTML = html;
 }
 
-/**************
- * 7. mLetters *
- **************/
-function load_mLetters() {
-  bloggerJsonp("mLetters", 6, "handle_mLetters");
+/**********************
+ * 5. mObservation    *
+ **********************/
+function load_mObservation() {
+  bloggerJsonp("mObservation", 6, "handle_mObservation");
 }
 
-function handle_mLetters(json) {
-  var el = document.getElementById("mLettersContent");
-  var badge = document.getElementById("envelope-badge");
-
-  if (badge) {
-    var count =
-      json && json.feed && json.feed.entry ? json.feed.entry.length : 0;
-    if (count > 6) count = 6;
-    badge.textContent = count;
-  }
-
+function handle_mObservation(json) {
+  var el = document.getElementById("mObservationContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No letters.";
+    el.textContent = "No mObservation posts.";
     return;
   }
 
@@ -715,12 +980,7 @@ function handle_mLetters(json) {
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
-
-    // spacing only, no lines
-    if (idx > 0) {
-      html += '<div style="height:10px;"></div>';
-    }
-
+    if (idx > 0) html += "<hr>";
     if (dateStr) {
       html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
@@ -730,15 +990,15 @@ function handle_mLetters(json) {
   el.innerHTML = html;
 }
 
-function load_mLetters_archive() {
-  bloggerJsonp("mLetters", 50, "handle_mLetters_archive");
+function load_mObservation_archive() {
+  bloggerJsonp("mObservation", 50, "handle_mObservation_archive");
 }
 
-function handle_mLetters_archive(json) {
-  var el = document.getElementById("mLettersArchive");
+function handle_mObservation_archive(json) {
+  var el = document.getElementById("mObservationArchiveContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No letter archives.";
+    el.textContent = "No archives.";
     return;
   }
 
@@ -746,11 +1006,7 @@ function handle_mLetters_archive(json) {
   json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
-
-    if (idx > 0) {
-      html += '<div style="height:10px;"></div>';
-    }
-
+    if (idx > 0) html += "<hr>";
     if (dateStr) {
       html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
@@ -759,3 +1015,4 @@ function handle_mLetters_archive(json) {
 
   el.innerHTML = html;
 }
+
