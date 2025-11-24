@@ -527,11 +527,11 @@
   }
 
   /* tweak these left values if you want to align them nicer */
-  #mSafrain #mind-menu {
+  #mSafrain #mind {
     left: 12px;
   }
 
-  #mSafrain #body-menu {
+  #mSafrain #body {
     left: 100px;
   }
 }
