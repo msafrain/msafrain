@@ -282,8 +282,10 @@
         $(document).on("click", function () {
           $(".top-dropdown").removeClass("open");
         });
-      }); // end $(function)
+      });
 
+  waitForjQuery();
+})();
   } // end initDesktopUI
 
   function waitForjQuery() {
