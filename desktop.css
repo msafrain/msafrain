@@ -499,6 +499,11 @@
   height: 520px !important;
 }
 
+#mSafrain .window[data-window-id="mvisual-archive"] {
+  width: 650px !important;
+  height: 520px !important;
+}
+
 @media (max-width: 768px) {
 
   /* Enable scrolling in ALL windows on mobile */
