@@ -499,7 +499,20 @@
   height: 520px !important;
 }
 
+/* Make mVisual Archive same size as mVisual */
 #mSafrain .window[data-window-id="mvisual-archive"] {
+  width: 650px !important;
+  height: 520px !important;
+}
+
+/* Make mArt same size as mVisual */
+#mSafrain .window[data-window-id="mart"] {
+  width: 650px !important;
+  height: 520px !important;
+}
+
+/* Make mStory same size as mVisual */
+#mSafrain .window[data-window-id="mstory"] {
   width: 650px !important;
   height: 520px !important;
 }
