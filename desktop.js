@@ -263,11 +263,22 @@
       /* ============================
        * TOP MENU DROPDOWNS (mMind / mBody)
        * ============================ */
-      $(document).on("click", ".topMenuButton", function (e) {
+            $(document).on("click", ".topMenuButton", function (e) {
         e.stopPropagation();
+
         var menuId = $(this).attr("data-menu-id");
         if (!menuId) return;
+
+        var $btn  = $(this);
         var $menu = $("#" + menuId);
+        if (!$menu.length) return;
+
+        // Position dropdown horizontally under the clicked button
+        var btnOffset = $btn.offset();
+        var left = btnOffset.left - $(window).scrollLeft(); // viewport-based
+
+        $menu.css({ left: left + "px" });
+
         if ($menu.hasClass("open")) {
           $menu.removeClass("open");
         } else {
