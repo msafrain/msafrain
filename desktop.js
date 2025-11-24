@@ -176,7 +176,7 @@
 
       $("#mSafrain").on("click", ".winclose", function () {
         var id = $(this).closest(".window").attr("data-id");
-        closeWindwow(id);
+        closeWindow(id);
       });
 
       $("#mSafrain").on("click", ".winminimize", function () {
@@ -278,6 +278,7 @@
       $(document).on("click", function () {
         $(".top-dropdown").removeClass("open");
       });
+    });
 
   function waitForjQuery() {
     if (window.jQuery && typeof window.jQuery === "function") {
