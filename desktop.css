@@ -577,3 +577,9 @@
   display: block;
   object-fit: contain;
 }
+
+/* Smaller font size ONLY for By mSafrain window */
+#mSafrain .window[data-window-id="bysafrain"] .wincontent {
+  font-size: 13px;   /* adjust size here */
+  line-height: 1.45; /* optional – cleaner spacing */
+}
