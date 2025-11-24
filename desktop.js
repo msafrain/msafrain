@@ -129,6 +129,18 @@
           $win.find(".windowTitle").text().trim() ||
           key;
 
+      // RANDOM OFFSET FOR MESSY AESTHETIC
+      var baseTop = parseInt($win.css("top")) || 100;
+      var baseLeft = parseInt($win.css("left")) || 100;
+
+      var randTop = baseTop + Math.floor(Math.random() * 30) - 15;
+      var randLeft = baseLeft + Math.floor(Math.random() * 30) - 15;
+
+      $win.css({
+        top: randTop + "px",
+        left: randLeft + "px"
+      });
+
         $win.css("z-index", 1000);
         $win.attr("data-id", i);
 
