@@ -25,27 +25,33 @@
   <script src="desktop.js"></script>
 
   <script>
-  function loadAllFeeds() {
-    // mMe single post (new)
-    load_mMe_single();
+function loadAllFeeds() {
+  // mMe single post (new)
+  load_mMe_single();
 
-    // mThoughts list (6 posts)
-    load_mThoughts_recent();
+  // mThoughts list (6 posts)
+  load_mThoughts_recent();
 
-    // Other main windows
-    load_mVisual();
-    load_mObservation();
-    load_mStratagems();
-    load_mLetters();
+  // New: mArt & mStory main windows
+  load_mArt();
+  load_mStory();
 
-    // Archives
-    load_mMe_archive();
-    load_mThoughts_archive();
-    load_mVisual_archive();
-    load_mObservation_archive();
-    load_mStratagems_archive();
-    load_mLetters_archive();
-  }
+  // Other main windows
+  load_mVisual();
+  load_mObservation();
+  load_mStratagems();
+  load_mLetters();
+
+  // Archives
+  load_mMe_archive();
+  load_mThoughts_archive();
+  load_mArt_archive();
+  load_mStory_archive();
+  load_mVisual_archive();
+  load_mObservation_archive();
+  load_mStratagems_archive();
+  load_mLetters_archive();
+}
 </script>
 </head>
 
@@ -54,13 +60,11 @@
 <div id="mSafrain">
 
   <!-- =============== TOP LAUNCHBAR =============== -->
-  <div class="openWindowButtons">
+ <div class="openWindowButtons">
   <button class="openWindow" data-window-id="bysafrain">By mSafrain</button>
   <button class="openWindow" data-window-id="mme">mMe</button>
-  <button class="openWindow" data-window-id="mthoughts-recent">mThoughts</button>
-  <button class="openWindow" data-window-id="mvisual">mVisual</button>
-  <button class="openWindow" data-window-id="mobservation">mObservation</button>
-  <button class="openWindow" data-window-id="mstratagems">mStratagems</button>
+  <button class="openWindow" data-window-id="mmind">mMind</button>
+  <button class="openWindow" data-window-id="mbody">mBody</button>
   <button class="openWindow" data-window-id="marchives">mArchives</button>
 </div>
 
@@ -107,10 +111,9 @@
    </p>  
   </div>
 </div>
-</div>
 
-        <!-- mMe – Single -->
-    <div class="window" data-window-id="mme" style="top:180px; left:460px;">
+    <!-- mMe -->
+    <div class="window closed" data-window-id="mme" style="top:160px; left:380px;">
       <div class="windowHeader">
         <span class="windowTitle">mMe</span>
         <div>
@@ -120,12 +123,72 @@
         </div>
       </div>
       <div class="wincontent">
-        <div id="mMeSingle" class="poetry-area">Loading mMe...</div>
+        <div id="mMeContent" class="poetry-area">Loading mMe...</div>
       </div>
     </div>
 
-    <!-- mThoughts – List -->
-    <div class="window" data-window-id="mthoughts-recent" style="top:160px; left:780px;">
+      <!-- mMind -->
+    <div class="window closed" data-window-id="mmind" style="top:200px; left:720px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mMind</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div class="poetry-area">
+          <p>mMind gathers my inner thinking:</p>
+          <p>• mThoughts — philosophies</p>
+          <p>• mStratagems — knowledge</p>
+          <p style="margin-top:10px;">Open them from here:</p>
+          <p>
+            <button class="openWindow" data-window-id="mthoughts">Open mThoughts</button>
+          </p>
+          <p>
+            <button class="openWindow" data-window-id="mstratagems">Open mStratagems</button>
+          </p>
+        </div>
+      </div>
+    </div>
+
+      <!-- mBody -->
+    <div class="window closed" data-window-id="mbody" style="top:260px; left:80px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mBody</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div class="poetry-area">
+          <p>mBody gathers my outer expressions:</p>
+          <p>• mArt — creations</p>
+          <p>• mStory — stories</p>
+          <p>• mVisual — illustrations</p>
+          <p>• mObservation — analysis</p>
+          <p style="margin-top:10px;">Open them from here:</p>
+          <p>
+            <button class="openWindow" data-window-id="mart">Open mArt</button>
+          </p>
+          <p>
+            <button class="openWindow" data-window-id="mstory">Open mStory</button>
+          </p>
+          <p>
+            <button class="openWindow" data-window-id="mvisual">Open mVisual</button>
+          </p>
+          <p>
+            <button class="openWindow" data-window-id="mobservation">Open mObservation</button>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- mThoughts -->
+    <div class="window" data-window-id="mthoughts" style="top:160px; left:780px;">
       <div class="windowHeader">
         <span class="windowTitle">mThoughts</span>
         <div>
@@ -151,6 +214,36 @@
       </div>
       <div class="wincontent">
         <div id="mVisualContent" class="poetry-area">Loading mVisual...</div>
+      </div>
+    </div>
+
+      <!-- mArt -->
+    <div class="window closed" data-window-id="mart" style="top:240px; left:520px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mArt</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mArtContent" class="poetry-area">Loading mArt...</div>
+      </div>
+    </div>
+
+    <!-- mStory -->
+    <div class="window closed" data-window-id="mstory" style="top:280px; left:860px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mStory</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mStoryContent" class="poetry-area">Loading mStory...</div>
       </div>
     </div>
 
@@ -215,30 +308,20 @@
         </div>
       </div>
       <div class="wincontent">
-    <ul class="poetry-area" id="mArchivesList">
-    <li class="archive-item" data-archive-target="mthoughts-archive">mThoughts Archives</li>
-    <li class="archive-item" data-archive-target="mme-archive">mMe Archives</li>
-    <li class="archive-item" data-archive-target="mvisual-archive">mVisual Archives</li>
-    <li class="archive-item" data-archive-target="mobservation-archive">mObservation Archives</li>
-    <li class="archive-item" data-archive-target="mstratagems-archive">mStratagems Archives</li>
-    <li class="archive-item" data-archive-target="mletters-archive">mLetters Archives</li>
-  </ul>
+  <ul class="poetry-area" id="mArchivesList">
+  <li class="archive-item" data-archive-target="mme-archive">mMe Archives</li>
+  <li class="archive-item" data-archive-target="mthoughts-archive">mThoughts Archives</li>
+  <li class="archive-item" data-archive-target="mletters-archive">mLetters Archives</li>
+  <li class="archive-item" data-archive-target="mart-archive">mArt Archives</li>
+  <li class="archive-item" data-archive-target="mstory-archive">mStory Archives</li>
+  <li class="archive-item" data-archive-target="mvisual-archive">mVisual Archives</li>
+  <li class="archive-item" data-archive-target="mstratagems-archive">mStratagems Archives</li>
+  <li class="archive-item" data-archive-target="mobservation-archive">mObservation Archives</li>
+</ul>
 </div>
     </div>
-    <div class="window closed" data-window-id="mthoughts-archive" style="top:120px; left:140px;">
-      <div class="windowHeader">
-        <span class="windowTitle">mThoughts Archives</span>
-        <div>
-          <span class="winminimize">–</span>
-          <span class="winmaximize">□</span>
-          <span class="winclose">x</span>
-        </div>
-      </div>
-      <div class="wincontent">
-        <div id="mThoughtsArchive" class="poetry-area">Loading mThoughts Archives...</div>
-      </div>
-    </div>
-      <div class="window closed" data-window-id="mme-archive" style="top:170px; left:190px;">
+    
+      <div class="window closed" data-window-id="mme-archive" style="top:160px; left:200px;">
       <div class="windowHeader">
         <span class="windowTitle">mMe Archives</span>
         <div>
@@ -252,7 +335,21 @@
       </div>
     </div>
 
-    <div class="window closed" data-window-id="mvisual-archive" style="top:220px; left:260px;">
+    <div class="window closed" data-window-id="mthoughts-archive" style="top:160px; left:440px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mThoughts Archives</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mThoughtsArchive" class="poetry-area">Loading mThoughts Archives...</div>
+      </div>
+    </div>
+
+    <div class="window closed" data-window-id="mvisual-archive" style="top:260px; left:440px;">
       <div class="windowHeader">
         <span class="windowTitle">mVisual Archives</span>
         <div>
@@ -265,8 +362,35 @@
         <div id="mVisualArchive" class="poetry-area">Loading mVisual Archives...</div>
       </div>
     </div>
+      <div class="window closed" data-window-id="mart-archive" style="top:160px; left:920px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mArt Archives</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mArtArchive" class="poetry-area">Loading mArt Archives...</div>
+      </div>
+    </div>
 
-    <div class="window closed" data-window-id="mobservation-archive" style="top:240px; left:300px;">
+    <div class="window closed" data-window-id="mstory-archive" style="top:260px; left:200px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mStory Archives</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mStoryArchive" class="poetry-area">Loading mStory Archives...</div>
+      </div>
+    </div>
+
+    <div class="window closed" data-window-id="mobservation-archive" style="top:260px; left:920px;">
       <div class="windowHeader">
         <span class="windowTitle">mObservation Archives</span>
         <div>
@@ -280,7 +404,7 @@
       </div>
     </div>
 
-    <div class="window closed" data-window-id="mstratagems-archive" style="top:260px; left:340px;">
+    <div class="window closed" data-window-id="mstratagems-archive" style="top:260px; left:680px;">
       <div class="windowHeader">
         <span class="windowTitle">mStratagems Archives</span>
         <div>
@@ -294,7 +418,7 @@
       </div>
     </div>
 
-    <div class="window closed" data-window-id="mletters-archive" style="top:280px; left:380px;">
+    <div class="window closed" data-window-id="mletters-archive" style="top:160px; left:680px;">      
       <div class="windowHeader">
         <span class="windowTitle">mLetters Archives</span>
         <div>
