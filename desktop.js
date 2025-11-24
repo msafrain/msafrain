@@ -276,14 +276,17 @@
         }
       });
 
-      $(document).on("click", ".top-dropdown", function (e) {
-        e.stopPropagation();
-      });
-      $(document).on("click", function () {
-        $(".top-dropdown").removeClass("open");
-      });
-    });
+        $(document).on("click", ".top-dropdown", function (e) {
+          e.stopPropagation();
+        });
+        $(document).on("click", function () {
+          $(".top-dropdown").removeClass("open");
+        });
+      }); // end $(function)
 
+  } // end initDesktopUI
+
+  function waitForjQuery() {
   function waitForjQuery() {
     if (window.jQuery && typeof window.jQuery === "function") {
       initDesktopUI(window.jQuery);
