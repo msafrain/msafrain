@@ -129,11 +129,11 @@ $("#mSafrain .window").each(function () {
     $win.find(".windowTitle").text().trim() ||
     key;
 
-  // 🎯 PRESET “MESSY” POSITIONS FOR MAIN WINDOWS
+  // preset base positions for main windows
   var presetPositions = {
-    bysafrain:  { top: 160, left: 60  },
-    mme:        { top: 210, left: 380 },
-    mthoughts:  { top: 140, left: 700 }
+    bysafrain: { top: 160, left: 60 },
+    mme:       { top: 210, left: 380 },
+    mthoughts: { top: 140, left: 700 }
   };
 
   var baseTop, baseLeft;
@@ -142,18 +142,18 @@ $("#mSafrain .window").each(function () {
     baseTop  = presetPositions[key].top;
     baseLeft = presetPositions[key].left;
   } else {
-    baseTop  = parseInt($win.css("top"))  || 140;
-    baseLeft = parseInt($win.css("left")) || 140;
+    baseTop  = parseInt($win.css("top"), 10)  || 140;
+    baseLeft = parseInt($win.css("left"), 10) || 140;
   }
 
-    // 🎲 ADD STRONGER RANDOM JITTER (MESSY)
+  // small random jitter for messy aesthetic (BUT no tilt)
   var randTop  = baseTop  + Math.floor(Math.random() * 40) - 20;
   var randLeft = baseLeft + Math.floor(Math.random() * 60) - 30;
 
   $win.css({
-    top:  randTop + "px",
-    left: randLeft + "px"
-    // no rotation – keep windows straight
+    top: randTop + "px",
+    left: randLeft + "px",
+    transform: "none"          // make sure there is ZERO rotation
   });
 
   $win.css("z-index", 1000);
@@ -184,7 +184,20 @@ $("#mSafrain .window").each(function () {
   i++;
 });
 
-      // ✅ after all windows are initialised
+// Ensure all windows start correctly
+var defaultKey = "bysafrain";
+var defaultId = keyToId[defaultKey];
+
+if (typeof defaultId === "undefined") {
+  // fallback: take first non-closed window
+  for (var k in keyToId) {
+    if (!$("#window" + keyToId[k]).hasClass("closed")) {
+      defaultId = keyToId[k];
+      break;
+    }
+  }
+}
+
 setupInteractions();
 adjustFullScreenSize();
       
