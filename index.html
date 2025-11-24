@@ -60,12 +60,29 @@ function loadAllFeeds() {
 <div id="mSafrain">
 
   <!-- =============== TOP LAUNCHBAR =============== -->
- <div class="openWindowButtons">
+<div class="openWindowButtons">
   <button class="openWindow" data-window-id="bysafrain">By mSafrain</button>
   <button class="openWindow" data-window-id="mme">mMe</button>
-  <button class="openWindow" data-window-id="mmind">mMind</button>
-  <button class="openWindow" data-window-id="mbody">mBody</button>
+
+  <!-- These two are now MENU buttons, not windows -->
+  <button class="topMenuButton" data-menu-id="mind-menu">mMind</button>
+  <button class="topMenuButton" data-menu-id="body-menu">mBody</button>
+
   <button class="openWindow" data-window-id="marchives">mArchives</button>
+</div>
+
+  <!-- Dropdown for mMind -->
+<div id="mind-menu" class="top-dropdown">
+  <button class="openWindow" data-window-id="mthoughts">mThoughts</button>
+  <button class="openWindow" data-window-id="mstratagems">mStratagems</button>
+</div>
+
+<!-- Dropdown for mBody -->
+<div id="body-menu" class="top-dropdown">
+  <button class="openWindow" data-window-id="mart">mArt</button>
+  <button class="openWindow" data-window-id="mstory">mStory</button>
+  <button class="openWindow" data-window-id="mvisual">mVisual</button>
+  <button class="openWindow" data-window-id="mobservation">mObservation</button>
 </div>
 
 
@@ -124,66 +141,6 @@ function loadAllFeeds() {
       </div>
       <div class="wincontent">
         <div id="mMeContent" class="poetry-area">Loading mMe...</div>
-      </div>
-    </div>
-
-      <!-- mMind -->
-    <div class="window closed" data-window-id="mmind" style="top:200px; left:720px;">
-      <div class="windowHeader">
-        <span class="windowTitle">mMind</span>
-        <div>
-          <span class="winminimize">–</span>
-          <span class="winmaximize">□</span>
-          <span class="winclose">x</span>
-        </div>
-      </div>
-      <div class="wincontent">
-        <div class="poetry-area">
-          <p>mMind gathers my inner thinking:</p>
-          <p>• mThoughts — philosophies</p>
-          <p>• mStratagems — knowledge</p>
-          <p style="margin-top:10px;">Open them from here:</p>
-          <p>
-            <button class="openWindow" data-window-id="mthoughts">Open mThoughts</button>
-          </p>
-          <p>
-            <button class="openWindow" data-window-id="mstratagems">Open mStratagems</button>
-          </p>
-        </div>
-      </div>
-    </div>
-
-      <!-- mBody -->
-    <div class="window closed" data-window-id="mbody" style="top:260px; left:80px;">
-      <div class="windowHeader">
-        <span class="windowTitle">mBody</span>
-        <div>
-          <span class="winminimize">–</span>
-          <span class="winmaximize">□</span>
-          <span class="winclose">x</span>
-        </div>
-      </div>
-      <div class="wincontent">
-        <div class="poetry-area">
-          <p>mBody gathers my outer expressions:</p>
-          <p>• mArt — creations</p>
-          <p>• mStory — stories</p>
-          <p>• mVisual — illustrations</p>
-          <p>• mObservation — analysis</p>
-          <p style="margin-top:10px;">Open them from here:</p>
-          <p>
-            <button class="openWindow" data-window-id="mart">Open mArt</button>
-          </p>
-          <p>
-            <button class="openWindow" data-window-id="mstory">Open mStory</button>
-          </p>
-          <p>
-            <button class="openWindow" data-window-id="mvisual">Open mVisual</button>
-          </p>
-          <p>
-            <button class="openWindow" data-window-id="mobservation">Open mObservation</button>
-          </p>
-        </div>
       </div>
     </div>
 
