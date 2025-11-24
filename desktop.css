@@ -583,3 +583,31 @@
   font-size: 13px;   /* adjust size here */
   line-height: 1.45; /* optional – cleaner spacing */
 }
+
+/* Make mArt Archive same size as mArt */
+#mSafrain .window[data-window-id="mart-archive"] {
+  width: 650px !important;
+  height: 520px !important;
+}
+
+/* Make mStory Archive same size as mStory */
+#mSafrain .window[data-window-id="mstory-archive"] {
+  width: 650px !important;
+  height: 520px !important;
+}
+
+/* Ensure archive windows match normal windows */
+#mSafrain .window[data-window-id="mart-archive"] .wincontent,
+#mSafrain .window[data-window-id="mstory-archive"] .wincontent {
+  padding: 10px;
+  background: #ffffff;
+  overflow-y: auto;
+}
+
+/* Fix image scaling inside archive windows */
+#mSafrain .window[data-window-id="mart-archive"] img,
+#mSafrain .window[data-window-id="mstory-archive"] img {
+  width: 100% !important;
+  height: auto !important;
+  display: block;
+}
