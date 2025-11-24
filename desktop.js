@@ -23,6 +23,8 @@
       }
 
       function makeWindowActive(thisid) {
+        $(".top-dropdown").removeClass("open");
+        
         if (typeof thisid === "undefined" || thisid === null) return;
 
         $("#mSafrain .window").each(function () {
@@ -155,15 +157,18 @@
         i++;
       });
 
-      // Default active window: By mSafrain single if exists, otherwise last
+      // Ensure all windows start correctly
       var defaultKey = "bysafrain";
       var defaultId = keyToId[defaultKey];
+
       if (typeof defaultId === "undefined") {
-        defaultId = i > 0 ? i - 1 : null;
-      }
-      if (defaultId !== null && typeof defaultId !== "undefined") {
-        $("#minimPanel" + defaultId).addClass("activeTab");
-        $("#window" + defaultId).addClass("activeWindow");
+        // fallback: take first non-closed window
+        for (var k in keyToId) {
+          if (!$("#window" + keyToId[k]).hasClass("closed")) {
+            defaultId = keyToId[k];
+            break;
+          }
+        }
       }
 
       setupInteractions();
@@ -287,6 +292,11 @@
       setTimeout(waitForjQuery, 100);
     }
   }
+
+  // Prevent dropdowns from closing when clicking inside their children
+  $(".top-dropdown").on("mousedown", function (e) {
+    e.stopPropagation();
+  });
 
   waitForjQuery();
 })();
