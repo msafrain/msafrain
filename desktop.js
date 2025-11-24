@@ -119,73 +119,78 @@
         }
       }
 
-      // INITIALISE WINDOWS
-      $("#mSafrain .window").each(function () {
-        var $win = $(this);
-        var key = $win.attr("data-window-id") || "window-" + i;
+      /// INITIALISE WINDOWS
+$("#mSafrain .window").each(function () {
+  var $win = $(this);
+  var key = $win.attr("data-window-id") || "window-" + i;
 
-        var title =
-          $win.attr("data-title") ||
-          $win.find(".windowTitle").text().trim() ||
-          key;
+  var title =
+    $win.attr("data-title") ||
+    $win.find(".windowTitle").text().trim() ||
+    key;
 
-      // RANDOM OFFSET FOR MESSY AESTHETIC
-      var baseTop = parseInt($win.css("top")) || 100;
-      var baseLeft = parseInt($win.css("left")) || 100;
+  // 🎯 PRESET “MESSY” POSITIONS FOR MAIN WINDOWS
+  var presetPositions = {
+    bysafrain:  { top: 160, left: 60  },
+    mme:        { top: 210, left: 380 },
+    mthoughts:  { top: 140, left: 700 }
+  };
 
-      var randTop = baseTop + Math.floor(Math.random() * 30) - 15;
-      var randLeft = baseLeft + Math.floor(Math.random() * 30) - 15;
+  var baseTop, baseLeft;
 
-      $win.css({
-        top: randTop + "px",
-        left: randLeft + "px"
-      });
+  if (presetPositions[key]) {
+    baseTop  = presetPositions[key].top;
+    baseLeft = presetPositions[key].left;
+  } else {
+    baseTop  = parseInt($win.css("top"))  || 140;
+    baseLeft = parseInt($win.css("left")) || 140;
+  }
 
-        $win.css("z-index", 1000);
-        $win.attr("data-id", i);
+  // 🎲 ADD STRONGER RANDOM JITTER (MESSY)
+  var randTop  = baseTop  + Math.floor(Math.random() * 40) - 20;
+  var randLeft = baseLeft + Math.floor(Math.random() * 60) - 30;
 
-        minimizedWidth[i] = $win.width();
-        minimizedHeight[i] = $win.height();
-        windowTopPos[i] = $win.css("top");
-        windowLeftPos[i] = $win.css("left");
+  $win.css({
+    top:  randTop + "px",
+    left: randLeft + "px"
+  });
 
-        keyToId[key] = i;
+  // 🎨 Slight random tilt for "polaroid" aesthetic
+  var angle = (Math.random() * 4) - 2; // -2deg to +2deg
+  $win.css("transform", "rotate(" + angle + "deg)");
 
-        $("#taskbar").append(
-          '<div class="taskbarPanel" id="minimPanel' +
-            i +
-            '" data-id="' +
-            i +
-            '">' +
-            title +
-            "</div>"
-        );
+  $win.css("z-index", 1000);
+  $win.attr("data-id", i);
 
-        if ($win.hasClass("closed")) {
-          $("#minimPanel" + i).addClass("closed");
-        }
+  minimizedWidth[i]  = $win.width();
+  minimizedHeight[i] = $win.height();
+  windowTopPos[i]    = $win.css("top");
+  windowLeftPos[i]   = $win.css("left");
 
-        $win.attr("id", "window" + i);
-        i++;
-      });
+  keyToId[key] = i;
 
-      // Ensure all windows start correctly
-      var defaultKey = "bysafrain";
-      var defaultId = keyToId[defaultKey];
+  $("#taskbar").append(
+    '<div class="taskbarPanel" id="minimPanel' +
+      i +
+      '" data-id="' +
+      i +
+      '">' +
+      title +
+      "</div>"
+  );
 
-      if (typeof defaultId === "undefined") {
-        // fallback: take first non-closed window
-        for (var k in keyToId) {
-          if (!$("#window" + keyToId[k]).hasClass("closed")) {
-            defaultId = keyToId[k];
-            break;
-          }
-        }
-      }
+  if ($win.hasClass("closed")) {
+    $("#minimPanel" + i).addClass("closed");
+  }
 
-      setupInteractions();
-      adjustFullScreenSize();
+  $win.attr("id", "window" + i);
+  i++;
+});
 
+      // ✅ after all windows are initialised
+setupInteractions();
+adjustFullScreenSize();
+      
       // EVENTS
       $("#mSafrain").on("mousedown", ".window", function () {
         makeWindowActive($(this).attr("data-id"));
