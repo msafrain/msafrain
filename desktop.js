@@ -146,18 +146,15 @@ $("#mSafrain .window").each(function () {
     baseLeft = parseInt($win.css("left")) || 140;
   }
 
-  // 🎲 ADD STRONGER RANDOM JITTER (MESSY)
+    // 🎲 ADD STRONGER RANDOM JITTER (MESSY)
   var randTop  = baseTop  + Math.floor(Math.random() * 40) - 20;
   var randLeft = baseLeft + Math.floor(Math.random() * 60) - 30;
 
   $win.css({
     top:  randTop + "px",
     left: randLeft + "px"
+    // no rotation – keep windows straight
   });
-
-  // 🎨 Slight random tilt for "polaroid" aesthetic
-  var angle = (Math.random() * 4) - 2; // -2deg to +2deg
-  $win.css("transform", "rotate(" + angle + "deg)");
 
   $win.css("z-index", 1000);
   $win.attr("data-id", i);
