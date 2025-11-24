@@ -568,3 +568,12 @@
     display: block;
   }
 }
+
+/* Force Blogger images to scale correctly inside all windows */
+#mSafrain .wincontent img {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+  display: block;
+  object-fit: contain;
+}
