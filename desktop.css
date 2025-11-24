@@ -517,3 +517,31 @@
     max-height: none !important;
   }
 }
+
+/* MOBILE FIXES */
+@media (max-width: 768px) {
+
+  .window {
+    width: 90% !important;
+    left: 5% !important;
+    right: 5% !important;
+    max-width: 100% !important;
+  }
+
+  #mSafrain .window-content {
+    overflow-x: hidden !important;
+    word-wrap: break-word;
+  }
+
+  .openWindowButtons {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .top-dropdown {
+    position: absolute !important;
+    left: 0 !important;
+    right: auto !important;
+    width: auto;
+  }
+}
