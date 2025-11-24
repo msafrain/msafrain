@@ -276,13 +276,21 @@
         }
       });
 
-              $(document).on("click", ".top-dropdown", function (e) {
-        e.stopPropagation();
+        $(document).on("click", ".top-dropdown", function (e) {
+          e.stopPropagation();
+        });
+        $(document).on("click", function () {
+          $(".top-dropdown").removeClass("open");
+        });
+
+        // Initial Blogger feed loads (mMe + mThoughts)
+        if (typeof load_mMe === "function") {
+          load_mMe();
+        }
+        if (typeof load_mThoughts === "function") {
+          load_mThoughts();
+        }
       });
-      $(document).on("click", function () {
-        $(".top-dropdown").removeClass("open");
-      });
-    }); // end $(function)
   } // end initDesktopUI
 
   function waitForjQuery() {
@@ -295,24 +303,6 @@
 
   waitForjQuery();
 })(); // end IIFE
-  } // end initDesktopUI
-
-  function waitForjQuery() {
-  function waitForjQuery() {
-    if (window.jQuery && typeof window.jQuery === "function") {
-      initDesktopUI(window.jQuery);
-    } else {
-      setTimeout(waitForjQuery, 100);
-    }
-  }
-
-  // Prevent dropdowns from closing when clicking inside their children
-  $(".top-dropdown").on("mousedown", function (e) {
-    e.stopPropagation();
-  });
-
-  waitForjQuery();
-})();
 
 /***************************
  * 2. BLOGGER FEED HELPERS *
