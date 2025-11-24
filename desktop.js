@@ -94,7 +94,7 @@
         }
       }
 
-      function closeWindwow(id) {
+      function closeWindow(id) {
         if (typeof id === "undefined" || id === null) return;
 
         $("#window" + id).addClass("closed");
@@ -254,8 +254,30 @@
           $("#mVisualAltModal").removeClass("open");
         }
       });
-    });
-  }
+
+      /* ============================
+       * TOP MENU DROPDOWNS (mMind / mBody)
+       * ============================ */
+      $(document).on("click", ".topMenuButton", function (e) {
+        e.stopPropagation();
+        var menuId = $(this).attr("data-menu-id");
+        if (!menuId) return;
+        var $menu = $("#" + menuId);
+        if ($menu.hasClass("open")) {
+          $menu.removeClass("open");
+        } else {
+          $(".top-dropdown").removeClass("open");
+          $menu.addClass("open");
+        }
+      });
+
+      $(document).on("click", ".top-dropdown", function (e) {
+        e.stopPropagation();
+      });
+
+      $(document).on("click", function () {
+        $(".top-dropdown").removeClass("open");
+      });
 
   function waitForjQuery() {
     if (window.jQuery && typeof window.jQuery === "function") {
