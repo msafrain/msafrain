@@ -41,19 +41,26 @@
   border-radius: 6px;
   border: 1px solid rgba(0,0,0,0.2);
   padding: 4px;
-  display: none;            /* hidden by default */
-  z-index: 2101;            /* above windows, just above launchbar */
+  display: none;            /* 🔹 hidden by default */
+  z-index: 2101;            /* above windows */
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-
-  /* make it a vertical menu */
-  display: flex;
-  flex-direction: column;
+  flex-direction: column;   /* vertical menu */
   align-items: stretch;
 }
 
 /* When JS adds .open */
 #mSafrain .top-dropdown.open {
-  display: flex;
+  display: flex;            /* 🔹 only show when .open is present */
+}
+
+/* Buttons inside dropdown – full-width, stacked */
+#mSafrain .top-dropdown .openWindow {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin: 2px 0;
+  font-size: 12px;
+  padding: 4px 10px;
 }
 
 /* Buttons inside dropdown – full-width, stacked */
