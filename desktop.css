@@ -35,26 +35,42 @@
 
 /* DROPDOWN MENUS UNDER mMind / mBody */
 #mSafrain .top-dropdown {
-
-  /* Position each dropdown roughly under its button on DESKTOP */
-#mSafrain #mind-menu {
-  left: 120px;   /* adjust if you want it more centred under "mMind" */
-}
-
-#mSafrain #body-menu {
-  left: 200px;   /* adjust for "mBody" */
-}
-  position: fixed;          /* follow the top bar */
-  top: 36px;                /* a bit under the launchbar row */
+  position: fixed;
+  top: 36px;                 /* under the top launchbar */
   background: #f9fafb;
   border-radius: 6px;
   border: 1px solid rgba(0,0,0,0.2);
   padding: 4px;
-  display: none;            /* 🔹 hidden by default */
-  z-index: 2101;            /* above windows */
+  display: none;             /* hidden by default */
+  z-index: 2101;
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  flex-direction: column;   /* vertical menu */
+  display: flex;
+  flex-direction: column;
   align-items: stretch;
+}
+
+/* DESKTOP POSITIONING */
+#mSafrain #mind-menu {
+  left: 150px;               /* adjust under mMind */
+}
+
+#mSafrain #body-menu {
+  left: 260px;               /* adjust under mBody */
+}
+
+/* When JS adds .open */
+#mSafrain .top-dropdown.open {
+  display: flex;
+}
+
+/* Dropdown buttons */
+#mSafrain .top-dropdown .openWindow {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin: 3px 0;
+  font-size: 12px;
+  padding: 6px 10px;
 }
 
 /* When JS adds .open */
