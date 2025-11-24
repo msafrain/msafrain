@@ -46,6 +46,7 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 
   /* make it a vertical menu */
+  display: flex;
   flex-direction: column;
   align-items: stretch;
 }
@@ -63,22 +64,6 @@
   margin: 2px 0;
   font-size: 12px;
   padding: 4px 10px;
-}
-
-/* Position each dropdown roughly under its button */
-#mSafrain #mind-menu {
-  left: 120px;  /* tweak if needed to sit under "mMind" */
-}
-
-#mSafrain #body-menu {
-  left: 200px;  /* tweak if needed to sit under "mBody" */
-}
-
-/* Buttons inside dropdown */
-#mSafrain .top-dropdown .openWindow {
-  margin: 0 4px;
-  font-size: 12px;
-  padding: 4px 8px;
 }
 
 #mSafrain .openWindowButtons .topMenuButton:hover {
