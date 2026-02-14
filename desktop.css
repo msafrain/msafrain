@@ -655,3 +655,7 @@
   height: auto !important;
   display: block;
 }
+
+/* Archive lists: prevent overflow */
+.archive-list { margin: 0; padding-left: 18px; }
+.archive-list li { overflow-wrap: anywhere; word-break: break-word; }
