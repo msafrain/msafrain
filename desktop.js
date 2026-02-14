@@ -105,7 +105,6 @@
         // Normal path: keyToId mapping
         if (typeof keyToId !== "undefined" && typeof keyToId[key] !== "undefined") {
           openWindow(keyToId[key]);
-          triggerLoadForKey(key);
           return;
         }
 
@@ -116,51 +115,15 @@
         var nid = $win.attr("data-id");
         if (typeof nid !== "undefined" && nid !== null && nid !== "") {
           openWindow(nid);
-          triggerLoadForKey(key);
           return;
         }
 
         // Last resort (should rarely happen): show it directly
-$win.removeClass("closed minimizedWindow");
+        $win.removeClass("closed minimizedWindow");
         $win.css("z-index", 9999);
-        triggerLoadForKey(key);
       }
 
-      
-      // Load Blogger content when a window is opened (so windows don't stay stuck on "Loading...")
-      function triggerLoadForKey(key) {
-        var map = {
-          "mpoetry": "load_mPoetry",
-          "mthoughts": "load_mThoughts",
-          "mchapters": "load_mChapters",
-          "mletters": "load_mLetters",
-          "mbrush": "load_mBrush",
-          "mstory": "load_mStory",
-          "mvisual": "load_mVisual",
-          "mknowledge": "load_mKnowledge",
-          "mstratagems": "load_mStratagems",
-
-          "mpoetry-archive": "load_mPoetry_archive",
-          "mthoughts-archive": "load_mThoughts_archive",
-          "mchapters-archive": "load_mChapters_archive",
-          "mletters-archive": "load_mLetters_archive",
-          "mbrush-archive": "load_mBrush_archive",
-          "mstory-archive": "load_mStory_archive",
-          "mvisual-archive": "load_mVisual_archive",
-          "mknowledge-archive": "load_mKnowledge_archive",
-          "mstratagems-archive": "load_mStratagems_archive"
-        };
-
-        if (!key) return;
-        var k = String(key).toLowerCase();
-        var fnName = map[k];
-        if (!fnName) return;
-
-        var fn = window[fnName];
-        if (typeof fn === "function") fn();
-      }
-
-function closeWindow(id) {
+      function closeWindow(id) {
         if (typeof id === "undefined" || id === null) return;
 
         $("#window" + id).addClass("closed");
@@ -381,8 +344,8 @@ adjustFullScreenSize();
         });
 
         // Initial Blogger feed loads (mMe + mThoughts)
-        if (typeof load_mPoetry === "function") {
-          load_mPoetry();
+        if (typeof load_mMe === "function") {
+          load_mMe();
         }
         if (typeof load_mThoughts === "function") {
           load_mThoughts();
@@ -465,19 +428,21 @@ function getTitleOrSnippet(entry) {
   var content = stripHtml(extractContent(entry));
   if (!content) return "(untitled)";
   if (content.length <= 80) return content;
-  return content.substring(0, 80) + "./******************************
- *  NEW: mPoetry – LIST & ARCHIVE *
- ******************************/
-function load_mPoetry() {
-  bloggerJsonp("mPoetry", 6, "handle_mPoetry");
+  return content.substring(0, 80) + "...";
 }
 
-function handle_mPoetry(json) {
-  var el = document.getElementById("mPoetryContent");
-  if (!el) return;
+/******************************
+ *  NEW: mMe – LIST & ARCHIVE *
+ ******************************/
+function load_mPoetry() {
+  bloggerJsonp("mMe", 6, "handle_mMe");
+}
 
+function handle_mMe(json) {
+  var el = document.getElementById("mMeContent");
+  if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mPoetry posts yet.";
+    el.textContent = "No mMe posts yet.";
     return;
   }
 
@@ -487,9 +452,11 @@ function handle_mPoetry(json) {
     var dateStr = formatDate(entry);
 
     if (idx > 0) html += "<hr>";
+
     if (dateStr) {
       html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
+
     html += content;
   });
 
@@ -497,37 +464,33 @@ function handle_mPoetry(json) {
 }
 
 function load_mPoetry_archive() {
-  bloggerJsonp("mPoetry", 50, "handle_mPoetry_archive");
+  bloggerJsonp("mMe", 50, "handle_mMe_archive");
 }
 
-function handle_mPoetry_archive(json) {
-  var el = document.getElementById("mPoetryArchive");
+function handle_mMe_archive(json) {
+  var el = document.getElementById("mMeArchive");
   if (!el) return;
 
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mPoetry archives yet.";
+    el.textContent = "No mMe archives.";
     return;
   }
 
-  var out = "<ul class='archive-list'>";
-  json.feed.entry.forEach(function (entry) {
-    var title = entry.title ? entry.title.$t : "";
-    var link = "";
-    if (entry.link) {
-      entry.link.forEach(function (l) {
-        if (l.rel === "alternate") link = l.href;
-      });
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     }
-    out += "<li>";
-    out += link ? "<a href='" + link + "' target='_blank'>" + title + "</a>" : title;
-    out += "</li>";
+
+    html += content;
   });
-  out += "</ul>";
 
-  el.innerHTML = out;
-}
-
-tml;
+  el.innerHTML = html;
 }
 
 /******************************
