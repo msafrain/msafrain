@@ -216,10 +216,15 @@
 /* CONTENT (poetry-area) */
 #mSafrain .poetry-area {
   width: 100%;
-  height: 100%;
-  min-height: 0;
-  max-height: 100%;
-  box-sizing: border-box;
+  min-height: 200px;          /* FIXED reduced min-height */
+  border-radius: 6px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  background: #fff;
+  color: #000;
+  padding: 8px 10px 10px;     /* FIXED spacing */
+  font-family: "Iowan Old Style", Georgia, serif;
+  font-size: 14px;
+  white-space: pre-wrap;
 }
 
 /* Normal paragraph spacing */
@@ -654,5 +659,3 @@
 /* Archive lists: prevent overflow */
 .archive-list { margin: 0; padding-left: 18px; }
 .archive-list li { overflow-wrap: anywhere; word-break: break-word; }
-
-#mSafrain hr { border: 0; border-top: 1px solid rgba(0,0,0,0.15); margin: 10px 0; }
