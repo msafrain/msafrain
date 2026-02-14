@@ -26,29 +26,33 @@
 
   <script>
 function loadAllFeeds() {
-  // mMe — 6 recent posts
-  load_mMe();
+  // mPoetry — 6 recent posts
+  load_mPoetry();
 
   // mThoughts — 6 recent posts
   load_mThoughts();
 
-  // New: mArt & mStory main windows
-  load_mArt();
+  // mChapters — 6 recent posts
+  load_mChapters();
+
+  // New: mBrush & mStory main windows
+  load_mBrush();
   load_mStory();
 
   // Other main windows
   load_mVisual();
-  load_mObservation();
   load_mStratagems();
   load_mLetters();
+  load_mKnowledge();
 
   // Archives
-  load_mMe_archive();
+  load_mPoetry_archive();
   load_mThoughts_archive();
-  load_mArt_archive();
+  load_mChapters_archive();
+  load_mBrush_archive();
   load_mStory_archive();
   load_mVisual_archive();
-  load_mObservation_archive();
+  load_mKnowledge_archive();
   load_mStratagems_archive();
   load_mLetters_archive();
 }
@@ -62,11 +66,11 @@ function loadAllFeeds() {
   <!-- =============== TOP LAUNCHBAR =============== -->
 <div class="openWindowButtons">
   <button class="openWindow" data-window-id="bysafrain">By mSafrain</button>
-  <button class="openWindow" data-window-id="mme">mMe</button>
+  <button class="openWindow" data-window-id="mpoetry">mPoetry</button>
 
   <!-- These two are now MENU buttons, not windows -->
   <button class="topMenuButton" data-menu-id="mind-menu">mMind</button>
-  <button class="topMenuButton" data-menu-id="body-menu">mBody</button>
+  <button class="topMenuButton" data-menu-id="body-menu">mMastery</button>
 
   <button class="openWindow" data-window-id="marchives">mArchives</button>
 </div>
@@ -74,15 +78,15 @@ function loadAllFeeds() {
   <!-- Dropdown for mMind -->
 <div id="mind-menu" class="top-dropdown">
   <button class="openWindow" data-window-id="mthoughts">mThoughts</button>
+  <button class="openWindow" data-window-id="mvisual">mVisual</button>
+  <button class="openWindow" data-window-id="mknowledge">mKnowledge</button>
   <button class="openWindow" data-window-id="mstratagems">mStratagems</button>
 </div>
 
 <!-- Dropdown for mBody -->
 <div id="body-menu" class="top-dropdown">
-  <button class="openWindow" data-window-id="mart">mArt</button>
+  <button class="openWindow" data-window-id="mbrush">mBrush</button>
   <button class="openWindow" data-window-id="mstory">mStory</button>
-  <button class="openWindow" data-window-id="mvisual">mVisual</button>
-  <button class="openWindow" data-window-id="mobservation">mObservation</button>
 </div>
 
 
@@ -91,6 +95,11 @@ function loadAllFeeds() {
 
     <!-- =============== DESKTOP ICONS (RIGHT SIDE) =============== -->
     <div class="desktop-icons">
+      <div class="desktop-icon m-diary" data-window-id="mchapters">
+        <div class="icon-diary"></div>
+        <span class="icon-label">mDiary</span>
+      </div>
+
       <div class="desktop-icon m-envelope" data-window-id="menvelope">
         <div class="icon-envelope"></div>
         <span class="icon-label">mEnvelope</span>
@@ -130,10 +139,10 @@ function loadAllFeeds() {
   </div>
 </div>
 
-    <!-- mMe -->
-    <div class="window" data-window-id="mme" style="top:160px; left:380px;">
+    <!-- mPoetry -->
+    <div class="window" data-window-id="mpoetry" style="top:160px; left:380px;">
       <div class="windowHeader">
-        <span class="windowTitle">mMe</span>
+        <span class="windowTitle">mPoetry</span>
         <div>
           <span class="winminimize">–</span>
           <span class="winmaximize">□</span>
@@ -141,7 +150,7 @@ function loadAllFeeds() {
         </div>
       </div>
       <div class="wincontent">
-        <div id="mMeContent" class="poetry-area">Loading mMe...</div>
+        <div id="mPoetryContent" class="poetry-area">Loading mPoetry...</div>
       </div>
     </div>
 
@@ -155,6 +164,22 @@ function loadAllFeeds() {
           <span class="winclose">x</span>
         </div>
       </div>
+
+    <!-- mKnowledge -->
+    <div class="window closed" data-window-id="mknowledge" style="top:420px; left:780px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mKnowledge</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mKnowledgeContent" class="poetry-area">Loading mKnowledge...</div>
+      </div>
+    </div>
+
       <div class="wincontent">
         <div id="mThoughts" class="poetry-area">Loading mThoughts...</div>
       </div>
@@ -175,10 +200,10 @@ function loadAllFeeds() {
       </div>
     </div>
 
-    <!-- mArt -->
-    <div class="window closed" data-window-id="mart" style="top:240px; left:520px;">
+    <!-- mChapters -->
+    <div class="window closed" data-window-id="mchapters" style="top:520px; left:620px;">
       <div class="windowHeader">
-        <span class="windowTitle">mArt</span>
+        <span class="windowTitle">mChapters</span>
         <div>
           <span class="winminimize">–</span>
           <span class="winmaximize">□</span>
@@ -186,7 +211,22 @@ function loadAllFeeds() {
         </div>
       </div>
       <div class="wincontent">
-        <div id="mArtContent" class="poetry-area">Loading mArt...</div>
+        <div id="mChaptersContent" class="poetry-area">Loading mChapters...</div>
+      </div>
+    </div>
+
+    <!-- mBrush -->
+    <div class="window closed" data-window-id="mbrush" style="top:240px; left:520px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mBrush</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mBrushContent" class="poetry-area">Loading mBrush...</div>
       </div>
     </div>
 
@@ -235,21 +275,6 @@ function loadAllFeeds() {
       </div>
     </div>
 
-    <!-- mObservation -->
-    <div class="window closed" data-window-id="mobservation" style="top:420px; left:120px;">
-      <div class="windowHeader">
-        <span class="windowTitle">mObservation</span>
-        <div>
-          <span class="winminimize">–</span>
-          <span class="winmaximize">□</span>
-          <span class="winclose">x</span>
-        </div>
-      </div>
-      <div class="wincontent">
-        <div id="mObservationContent" class="poetry-area">Loading mObservation...</div>
-      </div>
-    </div>
-
     <!-- =============== ARCHIVES WINDOWS =============== -->
         <!-- mArchives main window (list of archive categories) -->
         <div class="window closed" data-window-id="marchives" style="top:120px; left:40px;">
@@ -263,21 +288,22 @@ function loadAllFeeds() {
       </div>
       <div class="wincontent">
   <ul class="poetry-area" id="mArchivesList">
-  <li class="archive-item" data-archive-target="mme-archive">mMe Archives</li>
+  <li class="archive-item" data-archive-target="mpoetry-archive">mPoetry Archives</li>
   <li class="archive-item" data-archive-target="mthoughts-archive">mThoughts Archives</li>
+  <li class="archive-item" data-archive-target="mchapters-archive">mChapters Archives</li>
   <li class="archive-item" data-archive-target="mletters-archive">mLetters Archives</li>
-  <li class="archive-item" data-archive-target="mart-archive">mArt Archives</li>
+  <li class="archive-item" data-archive-target="mbrush-archive">mBrush Archives</li>
   <li class="archive-item" data-archive-target="mstory-archive">mStory Archives</li>
   <li class="archive-item" data-archive-target="mvisual-archive">mVisual Archives</li>
+  <li class="archive-item" data-archive-target="mknowledge-archive">mKnowledge Archives</li>
   <li class="archive-item" data-archive-target="mstratagems-archive">mStratagems Archives</li>
-  <li class="archive-item" data-archive-target="mobservation-archive">mObservation Archives</li>
 </ul>
 </div>
     </div>
     
-      <div class="window closed" data-window-id="mme-archive" style="top:160px; left:200px;">
+      <div class="window closed" data-window-id="mpoetry-archive" style="top:160px; left:200px;">
       <div class="windowHeader">
-        <span class="windowTitle">mMe Archives</span>
+        <span class="windowTitle">mPoetry Archives</span>
         <div>
           <span class="winminimize">–</span>
           <span class="winmaximize">□</span>
@@ -285,7 +311,7 @@ function loadAllFeeds() {
         </div>
       </div>
       <div class="wincontent">
-        <div id="mMeArchive" class="poetry-area">Loading mMe Archives...</div>
+        <div id="mPoetryArchive" class="poetry-area">Loading mPoetry Archives...</div>
       </div>
     </div>
 
@@ -298,12 +324,27 @@ function loadAllFeeds() {
           <span class="winclose">x</span>
         </div>
       </div>
+
+    <div class="window closed" data-window-id="mchapters-archive" style="top:160px; left:680px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mChapters Archives</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mChaptersArchive" class="poetry-area">Loading mChapters Archives...</div>
+      </div>
+    </div>
+
       <div class="wincontent">
         <div id="mThoughtsArchive" class="poetry-area">Loading mThoughts Archives...</div>
       </div>
     </div>
 
-        <div class="window closed" data-window-id="mletters-archive" style="top:160px; left:680px;">      
+        <div class="window closed" data-window-id="mletters-archive" style="top:160px; left:920px;">      
       <div class="windowHeader">
         <span class="windowTitle">mLetters Archives</span>
         <div>
@@ -317,9 +358,9 @@ function loadAllFeeds() {
       </div>
     </div>
 
-     <div class="window closed" data-window-id="mart-archive" style="top:160px; left:920px;">
+     <div class="window closed" data-window-id="mbrush-archive" style="top:260px; left:200px;">
       <div class="windowHeader">
-        <span class="windowTitle">mArt Archives</span>
+        <span class="windowTitle">mBrush Archives</span>
         <div>
           <span class="winminimize">–</span>
           <span class="winmaximize">□</span>
@@ -327,11 +368,11 @@ function loadAllFeeds() {
         </div>
       </div>
       <div class="wincontent">
-        <div id="mArtArchive" class="poetry-area">Loading mArt Archives...</div>
+        <div id="mBrushArchive" class="poetry-area">Loading mBrush Archives...</div>
       </div>
     </div>
 
-    <div class="window closed" data-window-id="mstory-archive" style="top:260px; left:200px;">
+    <div class="window closed" data-window-id="mstory-archive" style="top:260px; left:440px;">
       <div class="windowHeader">
         <span class="windowTitle">mStory Archives</span>
         <div>
@@ -345,7 +386,7 @@ function loadAllFeeds() {
       </div>
     </div>
 
-    <div class="window closed" data-window-id="mvisual-archive" style="top:260px; left:440px;">
+    <div class="window closed" data-window-id="mvisual-archive" style="top:260px; left:680px;">
       <div class="windowHeader">
         <span class="windowTitle">mVisual Archives</span>
         <div>
@@ -358,8 +399,23 @@ function loadAllFeeds() {
         <div id="mVisualArchive" class="poetry-area">Loading mVisual Archives...</div>
       </div>
     </div>
+    <div class="window closed" data-window-id="mknowledge-archive" style="top:360px; left:200px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mKnowledge Archives</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mKnowledgeArchive" class="poetry-area">Loading mKnowledge Archives...</div>
+      </div>
+    </div>
 
-    <div class="window closed" data-window-id="mstratagems-archive" style="top:260px; left:680px;">
+
+
+    <div class="window closed" data-window-id="mstratagems-archive" style="top:260px; left:920px;">
       <div class="windowHeader">
         <span class="windowTitle">mStratagems Archives</span>
         <div>
@@ -372,21 +428,8 @@ function loadAllFeeds() {
         <div id="mStratagemsArchiveContent" class="poetry-area">Loading mStratagems Archives...</div>
       </div>
     </div>
-
-    <div class="window closed" data-window-id="mobservation-archive" style="top:260px; left:920px;">
-      <div class="windowHeader">
-        <span class="windowTitle">mObservation Archives</span>
-        <div>
-          <span class="winminimize">–</span>
-          <span class="winmaximize">□</span>
-          <span class="winclose">x</span>
-        </div>
       </div>
       <div class="wincontent">
-        <div id="mObservationArchiveContent" class="poetry-area">Loading mObservation Archives...</div>
-      </div>
-    </div>
-
        <!-- mVisual alt-text modal -->
     <div id="mVisualAltModal">
       <div class="modal-inner">
