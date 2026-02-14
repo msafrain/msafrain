@@ -1,291 +1,9 @@
-// desktop.js
-// Window management + Blogger loading for mSafrain Desktop UI
-
-/****************************
- * 1. DESKTOP WINDOW SYSTEM *
- ****************************/
-(function () {
-  function initDesktopUI($) {
-    $(function () {
-      if (!$("#mSafrain").length) return;
-
-      var i = 0,
-        minimizedWidth = [],
-        minimizedHeight = [],
-        windowTopPos = [],
-        windowLeftPos = [],
-        keyToId = {}; // map from string window key -> numeric ID
-
-      function adjustFullScreenSize() {
-        $("#mSafrain .fullSizeWindow .wincontent")
-          .css("width", window.innerWidth - 32)
-          .css("height", window.innerHeight - 98);
-      }
-
-      function makeWindowActive(thisid) {
-        $(".top-dropdown").removeClass("open");
-        
-        if (typeof thisid === "undefined" || thisid === null) return;
-
-        $("#mSafrain .window").each(function () {
-          $(this).css(
-            "z-index",
-            parseInt($(this).css("z-index") || 0, 10) - 1
-          );
-        });
-        $("#window" + thisid).css("z-index", 1000);
-        $("#mSafrain .window").removeClass("activeWindow");
-        $("#window" + thisid).addClass("activeWindow");
-        $("#mSafrain .taskbarPanel").removeClass("activeTab");
-        $("#minimPanel" + thisid).addClass("activeTab");
-      }
-
-      function minimizeWindow(id) {
-        if (typeof id === "undefined" || id === null) return;
-
-        windowTopPos[id] = $("#window" + id).css("top");
-        windowLeftPos[id] = $("#window" + id).css("left");
-
-        $("#window" + id).animate(
-          { top: 800, left: 0 },
-          200,
-          function () {
-            $("#window" + id).addClass("minimizedWindow");
-            $("#minimPanel" + id)
-              .addClass("minimizedTab")
-              .removeClass("activeTab");
-          }
-        );
-      }
-
-      function openMinimized(id) {
-        if (typeof id === "undefined" || id === null) return;
-
-        $("#window" + id).removeClass("minimizedWindow");
-        $("#minimPanel" + id).removeClass("minimizedTab");
-        makeWindowActive(id);
-
-        $("#window" + id).animate(
-          { top: windowTopPos[id], left: windowLeftPos[id] },
-          200
-        );
-      }
-
-      function openWindow(id) {
-        if (typeof id === "undefined" || id === null) return;
-
-        $("#window" + id).removeClass("closed");
-
-        if ($("#window" + id).hasClass("minimizedWindow")) {
-          openMinimized(id);
-        } else {
-          makeWindowActive(id);
-        }
-
-        $("#minimPanel" + id).removeClass("closed");
-
-        // Mobile: scroll to window
-        if (window.innerWidth <= 768) {
-          var $target = $("#window" + id);
-          if ($target.length) {
-            $("html, body").animate(
-              { scrollTop: $target.offset().top - 80 },
-              300
-            );
-          }
-        }
-      }
-
-      
-
-      // Open a window by its string key (data-window-id). Falls back even if keyToId isn't ready.
-      function openWindowByKey(key) {
-        if (typeof key === "undefined" || key === null) return;
-
-        // Normal path: keyToId mapping
-        if (typeof keyToId !== "undefined" && typeof keyToId[key] !== "undefined") {
-          openWindow(keyToId[key]);
-          return;
-        }
-
-        // Fallback: locate the window element by data-window-id
-        var $win = $('#mSafrain .window[data-window-id="' + key + '"]');
-        if (!$win.length) return;
-
-        var nid = $win.attr("data-id");
-        if (typeof nid !== "undefined" && nid !== null && nid !== "") {
-          openWindow(nid);
-          return;
-        }
-
-        // Last resort (should rarely happen): show it directly
-        $win.removeClass("closed minimizedWindow");
-        $win.css("z-index", 9999);
-      }
-
-      function closeWindow(id) {
-        if (typeof id === "undefined" || id === null) return;
-
-        $("#window" + id).addClass("closed");
-        $("#minimPanel" + id).addClass("closed");
-      }
-
-      function setupInteractions() {
-        var isMobile = window.innerWidth <= 768;
-
-        try {
-          $("#mSafrain .window").draggable("destroy");
-        } catch (e) {}
-        try {
-          $("#mSafrain .wincontent").resizable("destroy");
-        } catch (e) {}
-
-        if (!isMobile) {
-          $("#mSafrain .wincontent").resizable();
-          $("#mSafrain .window").draggable({ cancel: ".wincontent" });
-        }
-      }
-
-      /// INITIALISE WINDOWS
-$("#mSafrain .window").each(function () {
-  var $win = $(this);
-  var key = $win.attr("data-window-id") || "window-" + i;
-
-  var title =
-    $win.attr("data-title") ||
-    $win.find(".windowTitle").text().trim() ||
-    key;
-
-  // preset base positions for main windows
-  var presetPositions = {
-    bysafrain: { top: 160, left: 60 },
-    mpoetry:   { top: 210, left: 380 },
-    mthoughts: { top: 140, left: 700 }
-  };
-
-  var baseTop, baseLeft;
-
-  if (presetPositions[key]) {
-    baseTop  = presetPositions[key].top;
-    baseLeft = presetPositions[key].left;
-  } else {
-    baseTop  = parseInt($win.css("top"), 10)  || 140;
-    baseLeft = parseInt($win.css("left"), 10) || 140;
-  }
-
-  // small random jitter for messy aesthetic (BUT no tilt)
-  var randTop  = baseTop  + Math.floor(Math.random() * 40) - 20;
-  var randLeft = baseLeft + Math.floor(Math.random() * 60) - 30;
-
-  $win.css({
-    top: randTop + "px",
-    left: randLeft + "px",
-    transform: "none"          // make sure there is ZERO rotation
-  });
-
-  $win.css("z-index", 1000);
-  $win.attr("data-id", i);
-
-  minimizedWidth[i]  = $win.width();
-  minimizedHeight[i] = $win.height();
-  windowTopPos[i]    = $win.css("top");
-  windowLeftPos[i]   = $win.css("left");
-
-  keyToId[key] = i;
-
-  $("#taskbar").append(
-    '<div class="taskbarPanel" id="minimPanel' +
-      i +
-      '" data-id="' +
-      i +
-      '">' +
-      title +
-      "</div>"
-  );
-
-  if ($win.hasClass("closed")) {
-    $("#minimPanel" + i).addClass("closed");
-  }
-
-  $win.attr("id", "window" + i);
-  i++;
-});
-
-// Ensure all windows start correctly
-var defaultKey = "bysafrain";
-var defaultId = keyToId[defaultKey];
-
-if (typeof defaultId === "undefined") {
-  // fallback: take first non-closed window
-  for (var k in keyToId) {
-    if (!$("#window" + keyToId[k]).hasClass("closed")) {
-      defaultId = keyToId[k];
-      break;
-    }
-  }
-}
-
-setupInteractions();
-adjustFullScreenSize();
-      
-      // EVENTS
-      $("#mSafrain").on("mousedown", ".window", function () {
-        makeWindowActive($(this).attr("data-id"));
-      });
-
-      $("#mSafrain").on("click", ".winclose", function () {
-        var id = $(this).closest(".window").attr("data-id");
-        closeWindow(id);
-      });
-
-      $("#mSafrain").on("click", ".winminimize", function () {
-        var id = $(this).closest(".window").attr("data-id");
-        minimizeWindow(id);
-      });
-
-      $("#mSafrain").on("click", ".winmaximize", function () {
-        var win = $(this).closest(".window");
-        var wid = win.attr("data-id");
-        if (win.hasClass("fullSizeWindow")) {
-          win.removeClass("fullSizeWindow");
-          win
-            .find(".wincontent")
-            .height(minimizedHeight[wid])
-            .width(minimizedWidth[wid]);
-        } else {
-          win.addClass("fullSizeWindow");
-          minimizedHeight[wid] = win.find(".wincontent").height();
-          minimizedWidth[wid] = win.find(".wincontent").width();
-          adjustFullScreenSize();
-        }
-      });
-
-      // Taskbar click
-      $("#mSafrain").on("click", ".taskbarPanel", function () {
-        var id = $(this).attr("data-id");
-
-        if ($(this).hasClass("closed")) {
-          openWindow(id);
-        } else if ($(this).hasClass("activeTab")) {
-          minimizeWindow(id);
-        } else if ($(this).hasClass("minimizedTab")) {
-          openMinimized(id);
-        } else {
-          makeWindowActive(id);
-        }
-      });
-
-            // Launchbar buttons (top buttons)
-      $(document).on("click", ".openWindow", function () {
-        var key = $(this).attr("data-window-id");
+      // Clicking items inside the mArchives window opens that archive
+      $(document).on("click", "#mArchivesList .archive-item", function () {
+        var key = $(this).attr("data-archive-target");
+        if (typeof key === "string") key = key.trim();
         openWindowByKey(key);
       });
-
-                       // Clicking items inside the mArchives window opens that archive
-     $(document).on("click", "#mArchivesList li", function () {
-  var key = $(this).attr("data-archive-target");
-  openWindowByKey(key);
-});
 
       // Desktop icons (mEnvelope etc.)
       $(document).on("click", ".desktop-icon", function () {
@@ -576,9 +294,10 @@ function handle_mChapters_archive(json) {
     return;
   }
 
-  var out = "<ul class='archive-list'>";
+  var out = "<ul class=\"archive-list\">";
   json.feed.entry.forEach(function (entry) {
-    var title = entry.title ? entry.title.$t : "(untitled)";
+    var text = getTitleOrSnippet(entry);
+    var safeText = escapeHtml(text);
     var link = "";
     if (entry.link) {
       entry.link.forEach(function (l) {
@@ -586,7 +305,7 @@ function handle_mChapters_archive(json) {
       });
     }
     out += "<li>";
-    out += link ? "<a href='" + link + "' target='_blank'>" + escapeHtml(title) + "</a>" : escapeHtml(title);
+    out += link ? "<a href=\"" + link + "\" target=\"_blank\">" + safeText + "</a>" : safeText;
     out += "</li>";
   });
   out += "</ul>";
@@ -631,9 +350,10 @@ function handle_mKnowledge_archive(json) {
     return;
   }
 
-  var out = "<ul class='archive-list'>";
+  var out = "<ul class=\"archive-list\">";
   json.feed.entry.forEach(function (entry) {
-    var title = entry.title ? entry.title.$t : "(untitled)";
+    var text = getTitleOrSnippet(entry);
+    var safeText = escapeHtml(text);
     var link = "";
     if (entry.link) {
       entry.link.forEach(function (l) {
@@ -641,7 +361,7 @@ function handle_mKnowledge_archive(json) {
       });
     }
     out += "<li>";
-    out += link ? "<a href='" + link + "' target='_blank'>" + escapeHtml(title) + "</a>" : escapeHtml(title);
+    out += link ? "<a href=\"" + link + "\" target=\"_blank\">" + safeText + "</a>" : safeText;
     out += "</li>";
   });
   out += "</ul>";
@@ -1003,4 +723,3 @@ function handle_mStratagems_archive(json) {
 
   el.innerHTML = html;
 }
-
