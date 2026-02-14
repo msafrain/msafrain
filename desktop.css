@@ -659,3 +659,9 @@
 /* Archive lists: prevent overflow */
 .archive-list { margin: 0; padding-left: 18px; }
 .archive-list li { overflow-wrap: anywhere; word-break: break-word; }
+
+
+/* RIN FIX: archive list should not show bullets/dots */
+#mSafrain .archive-list{list-style:none; margin:0 !important; padding:0 !important;}
+#mSafrain .archive-list li{padding:6px 8px; border-bottom:1px solid rgba(0,0,0,0.08);}
+#mSafrain .archive-list li:last-child{border-bottom:none;}
