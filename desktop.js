@@ -96,6 +96,33 @@
         }
       }
 
+      
+
+      // Open a window by its string key (data-window-id). Falls back even if keyToId isn't ready.
+      function openWindowByKey(key) {
+        if (typeof key === "undefined" || key === null) return;
+
+        // Normal path: keyToId mapping
+        if (typeof keyToId !== "undefined" && typeof keyToId[key] !== "undefined") {
+          openWindow(keyToId[key]);
+          return;
+        }
+
+        // Fallback: locate the window element by data-window-id
+        var $win = $('#mSafrain .window[data-window-id="' + key + '"]');
+        if (!$win.length) return;
+
+        var nid = $win.attr("data-id");
+        if (typeof nid !== "undefined" && nid !== null && nid !== "") {
+          openWindow(nid);
+          return;
+        }
+
+        // Last resort (should rarely happen): show it directly
+        $win.removeClass("closed minimizedWindow");
+        $win.css("z-index", 9999);
+      }
+
       function closeWindow(id) {
         if (typeof id === "undefined" || id === null) return;
 
@@ -251,24 +278,19 @@ adjustFullScreenSize();
             // Launchbar buttons (top buttons)
       $(document).on("click", ".openWindow", function () {
         var key = $(this).attr("data-window-id");
-        var id = keyToId[key];
-        if (typeof id === "undefined") return;
-        openWindow(id);
+        openWindowByKey(key);
       });
 
                        // Clicking items inside the mArchives window opens that archive
      $(document).on("click", "#mArchivesList li", function () {
   var key = $(this).attr("data-archive-target");
-  var id = keyToId[key];
-  if (typeof id === "undefined") return;
-  openWindow(id);
+  openWindowByKey(key);
 });
 
       // Desktop icons (mEnvelope etc.)
       $(document).on("click", ".desktop-icon", function () {
         var key = $(this).attr("data-window-id");
-        var id = keyToId[key];
-        openWindow(id);
+        openWindowByKey(key);
       });
 
             // mVisual: click image to show alt-text popup
@@ -321,9 +343,9 @@ adjustFullScreenSize();
           $(".top-dropdown").removeClass("open");
         });
 
-        // Initial Blogger feed loads (mPoetry + mThoughts)
-        if (typeof load_mPoetry === "function") {
-          load_mPoetry();
+        // Initial Blogger feed loads (mMe + mThoughts)
+        if (typeof load_mMe === "function") {
+          load_mMe();
         }
         if (typeof load_mThoughts === "function") {
           load_mThoughts();
@@ -409,19 +431,18 @@ function getTitleOrSnippet(entry) {
   return content.substring(0, 80) + "...";
 }
 
-
-/*******************************
- *  NEW: mPoetry – LIST & ARCHIVE
- *******************************/
+/******************************
+ *  NEW: mMe – LIST & ARCHIVE *
+ ******************************/
 function load_mPoetry() {
-  bloggerJsonp("mPoetry", 6, "handle_mPoetry");
+  bloggerJsonp("mMe", 6, "handle_mMe");
 }
 
-function handle_mPoetry(json) {
-  var el = document.getElementById("mPoetryContent");
+function handle_mMe(json) {
+  var el = document.getElementById("mMeContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mPoetry posts yet.";
+    el.textContent = "No mMe posts yet.";
     return;
   }
 
@@ -443,77 +464,15 @@ function handle_mPoetry(json) {
 }
 
 function load_mPoetry_archive() {
-  bloggerJsonp("mPoetry", 50, "handle_mPoetry_archive");
+  bloggerJsonp("mMe", 50, "handle_mMe_archive");
 }
 
-function handle_mPoetry_archive(json) {
-  var el = document.getElementById("mPoetryArchive");
+function handle_mMe_archive(json) {
+  var el = document.getElementById("mMeArchive");
   if (!el) return;
 
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mPoetry archives.";
-    return;
-  }
-
-  var html = "";
-  json.feed.entry.forEach(function (entry, idx) {
-    var content = extractContent(entry);
-    var dateStr = formatDate(entry);
-
-    if (idx > 0) html += "<hr>";
-
-    if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
-    }
-
-    html += content;
-  });
-
-  el.innerHTML = html;
-}
-
-/*******************************
- *  NEW: mChapters – LIST & ARCHIVE
- *******************************/
-function load_mChapters() {
-  bloggerJsonp("mChapters", 6, "handle_mChapters");
-}
-
-function handle_mChapters(json) {
-  var el = document.getElementById("mChaptersContent");
-  if (!el) return;
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mChapters posts yet.";
-    return;
-  }
-
-  var html = "";
-  json.feed.entry.forEach(function (entry, idx) {
-    var content = extractContent(entry);
-    var dateStr = formatDate(entry);
-
-    if (idx > 0) html += "<hr>";
-
-    if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
-    }
-
-    html += content;
-  });
-
-  el.innerHTML = html;
-}
-
-function load_mChapters_archive() {
-  bloggerJsonp("mChapters", 50, "handle_mChapters_archive");
-}
-
-function handle_mChapters_archive(json) {
-  var el = document.getElementById("mChaptersArchive");
-  if (!el) return;
-
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mChapters archives.";
+    el.textContent = "No mMe archives.";
     return;
   }
 
@@ -593,68 +552,159 @@ function handle_mThoughts_archive(json) {
   el.innerHTML = html;
 }
 
-
-/*************************
- *  NEW: mKnowledge      *
- *************************/
-function load_mKnowledge() {
-  bloggerJsonp("mKnowledge", 6, "handle_mKnowledge");
-}
-
-function handle_mKnowledge(json) {
-  var el = document.getElementById("mKnowledgeContent");
-  if (!el) return;
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mKnowledge posts.";
-    return;
-  }
-
-  var html = "";
-  json.feed.entry.forEach(function (entry, idx) {
-    var content = extractContent(entry);
-    var dateStr = formatDate(entry);
-
-    if (idx > 0) html += "<hr>";
-    if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
-    }
-    html += content;
-  });
-
-  el.innerHTML = html;
-}
-
-function load_mKnowledge_archive() {
-  bloggerJsonp("mKnowledge", 50, "handle_mKnowledge_archive");
-}
-
-function handle_mKnowledge_archive(json) {
-  var el = document.getElementById("mKnowledgeArchive");
-  if (!el) return;
-
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mKnowledge archives.";
-    return;
-  }
-
-  var html = "";
-  json.feed.entry.forEach(function (entry, idx) {
-    var content = extractContent(entry);
-    var dateStr = formatDate(entry);
-
-    if (idx > 0) html += "<hr>";
-    if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
-    }
-    html += content;
-  });
-
-  el.innerHTML = html;
-}
-
 /**************
  * 7. mLetters *
  **************/
+
+function load_mChapters() {
+  var blogUrl = "https://msafrain.blogspot.com/feeds/posts/default";
+  var max = 6;
+  var url = blogUrl + "?alt=json&max-results=" + max + "&orderby=published&label=mChapters";
+
+  $.getJSON(url, function (data) {
+    if (!data.feed || !data.feed.entry) {
+      $("#mChaptersContent").html("<p>No mChapters yet.</p>");
+      return;
+    }
+
+    var output = "";
+    data.feed.entry.forEach(function (entry) {
+      var title = entry.title ? entry.title.$t : "";
+      var content = entry.content ? entry.content.$t : "";
+      var link = "";
+      if (entry.link) {
+        entry.link.forEach(function (l) {
+          if (l.rel === "alternate") link = l.href;
+        });
+      }
+
+      output += '<div class="blog-post">';
+      output += "<h3>" + title + "</h3>";
+      output += '<div class="blog-content">' + content + "</div>";
+      if (link) output += '<div class="blog-link"><a href="' + link + '" target="_blank">Open</a></div>';
+      output += "</div>";
+    });
+
+    $("#mChaptersContent").html(output);
+  }).fail(function () {
+    $("#mChaptersContent").html("<p>Failed to load mChapters.</p>");
+  });
+}
+
+function load_mChapters_archive() {
+  var blogUrl = "https://msafrain.blogspot.com/feeds/posts/default";
+  var max = 200;
+  var url = blogUrl + "?alt=json&max-results=" + max + "&orderby=published&label=mChapters";
+
+  $.getJSON(url, function (data) {
+    if (!data.feed || !data.feed.entry) {
+      $("#mChaptersArchive").html("<p>No mChapters Archives yet.</p>");
+      return;
+    }
+
+    var items = [];
+    data.feed.entry.forEach(function (entry) {
+      var title = entry.title ? entry.title.$t : "";
+      var published = entry.published ? entry.published.$t : "";
+      var link = "";
+      if (entry.link) {
+        entry.link.forEach(function (l) {
+          if (l.rel === "alternate") link = l.href;
+        });
+      }
+      items.push({ title: title, published: published, link: link });
+    });
+
+    var out = "<ul class='archive-list'>";
+    items.forEach(function (it) {
+      out += "<li>";
+      if (it.link) out += "<a href='" + it.link + "' target='_blank'>" + it.title + "</a>";
+      else out += it.title;
+      out += "</li>";
+    });
+    out += "</ul>";
+
+    $("#mChaptersArchive").html(out);
+  }).fail(function () {
+    $("#mChaptersArchive").html("<p>Failed to load mChapters Archives.</p>");
+  });
+}
+
+
+function load_mKnowledge() {
+  var blogUrl = "https://msafrain.blogspot.com/feeds/posts/default";
+  var max = 6;
+  var url = blogUrl + "?alt=json&max-results=" + max + "&orderby=published&label=mKnowledge";
+
+  $.getJSON(url, function (data) {
+    if (!data.feed || !data.feed.entry) {
+      $("#mKnowledgeContent").html("<p>No mKnowledge yet.</p>");
+      return;
+    }
+
+    var output = "";
+    data.feed.entry.forEach(function (entry) {
+      var title = entry.title ? entry.title.$t : "";
+      var content = entry.content ? entry.content.$t : "";
+      var link = "";
+      if (entry.link) {
+        entry.link.forEach(function (l) {
+          if (l.rel === "alternate") link = l.href;
+        });
+      }
+
+      output += '<div class="blog-post">';
+      output += "<h3>" + title + "</h3>";
+      output += '<div class="blog-content">' + content + "</div>";
+      if (link) output += '<div class="blog-link"><a href="' + link + '" target="_blank">Open</a></div>';
+      output += "</div>";
+    });
+
+    $("#mKnowledgeContent").html(output);
+  }).fail(function () {
+    $("#mKnowledgeContent").html("<p>Failed to load mKnowledge.</p>");
+  });
+}
+
+function load_mKnowledge_archive() {
+  var blogUrl = "https://msafrain.blogspot.com/feeds/posts/default";
+  var max = 200;
+  var url = blogUrl + "?alt=json&max-results=" + max + "&orderby=published&label=mKnowledge";
+
+  $.getJSON(url, function (data) {
+    if (!data.feed || !data.feed.entry) {
+      $("#mKnowledgeArchiveContent").html("<p>No mKnowledge Archives yet.</p>");
+      return;
+    }
+
+    var items = [];
+    data.feed.entry.forEach(function (entry) {
+      var title = entry.title ? entry.title.$t : "";
+      var published = entry.published ? entry.published.$t : "";
+      var link = "";
+      if (entry.link) {
+        entry.link.forEach(function (l) {
+          if (l.rel === "alternate") link = l.href;
+        });
+      }
+      items.push({ title: title, published: published, link: link });
+    });
+
+    var out = "<ul class='archive-list'>";
+    items.forEach(function (it) {
+      out += "<li>";
+      if (it.link) out += "<a href='" + it.link + "' target='_blank'>" + it.title + "</a>";
+      else out += it.title;
+      out += "</li>";
+    });
+    out += "</ul>";
+
+    $("#mKnowledgeArchiveContent").html(out);
+  }).fail(function () {
+    $("#mKnowledgeArchiveContent").html("<p>Failed to load mKnowledge Archives.</p>");
+  });
+}
+
 function load_mLetters() {
   bloggerJsonp("mLetters", 6, "handle_mLetters");
 }
@@ -725,19 +775,18 @@ function handle_mLetters_archive(json) {
   el.innerHTML = html;
 }
 
-
 /*****************
- * 8. mBrush     *
+ * 8. mArt       *
  *****************/
 function load_mBrush() {
-  bloggerJsonp("mBrush", 6, "handle_mBrush");
+  bloggerJsonp("mArt", 6, "handle_mArt");
 }
 
-function handle_mBrush(json) {
-  var el = document.getElementById("mBrushContent");
+function handle_mArt(json) {
+  var el = document.getElementById("mArtContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mBrush posts.";
+    el.textContent = "No mArt posts.";
     return;
   }
 
@@ -794,14 +843,14 @@ function handle_mBrush(json) {
 }
 
 function load_mBrush_archive() {
-  bloggerJsonp("mBrush", 50, "handle_mBrush_archive");
+  bloggerJsonp("mArt", 50, "handle_mArt_archive");
 }
 
-function handle_mBrush_archive(json) {
-  var el = document.getElementById("mBrushArchive");
+function handle_mArt_archive(json) {
+  var el = document.getElementById("mArtArchive");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mBrush archives.";
+    el.textContent = "No mArt archives.";
     return;
   }
 
@@ -1158,6 +1207,29 @@ function handle_mStratagems_archive(json) {
   el.innerHTML = html;
 }
 
+/**********************
+ * 5. mObservation    *
+ **********************/
 
+function handle_mObservation_archive(json) {
+  var el = document.getElementById("mObservationArchiveContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No archives.";
+    return;
+  }
 
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+    if (idx > 0) html += "<hr>";
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
 
