@@ -96,33 +96,6 @@
         }
       }
 
-      
-
-      // Open a window by its string key (data-window-id). Falls back even if keyToId isn't ready.
-      function openWindowByKey(key) {
-        if (typeof key === "undefined" || key === null) return;
-
-        // Normal path: keyToId mapping
-        if (typeof keyToId !== "undefined" && typeof keyToId[key] !== "undefined") {
-          openWindow(keyToId[key]);
-          return;
-        }
-
-        // Fallback: locate the window element by data-window-id
-        var $win = $('#mSafrain .window[data-window-id="' + key + '"]');
-        if (!$win.length) return;
-
-        var nid = $win.attr("data-id");
-        if (typeof nid !== "undefined" && nid !== null && nid !== "") {
-          openWindow(nid);
-          return;
-        }
-
-        // Last resort (should rarely happen): show it directly
-        $win.removeClass("closed minimizedWindow");
-        $win.css("z-index", 9999);
-      }
-
       function closeWindow(id) {
         if (typeof id === "undefined" || id === null) return;
 
@@ -278,19 +251,24 @@ adjustFullScreenSize();
             // Launchbar buttons (top buttons)
       $(document).on("click", ".openWindow", function () {
         var key = $(this).attr("data-window-id");
-        openWindowByKey(key);
+        var id = keyToId[key];
+        if (typeof id === "undefined") return;
+        openWindow(id);
       });
 
                        // Clicking items inside the mArchives window opens that archive
      $(document).on("click", "#mArchivesList li", function () {
   var key = $(this).attr("data-archive-target");
-  openWindowByKey(key);
+  var id = keyToId[key];
+  if (typeof id === "undefined") return;
+  openWindow(id);
 });
 
       // Desktop icons (mEnvelope etc.)
       $(document).on("click", ".desktop-icon", function () {
         var key = $(this).attr("data-window-id");
-        openWindowByKey(key);
+        var id = keyToId[key];
+        openWindow(id);
       });
 
             // mVisual: click image to show alt-text popup
@@ -343,9 +321,9 @@ adjustFullScreenSize();
           $(".top-dropdown").removeClass("open");
         });
 
-        // Initial Blogger feed loads (mMe + mThoughts)
-        if (typeof load_mMe === "function") {
-          load_mMe();
+        // Initial Blogger feed loads (mPoetry + mThoughts)
+        if (typeof load_mPoetry === "function") {
+          load_mPoetry();
         }
         if (typeof load_mThoughts === "function") {
           load_mThoughts();
@@ -431,18 +409,20 @@ function getTitleOrSnippet(entry) {
   return content.substring(0, 80) + "...";
 }
 
+
 /******************************
- *  NEW: mMe – LIST & ARCHIVE *
+ *  NEW: mPoetry – LIST & ARCHIVE
  ******************************/
 function load_mPoetry() {
-  bloggerJsonp("mMe", 6, "handle_mMe");
+  bloggerJsonp("mPoetry", 6, "handle_mPoetry");
 }
 
-function handle_mMe(json) {
-  var el = document.getElementById("mMeContent");
+function handle_mPoetry(json) {
+  var el = document.getElementById("mPoetryContent");
   if (!el) return;
+
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mMe posts yet.";
+    el.textContent = "No mPoetry posts yet.";
     return;
   }
 
@@ -464,15 +444,15 @@ function handle_mMe(json) {
 }
 
 function load_mPoetry_archive() {
-  bloggerJsonp("mMe", 50, "handle_mMe_archive");
+  bloggerJsonp("mPoetry", 50, "handle_mPoetry_archive");
 }
 
-function handle_mMe_archive(json) {
-  var el = document.getElementById("mMeArchive");
+function handle_mPoetry_archive(json) {
+  var el = document.getElementById("mPoetryArchive");
   if (!el) return;
 
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mMe archives.";
+    el.textContent = "No mPoetry archives.";
     return;
   }
 
@@ -493,8 +473,7 @@ function handle_mMe_archive(json) {
   el.innerHTML = html;
 }
 
-/******************************
- * 3. mThoughts – LIST        *
+* 3. mThoughts – LIST        *
  ******************************/
 function load_mThoughts() {
   bloggerJsonp("mThoughts", 6, "handle_mThoughts");
