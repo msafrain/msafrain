@@ -100,6 +100,7 @@
 
       // Open a window by its string key (data-window-id). Falls back even if keyToId isn't ready.
       function openWindowByKey(key) {
+        if (typeof key === "string") key = key.trim();
         if (typeof key === "undefined" || key === null) return;
 
         // Normal path: keyToId mapping
@@ -278,18 +279,23 @@ adjustFullScreenSize();
             // Launchbar buttons (top buttons)
       $(document).on("click", ".openWindow", function () {
         var key = $(this).attr("data-window-id");
+        if (typeof key === "string") key = key.trim();
         openWindowByKey(key);
       });
 
                        // Clicking items inside the mArchives window opens that archive
-     $(document).on("click", "#mArchivesList li", function () {
-  var key = $(this).attr("data-archive-target");
+     $(document).on("click", "#mArchivesList li, #mArchivesList .archive-item", function () {
+  var key = $(this).attr("data-archive-target") || $(this).data("archiveTarget") || $(this).data("archive-target");
+  if (typeof key === "string") key = key.trim();
+  openWindowByKey(key);
+});
   openWindowByKey(key);
 });
 
       // Desktop icons (mEnvelope etc.)
       $(document).on("click", ".desktop-icon", function () {
         var key = $(this).attr("data-window-id");
+        if (typeof key === "string") key = key.trim();
         openWindowByKey(key);
       });
 
@@ -578,7 +584,7 @@ function handle_mChapters_archive(json) {
 
   var out = "<ul class='archive-list'>";
   json.feed.entry.forEach(function (entry) {
-    var title = entry.title ? entry.title.$t : "(untitled)";
+    var title = getTitleOrSnippet(entry);
     var link = "";
     if (entry.link) {
       entry.link.forEach(function (l) {
@@ -633,7 +639,7 @@ function handle_mKnowledge_archive(json) {
 
   var out = "<ul class='archive-list'>";
   json.feed.entry.forEach(function (entry) {
-    var title = entry.title ? entry.title.$t : "(untitled)";
+    var title = getTitleOrSnippet(entry);
     var link = "";
     if (entry.link) {
       entry.link.forEach(function (l) {
