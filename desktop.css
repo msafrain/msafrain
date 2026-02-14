@@ -396,9 +396,16 @@
     padding: 6px 8px;
   }
 
+  #mSafrain .desktop-icon.m-diary {
+    right: 12px;
+    top: 70px;
+    position: fixed !important;
+    z-index: 6000 !important;
+  }
+
   #mSafrain .desktop-icon.m-envelope {
     right: 12px;
-    top: 120px;
+    top: 130px;
     position: fixed !important;
     z-index: 6000 !important;
   }
@@ -419,6 +426,11 @@
 #mSafrain .desktop-icon.m-envelope {
   right: 3vw;
   top: 24vh;
+}
+
+#mSafrain .desktop-icon.m-diary {
+  right: 3vw;
+  top: 14vh;
 }
 
 #mSafrain .icon-envelope {
@@ -447,6 +459,38 @@
 
 #mSafrain .icon-envelope::after {
   transform: skewY(-18deg);
+}
+
+/* Diary icon (mDiary) */
+#mSafrain .icon-diary {
+  width: 44px;
+  height: 48px;
+  margin: 0 auto 4px auto;
+  border: 2px solid rgba(0, 0, 0, 0.8);
+  border-radius: 6px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+#mSafrain .icon-diary::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  border-left: 2px solid rgba(0, 0, 0, 0.55);
+}
+
+#mSafrain .icon-diary::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  right: 8px;
+  top: 10px;
+  height: 0;
+  border-top: 2px solid rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.25), 0 16px 0 rgba(0, 0, 0, 0.25);
 }
 
 #mSafrain .icon-label {
@@ -506,7 +550,7 @@
 }
 
 /* Make mArt same size as mVisual */
-#mSafrain .window[data-window-id="mart"] {
+#mSafrain .window[data-window-id="mbrush"] {
   width: 650px !important;
   height: 520px !important;
 }
@@ -585,7 +629,7 @@
 }
 
 /* Make mArt Archive same size as mArt */
-#mSafrain .window[data-window-id="mart-archive"] {
+#mSafrain .window[data-window-id="mbrush-archive"] {
   width: 650px !important;
   height: 520px !important;
 }
@@ -597,7 +641,7 @@
 }
 
 /* Ensure archive windows match normal windows */
-#mSafrain .window[data-window-id="mart-archive"] .wincontent,
+#mSafrain .window[data-window-id="mbrush-archive"] .wincontent,
 #mSafrain .window[data-window-id="mstory-archive"] .wincontent {
   padding: 10px;
   background: #ffffff;
@@ -605,7 +649,7 @@
 }
 
 /* Fix image scaling inside archive windows */
-#mSafrain .window[data-window-id="mart-archive"] img,
+#mSafrain .window[data-window-id="mbrush-archive"] img,
 #mSafrain .window[data-window-id="mstory-archive"] img {
   width: 100% !important;
   height: auto !important;
