@@ -132,7 +132,7 @@ $("#mSafrain .window").each(function () {
   // preset base positions for main windows
   var presetPositions = {
     bysafrain: { top: 160, left: 60 },
-    mme:       { top: 210, left: 380 },
+    mpoetry:   { top: 210, left: 380 },
     mthoughts: { top: 140, left: 700 }
   };
 
@@ -321,9 +321,9 @@ adjustFullScreenSize();
           $(".top-dropdown").removeClass("open");
         });
 
-        // Initial Blogger feed loads (mMe + mThoughts)
-        if (typeof load_mMe === "function") {
-          load_mMe();
+        // Initial Blogger feed loads (mPoetry + mThoughts)
+        if (typeof load_mPoetry === "function") {
+          load_mPoetry();
         }
         if (typeof load_mThoughts === "function") {
           load_mThoughts();
@@ -409,18 +409,19 @@ function getTitleOrSnippet(entry) {
   return content.substring(0, 80) + "...";
 }
 
-/******************************
- *  NEW: mMe – LIST & ARCHIVE *
- ******************************/
-function load_mMe() {
-  bloggerJsonp("mMe", 6, "handle_mMe");
+
+/*******************************
+ *  NEW: mPoetry – LIST & ARCHIVE
+ *******************************/
+function load_mPoetry() {
+  bloggerJsonp("mPoetry", 6, "handle_mPoetry");
 }
 
-function handle_mMe(json) {
-  var el = document.getElementById("mMeContent");
+function handle_mPoetry(json) {
+  var el = document.getElementById("mPoetryContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mMe posts yet.";
+    el.textContent = "No mPoetry posts yet.";
     return;
   }
 
@@ -441,16 +442,78 @@ function handle_mMe(json) {
   el.innerHTML = html;
 }
 
-function load_mMe_archive() {
-  bloggerJsonp("mMe", 50, "handle_mMe_archive");
+function load_mPoetry_archive() {
+  bloggerJsonp("mPoetry", 50, "handle_mPoetry_archive");
 }
 
-function handle_mMe_archive(json) {
-  var el = document.getElementById("mMeArchive");
+function handle_mPoetry_archive(json) {
+  var el = document.getElementById("mPoetryArchive");
   if (!el) return;
 
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mMe archives.";
+    el.textContent = "No mPoetry archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+/*******************************
+ *  NEW: mChapters – LIST & ARCHIVE
+ *******************************/
+function load_mChapters() {
+  bloggerJsonp("mChapters", 6, "handle_mChapters");
+}
+
+function handle_mChapters(json) {
+  var el = document.getElementById("mChaptersContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mChapters posts yet.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mChapters_archive() {
+  bloggerJsonp("mChapters", 50, "handle_mChapters_archive");
+}
+
+function handle_mChapters_archive(json) {
+  var el = document.getElementById("mChaptersArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mChapters archives.";
     return;
   }
 
@@ -530,6 +593,65 @@ function handle_mThoughts_archive(json) {
   el.innerHTML = html;
 }
 
+
+/*************************
+ *  NEW: mKnowledge      *
+ *************************/
+function load_mKnowledge() {
+  bloggerJsonp("mKnowledge", 6, "handle_mKnowledge");
+}
+
+function handle_mKnowledge(json) {
+  var el = document.getElementById("mKnowledgeContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mKnowledge posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mKnowledge_archive() {
+  bloggerJsonp("mKnowledge", 50, "handle_mKnowledge_archive");
+}
+
+function handle_mKnowledge_archive(json) {
+  var el = document.getElementById("mKnowledgeArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mKnowledge archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) {
+      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
+    }
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
 /**************
  * 7. mLetters *
  **************/
@@ -603,18 +725,19 @@ function handle_mLetters_archive(json) {
   el.innerHTML = html;
 }
 
+
 /*****************
- * 8. mArt       *
+ * 8. mBrush     *
  *****************/
-function load_mArt() {
-  bloggerJsonp("mArt", 6, "handle_mArt");
+function load_mBrush() {
+  bloggerJsonp("mBrush", 6, "handle_mBrush");
 }
 
-function handle_mArt(json) {
-  var el = document.getElementById("mArtContent");
+function handle_mBrush(json) {
+  var el = document.getElementById("mBrushContent");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mArt posts.";
+    el.textContent = "No mBrush posts.";
     return;
   }
 
@@ -670,15 +793,15 @@ function handle_mArt(json) {
   el.innerHTML = html;
 }
 
-function load_mArt_archive() {
-  bloggerJsonp("mArt", 50, "handle_mArt_archive");
+function load_mBrush_archive() {
+  bloggerJsonp("mBrush", 50, "handle_mBrush_archive");
 }
 
-function handle_mArt_archive(json) {
-  var el = document.getElementById("mArtArchive");
+function handle_mBrush_archive(json) {
+  var el = document.getElementById("mBrushArchive");
   if (!el) return;
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mArt archives.";
+    el.textContent = "No mBrush archives.";
     return;
   }
 
@@ -1035,58 +1158,6 @@ function handle_mStratagems_archive(json) {
   el.innerHTML = html;
 }
 
-/**********************
- * 5. mObservation    *
- **********************/
-function load_mObservation() {
-  bloggerJsonp("mObservation", 6, "handle_mObservation");
-}
 
-function handle_mObservation(json) {
-  var el = document.getElementById("mObservationContent");
-  if (!el) return;
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mObservation posts.";
-    return;
-  }
 
-  var html = "";
-  json.feed.entry.forEach(function (entry, idx) {
-    var content = extractContent(entry);
-    var dateStr = formatDate(entry);
-    if (idx > 0) html += "<hr>";
-    if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
-    }
-    html += content;
-  });
-
-  el.innerHTML = html;
-}
-
-function load_mObservation_archive() {
-  bloggerJsonp("mObservation", 50, "handle_mObservation_archive");
-}
-
-function handle_mObservation_archive(json) {
-  var el = document.getElementById("mObservationArchiveContent");
-  if (!el) return;
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No archives.";
-    return;
-  }
-
-  var html = "";
-  json.feed.entry.forEach(function (entry, idx) {
-    var content = extractContent(entry);
-    var dateStr = formatDate(entry);
-    if (idx > 0) html += "<hr>";
-    if (dateStr) {
-      html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
-    }
-    html += content;
-  });
-
-  el.innerHTML = html;
-}
 
