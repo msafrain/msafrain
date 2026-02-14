@@ -16,42 +16,6 @@
         windowLeftPos = [],
         keyToId = {}; // map from string window key -> numeric ID
 
-var __loadedKeys = {}; // track which windows have loaded their Blogger feeds
-
-function ensureLoadedForKey(key) {
-  if (!key) return;
-  if (__loadedKeys[key]) return;
-
-  try {
-    switch (key) {
-      // Main windows
-      case "mpoetry":      if (typeof load_mMe === "function") load_mMe(); break;
-      case "mthoughts":    if (typeof load_mThoughts === "function") load_mThoughts(); break;
-      case "mchapters":    if (typeof load_mChapters === "function") load_mChapters(); break;
-      case "menvelope":    if (typeof load_mLetters === "function") load_mLetters(); break;
-      case "mbrush":       if (typeof load_mBrush === "function") load_mBrush(); break;
-      case "mvisual":      if (typeof load_mVisual === "function") load_mVisual(); break;
-      case "mknowledge":   if (typeof load_mKnowledge === "function") load_mKnowledge(); break;
-      case "mstratagems":  if (typeof load_mStratagems === "function") load_mStratagems(); break;
-
-      // Archives
-      case "mpoetry-archive":      if (typeof load_mPoetry_archive === "function") load_mPoetry_archive(); break;
-      case "mthoughts-archive":    if (typeof load_mThoughts_archive === "function") load_mThoughts_archive(); break;
-      case "mchapters-archive":    if (typeof load_mChapters_archive === "function") load_mChapters_archive(); break;
-      case "mletters-archive":     if (typeof load_mLetters_archive === "function") load_mLetters_archive(); break;
-      case "mbrush-archive":       if (typeof load_mBrush_archive === "function") load_mBrush_archive(); break;
-      case "mstory-archive":       if (typeof load_mStory_archive === "function") load_mStory_archive(); break;
-      case "mvisual-archive":      if (typeof load_mVisual_archive === "function") load_mVisual_archive(); break;
-      case "mknowledge-archive":   if (typeof load_mKnowledge_archive === "function") load_mKnowledge_archive(); break;
-      case "mstratagems-archive":  if (typeof load_mStratagems_archive === "function") load_mStratagems_archive(); break;
-    }
-  } catch (e) {
-    // fail silently; window can still open even if feed fails
-  }
-
-  __loadedKeys[key] = true;
-}
-
       function adjustFullScreenSize() {
         $("#mSafrain .fullSizeWindow .wincontent")
           .css("width", window.innerWidth - 32)
@@ -140,7 +104,6 @@ function ensureLoadedForKey(key) {
 
         // Normal path: keyToId mapping
         if (typeof keyToId !== "undefined" && typeof keyToId[key] !== "undefined") {
-          ensureLoadedForKey(key);
           openWindow(keyToId[key]);
           return;
         }
@@ -151,13 +114,11 @@ function ensureLoadedForKey(key) {
 
         var nid = $win.attr("data-id");
         if (typeof nid !== "undefined" && nid !== null && nid !== "") {
-          ensureLoadedForKey(key);
           openWindow(nid);
           return;
         }
 
         // Last resort (should rarely happen): show it directly
-        ensureLoadedForKey(key);
         $win.removeClass("closed minimizedWindow");
         $win.css("z-index", 9999);
       }
@@ -612,7 +573,7 @@ function handle_mChapters(json) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
 
-    if (idx > 0) html += "<hr class=\"post-divider\">";
+    if (idx > 0) html += '<div style="height:10px;"></div>';
     if (dateStr) html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     html += content;
   });
@@ -669,7 +630,7 @@ function handle_mKnowledge(json) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
 
-    if (idx > 0) html += "<hr class=\"post-divider\">";
+    if (idx > 0) html += '<div style="height:10px;"></div>';
     if (dateStr) html += '<div style="font-size:11px;margin-bottom:4px;">' + dateStr + "</div>";
     html += content;
   });
