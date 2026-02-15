@@ -1,11 +1,9 @@
 // desktop.js
 // Window management + Blogger loading for mSafrain Desktop UI
-// FIXED:
-// 1) Archive click always opens (mLetters + mStratagems included)
-// 2) mChapters + mKnowledge archive loads more reliably (maxResults reduced + loading text)
-// 3) openWindowByKey cleaned + safe
-// 4) All handlers scoped to #mSafrain (less “random” event issues)
 
+/****************************
+ * 1. DESKTOP WINDOW SYSTEM *
+ ****************************/
 (function () {
   function initDesktopUI($) {
     $(function () {
@@ -26,45 +24,55 @@
 
       function makeWindowActive(thisid) {
         $(".top-dropdown").removeClass("open");
-
-        if (thisid === undefined || thisid === null) return;
+        
+        if (typeof thisid === "undefined" || thisid === null) return;
 
         $("#mSafrain .window").each(function () {
-          $(this).css("z-index", parseInt($(this).css("z-index") || 0, 10) - 1);
+          $(this).css(
+            "z-index",
+            parseInt($(this).css("z-index") || 0, 10) - 1
+          );
         });
-
         $("#window" + thisid).css("z-index", 1000);
         $("#mSafrain .window").removeClass("activeWindow");
         $("#window" + thisid).addClass("activeWindow");
-
         $("#mSafrain .taskbarPanel").removeClass("activeTab");
         $("#minimPanel" + thisid).addClass("activeTab");
       }
 
       function minimizeWindow(id) {
-        if (id === undefined || id === null) return;
+        if (typeof id === "undefined" || id === null) return;
 
         windowTopPos[id] = $("#window" + id).css("top");
         windowLeftPos[id] = $("#window" + id).css("left");
 
-        $("#window" + id).animate({ top: 800, left: 0 }, 200, function () {
-          $("#window" + id).addClass("minimizedWindow");
-          $("#minimPanel" + id).addClass("minimizedTab").removeClass("activeTab");
-        });
+        $("#window" + id).animate(
+          { top: 800, left: 0 },
+          200,
+          function () {
+            $("#window" + id).addClass("minimizedWindow");
+            $("#minimPanel" + id)
+              .addClass("minimizedTab")
+              .removeClass("activeTab");
+          }
+        );
       }
 
       function openMinimized(id) {
-        if (id === undefined || id === null) return;
+        if (typeof id === "undefined" || id === null) return;
 
         $("#window" + id).removeClass("minimizedWindow");
         $("#minimPanel" + id).removeClass("minimizedTab");
         makeWindowActive(id);
 
-        $("#window" + id).animate({ top: windowTopPos[id], left: windowLeftPos[id] }, 200);
+        $("#window" + id).animate(
+          { top: windowTopPos[id], left: windowLeftPos[id] },
+          200
+        );
       }
 
       function openWindow(id) {
-        if (id === undefined || id === null) return;
+        if (typeof id === "undefined" || id === null) return;
 
         $("#window" + id).removeClass("closed");
 
@@ -80,39 +88,44 @@
         if (window.innerWidth <= 768) {
           var $target = $("#window" + id);
           if ($target.length) {
-            $("html, body").animate({ scrollTop: $target.offset().top - 80 }, 300);
+            $("html, body").animate(
+              { scrollTop: $target.offset().top - 80 },
+              300
+            );
           }
         }
       }
 
-      // Open by data-window-id key (SAFE + multiple fallbacks)
-      function openWindowByKey(key) {
-        key = (key || "").toString().trim();
-        if (!key) return;
+      
 
-        // Path 1: mapping exists
-        if (keyToId && keyToId[key] !== undefined) {
+      // Open a window by its string key (data-window-id). Falls back even if keyToId isn't ready.
+      function openWindowByKey(key) {
+        if (typeof key === "undefined" || key === null) return;
+
+        // Normal path: keyToId mapping
+        if (typeof keyToId !== "undefined" && typeof keyToId[key] !== "undefined") {
           openWindow(keyToId[key]);
           return;
         }
 
-        // Path 2: find window by data-window-id
+        // Fallback: locate the window element by data-window-id
         var $win = $('#mSafrain .window[data-window-id="' + key + '"]');
         if (!$win.length) return;
 
-        // If it already has data-id, use full open path
         var nid = $win.attr("data-id");
-        if (nid !== undefined && nid !== null && nid !== "") {
+        if (typeof nid !== "undefined" && nid !== null && nid !== "") {
           openWindow(nid);
           return;
         }
 
-        // Path 3: force show (last resort)
-        $win.removeClass("closed minimizedWindow").css("z-index", 9999);
+        // Last resort (should rarely happen): show it directly
+        $win.removeClass("closed minimizedWindow");
+        $win.css("z-index", 9999);
       }
 
       function closeWindow(id) {
-        if (id === undefined || id === null) return;
+        if (typeof id === "undefined" || id === null) return;
+
         $("#window" + id).addClass("closed");
         $("#minimPanel" + id).addClass("closed");
       }
@@ -120,8 +133,12 @@
       function setupInteractions() {
         var isMobile = window.innerWidth <= 768;
 
-        try { $("#mSafrain .window").draggable("destroy"); } catch (e) {}
-        try { $("#mSafrain .wincontent").resizable("destroy"); } catch (e) {}
+        try {
+          $("#mSafrain .window").draggable("destroy");
+        } catch (e) {}
+        try {
+          $("#mSafrain .wincontent").resizable("destroy");
+        } catch (e) {}
 
         if (!isMobile) {
           $("#mSafrain .wincontent").resizable();
@@ -129,86 +146,112 @@
         }
       }
 
-      // INITIALISE WINDOWS
-      $("#mSafrain .window").each(function () {
-        var $win = $(this);
-        var key = $win.attr("data-window-id") || "window-" + i;
+      /// INITIALISE WINDOWS
+$("#mSafrain .window").each(function () {
+  var $win = $(this);
+  var key = $win.attr("data-window-id") || "window-" + i;
 
-        var title =
-          $win.attr("data-title") ||
-          $win.find(".windowTitle").text().trim() ||
-          key;
+  var title =
+    $win.attr("data-title") ||
+    $win.find(".windowTitle").text().trim() ||
+    key;
 
-        var presetPositions = {
-          bysafrain: { top: 160, left: 60 },
-          mpoetry: { top: 210, left: 380 },
-          mthoughts: { top: 140, left: 700 }
-        };
+  // preset base positions for main windows
+  var presetPositions = {
+    bysafrain: { top: 160, left: 60 },
+    mpoetry:   { top: 210, left: 380 },
+    mthoughts: { top: 140, left: 700 }
+  };
 
-        var baseTop, baseLeft;
-        if (presetPositions[key]) {
-          baseTop = presetPositions[key].top;
-          baseLeft = presetPositions[key].left;
-        } else {
-          baseTop = parseInt($win.css("top"), 10) || 140;
-          baseLeft = parseInt($win.css("left"), 10) || 140;
-        }
+  var baseTop, baseLeft;
 
-        var randTop = baseTop + Math.floor(Math.random() * 40) - 20;
-        var randLeft = baseLeft + Math.floor(Math.random() * 60) - 30;
+  if (presetPositions[key]) {
+    baseTop  = presetPositions[key].top;
+    baseLeft = presetPositions[key].left;
+  } else {
+    baseTop  = parseInt($win.css("top"), 10)  || 140;
+    baseLeft = parseInt($win.css("left"), 10) || 140;
+  }
 
-        $win.css({ top: randTop + "px", left: randLeft + "px", transform: "none" });
-        $win.css("z-index", 1000);
-        $win.attr("data-id", i);
+  // small random jitter for messy aesthetic (BUT no tilt)
+  var randTop  = baseTop  + Math.floor(Math.random() * 40) - 20;
+  var randLeft = baseLeft + Math.floor(Math.random() * 60) - 30;
 
-        minimizedWidth[i] = $win.width();
-        minimizedHeight[i] = $win.height();
-        windowTopPos[i] = $win.css("top");
-        windowLeftPos[i] = $win.css("left");
+  $win.css({
+    top: randTop + "px",
+    left: randLeft + "px",
+    transform: "none"          // make sure there is ZERO rotation
+  });
 
-        keyToId[key] = i;
+  $win.css("z-index", 1000);
+  $win.attr("data-id", i);
 
-        $("#taskbar").append(
-          '<div class="taskbarPanel" id="minimPanel' +
-            i +
-            '" data-id="' +
-            i +
-            '">' +
-            title +
-            "</div>"
-        );
+  minimizedWidth[i]  = $win.width();
+  minimizedHeight[i] = $win.height();
+  windowTopPos[i]    = $win.css("top");
+  windowLeftPos[i]   = $win.css("left");
 
-        if ($win.hasClass("closed")) {
-          $("#minimPanel" + i).addClass("closed");
-        }
+  keyToId[key] = i;
 
-        $win.attr("id", "window" + i);
-        i++;
-      });
+  $("#taskbar").append(
+    '<div class="taskbarPanel" id="minimPanel' +
+      i +
+      '" data-id="' +
+      i +
+      '">' +
+      title +
+      "</div>"
+  );
 
-      setupInteractions();
-      adjustFullScreenSize();
+  if ($win.hasClass("closed")) {
+    $("#minimPanel" + i).addClass("closed");
+  }
 
+  $win.attr("id", "window" + i);
+  i++;
+});
+
+// Ensure all windows start correctly
+var defaultKey = "bysafrain";
+var defaultId = keyToId[defaultKey];
+
+if (typeof defaultId === "undefined") {
+  // fallback: take first non-closed window
+  for (var k in keyToId) {
+    if (!$("#window" + keyToId[k]).hasClass("closed")) {
+      defaultId = keyToId[k];
+      break;
+    }
+  }
+}
+
+setupInteractions();
+adjustFullScreenSize();
+      
       // EVENTS
       $("#mSafrain").on("mousedown", ".window", function () {
         makeWindowActive($(this).attr("data-id"));
       });
 
       $("#mSafrain").on("click", ".winclose", function () {
-        closeWindow($(this).closest(".window").attr("data-id"));
+        var id = $(this).closest(".window").attr("data-id");
+        closeWindow(id);
       });
 
       $("#mSafrain").on("click", ".winminimize", function () {
-        minimizeWindow($(this).closest(".window").attr("data-id"));
+        var id = $(this).closest(".window").attr("data-id");
+        minimizeWindow(id);
       });
 
       $("#mSafrain").on("click", ".winmaximize", function () {
         var win = $(this).closest(".window");
         var wid = win.attr("data-id");
-
         if (win.hasClass("fullSizeWindow")) {
           win.removeClass("fullSizeWindow");
-          win.find(".wincontent").height(minimizedHeight[wid]).width(minimizedWidth[wid]);
+          win
+            .find(".wincontent")
+            .height(minimizedHeight[wid])
+            .width(minimizedWidth[wid]);
         } else {
           win.addClass("fullSizeWindow");
           minimizedHeight[wid] = win.find(".wincontent").height();
@@ -232,41 +275,27 @@
         }
       });
 
-      // Launchbar + dropdown buttons
-      $("#mSafrain").on("click", ".openWindow", function () {
-        openWindowByKey($(this).attr("data-window-id"));
-      });
-
-      // Desktop icons
-      $("#mSafrain").on("click", ".desktop-icon", function () {
-        openWindowByKey($(this).attr("data-window-id"));
-      });
-
-      // mArchives list: ALWAYS open (this is the fix for mLetters + mStratagems archive not popping)
-      $("#mSafrain").on("click", ".archive-item", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        var key = ($(this).attr("data-archive-target") || "").trim();
-        if (!key) return;
-
-        // Try normal open
+            // Launchbar buttons (top buttons)
+      $(document).on("click", ".openWindow", function () {
+        var key = $(this).attr("data-window-id");
         openWindowByKey(key);
-
-        // Hard fallback: force show
-        var $win = $('#mSafrain .window[data-window-id="' + key + '"]');
-        if (!$win.length) return;
-
-        $win.removeClass("closed minimizedWindow").css("z-index", 9999);
-
-        var nid = $win.attr("data-id");
-        if (nid !== undefined && nid !== null && nid !== "") {
-          $("#minimPanel" + nid).removeClass("closed minimizedTab");
-          makeWindowActive(nid);
-        }
       });
 
-      // mVisual alt-text modal
+                       // Clicking items inside the mArchives window opens that archive
+     $(document).on("click", "#mArchivesList li", function () {
+  var key = $(this).attr("data-archive-target");
+  openWindowByKey(key);
+});
+
+      // Desktop icons (mEnvelope etc.)
+      $(document).on("click", ".desktop-icon", function () {
+        var key = $(this).attr("data-window-id");
+        openWindowByKey(key);
+      });
+
+            // mVisual: click image to show alt-text popup
+
+            // mVisual alt-text modal
       $(document).on("click", ".mvisual-item img", function () {
         var alt = $(this).closest(".mvisual-item").attr("data-alt") || "";
         if (!alt) return;
@@ -280,19 +309,23 @@
         }
       });
 
-      // TOP MENU DROPDOWNS (mMind / mBody)
-      $(document).on("click", ".topMenuButton", function (e) {
+      /* ============================
+       * TOP MENU DROPDOWNS (mMind / mBody)
+       * ============================ */
+            $(document).on("click", ".topMenuButton", function (e) {
         e.stopPropagation();
 
         var menuId = $(this).attr("data-menu-id");
         if (!menuId) return;
 
-        var $btn = $(this);
+        var $btn  = $(this);
         var $menu = $("#" + menuId);
         if (!$menu.length) return;
 
+        // Position dropdown horizontally under the clicked button
         var btnOffset = $btn.offset();
-        var left = btnOffset.left - $(window).scrollLeft();
+        var left = btnOffset.left - $(window).scrollLeft(); // viewport-based
+
         $menu.css({ left: left + "px" });
 
         if ($menu.hasClass("open")) {
@@ -303,18 +336,22 @@
         }
       });
 
-      $(document).on("click", ".top-dropdown", function (e) {
-        e.stopPropagation();
-      });
-      $(document).on("click", function () {
-        $(".top-dropdown").removeClass("open");
-      });
+        $(document).on("click", ".top-dropdown", function (e) {
+          e.stopPropagation();
+        });
+        $(document).on("click", function () {
+          $(".top-dropdown").removeClass("open");
+        });
 
-      // Optional calls (won't error if not defined)
-      if (typeof load_mMe === "function") load_mMe();
-      if (typeof load_mThoughts === "function") load_mThoughts();
-    });
-  }
+        // Initial Blogger feed loads (mMe + mThoughts)
+        if (typeof load_mMe === "function") {
+          load_mMe();
+        }
+        if (typeof load_mThoughts === "function") {
+          load_mThoughts();
+        }
+      });
+  } // end initDesktopUI
 
   function waitForjQuery() {
     if (window.jQuery && typeof window.jQuery === "function") {
@@ -325,18 +362,21 @@
   }
 
   waitForjQuery();
-})();
+})(); // end IIFE
 
 /***************************
  * 2. BLOGGER FEED HELPERS *
  ***************************/
 var BLOG_BASE = "https://msafrain.blogspot.com/feeds/posts/default";
-
 function bloggerJsonp(label, maxResults, callbackName) {
   var src = BLOG_BASE;
-  if (label) src += "/-/" + encodeURIComponent(label);
+  if (label) {
+    src += "/-/" + encodeURIComponent(label);
+  }
   src += "?alt=json-in-script&callback=" + callbackName;
-  if (maxResults) src += "&max-results=" + maxResults;
+  if (maxResults) {
+    src += "&max-results=" + maxResults;
+  }
 
   var s = document.createElement("script");
   s.type = "text/javascript";
@@ -376,126 +416,177 @@ function escapeHtml(str) {
     .replace(/'/g, "&#39;");
 }
 
+// Use title if available, otherwise first 80 chars of content
+function getTitleOrSnippet(entry) {
+  var title =
+    entry && entry.title && entry.title.$t
+      ? entry.title.$t.trim()
+      : "";
+
+  if (title) return title;
+
+  var content = stripHtml(extractContent(entry));
+  if (!content) return "(untitled)";
+  if (content.length <= 80) return content;
+  return content.substring(0, 80) + "...";
+}
+
 /********************************
  * 3. FEED LOADERS (MAIN + ARCH) *
  ********************************/
 
-/* ===== mPoetry ===== */
-function load_mPoetry() { bloggerJsonp("mPoetry", 6, "handle_mPoetry"); }
+/* ===== mPoetry (label: mPoetry) ===== */
+function load_mPoetry() {
+  bloggerJsonp("mPoetry", 6, "handle_mPoetry");
+}
 function handle_mPoetry(json) {
   var el = document.getElementById("mPoetryContent");
   if (!el) return;
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) { el.textContent = "No mPoetry posts yet."; return; }
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mPoetry posts yet.";
+    return;
+  }
 
   var html = "";
-  entries.forEach(function (entry, idx) {
+  json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += "<hr>";
-    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    if (dateStr) {
+      html += '<div class="post-date">' + dateStr + "</div>";
+    }
     html += content;
   });
+
   el.innerHTML = html;
 }
 
-function load_mPoetry_archive() { bloggerJsonp("mPoetry", 50, "handle_mPoetry_archive"); }
+function load_mPoetry_archive() {
+  bloggerJsonp("mPoetry", 50, "handle_mPoetry_archive");
+}
 function handle_mPoetry_archive(json) {
   var el = document.getElementById("mPoetryArchive");
   if (!el) return;
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) { el.textContent = "No mPoetry archives."; return; }
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mPoetry archives.";
+    return;
+  }
 
   var html = "";
-  entries.forEach(function (entry, idx) {
+  json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += "<hr>";
-    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    if (dateStr) {
+      html += '<div class="post-date">' + dateStr + "</div>";
+    }
     html += content;
   });
+
   el.innerHTML = html;
 }
 
-/* ===== mThoughts ===== */
-function load_mThoughts() { bloggerJsonp("mThoughts", 6, "handle_mThoughts"); }
+/* ===== mThoughts (label: mThoughts) ===== */
+function load_mThoughts() {
+  bloggerJsonp("mThoughts", 6, "handle_mThoughts");
+}
 function handle_mThoughts(json) {
   var el = document.getElementById("mThoughts");
   if (!el) return;
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) { el.textContent = "No recent mThoughts."; return; }
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No recent mThoughts.";
+    return;
+  }
 
   var html = "";
-  entries.forEach(function (entry, idx) {
+  json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += "<hr>";
     if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
     html += content;
   });
+
   el.innerHTML = html;
 }
 
-function load_mThoughts_archive() { bloggerJsonp("mThoughts", 50, "handle_mThoughts_archive"); }
+function load_mThoughts_archive() {
+  bloggerJsonp("mThoughts", 50, "handle_mThoughts_archive");
+}
 function handle_mThoughts_archive(json) {
   var el = document.getElementById("mThoughtsArchive");
   if (!el) return;
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) { el.textContent = "No mThoughts archives."; return; }
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mThoughts archives.";
+    return;
+  }
 
   var html = "";
-  entries.forEach(function (entry, idx) {
+  json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += "<hr>";
     if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
     html += content;
   });
+
   el.innerHTML = html;
 }
 
-/* ===== mChapters ===== */
-function load_mChapters() { bloggerJsonp("mChapters", 6, "handle_mChapters"); }
+/* ===== mChapters (label: mChapters) ===== */
+function load_mChapters() {
+  bloggerJsonp("mChapters", 6, "handle_mChapters");
+}
 function handle_mChapters(json) {
   var el = document.getElementById("mChaptersContent");
   if (!el) return;
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) { el.textContent = "No mChapters posts yet."; return; }
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mChapters posts yet.";
+    return;
+  }
 
   var html = "";
-  entries.forEach(function (entry, idx) {
+  json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += "<hr>";
     if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
     html += content;
   });
+
   el.innerHTML = html;
 }
 
-// FIX: reduce to 50 + show loading text so you know callback fired
 function load_mChapters_archive() {
-  var el = document.getElementById("mChaptersArchive");
-  if (el) el.textContent = "Loading mChapters Archives...";
-  bloggerJsonp("mChapters", 50, "handle_mChapters_archive");
+  bloggerJsonp("mChapters", 200, "handle_mChapters_archive");
 }
 function handle_mChapters_archive(json) {
   var el = document.getElementById("mChaptersArchive");
   if (!el) return;
 
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) { el.textContent = "No mChapters Archives yet."; return; }
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mChapters Archives yet.";
+    return;
+  }
 
   var out = "<ul class='archive-list'>";
-  entries.forEach(function (entry) {
+  json.feed.entry.forEach(function (entry) {
     var title = entry.title ? entry.title.$t : "(untitled)";
     var link = "";
-    (entry.link || []).forEach(function (l) { if (l.rel === "alternate") link = l.href; });
-
+    if (entry.link) {
+      entry.link.forEach(function (l) {
+        if (l.rel === "alternate") link = l.href;
+      });
+    }
     out += "<li>";
-    out += link
-      ? "<a href='" + link + "' target='_blank' rel='noopener noreferrer'>" + escapeHtml(title) + "</a>"
-      : escapeHtml(title);
+    out += link ? "<a href='" + link + "' target='_blank'>" + escapeHtml(title) + "</a>" : escapeHtml(title);
     out += "</li>";
   });
   out += "</ul>";
@@ -503,51 +594,54 @@ function handle_mChapters_archive(json) {
   el.innerHTML = out;
 }
 
-/* ===== mKnowledge ===== */
-function load_mKnowledge() { bloggerJsonp("mKnowledge", 6, "handle_mKnowledge"); }
+/* ===== mKnowledge (label: mKnowledge) ===== */
+function load_mKnowledge() {
+  bloggerJsonp("mKnowledge", 6, "handle_mKnowledge");
+}
 function handle_mKnowledge(json) {
   var el = document.getElementById("mKnowledgeContent");
   if (!el) return;
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) { el.textContent = "No mKnowledge posts yet."; return; }
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mKnowledge posts yet.";
+    return;
+  }
 
   var html = "";
-  entries.forEach(function (entry, idx) {
+  json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += "<hr>";
     if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
     html += content;
   });
+
   el.innerHTML = html;
 }
 
-// FIX: reduce to 50 + loading text
 function load_mKnowledge_archive() {
-  var el = document.getElementById("mKnowledgeArchive");
-  if (el) el.textContent = "Loading mKnowledge Archives...";
-  bloggerJsonp("mKnowledge", 50, "handle_mKnowledge_archive");
+  bloggerJsonp("mKnowledge", 200, "handle_mKnowledge_archive");
 }
 function handle_mKnowledge_archive(json) {
   var el = document.getElementById("mKnowledgeArchive");
   if (!el) return;
 
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) {
-    el.textContent = "No mKnowledge Archives yet (check Blogger label spelling: mKnowledge).";
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mKnowledge Archives yet.";
     return;
   }
 
   var out = "<ul class='archive-list'>";
-  entries.forEach(function (entry) {
-    var title = (entry.title && entry.title.$t) ? entry.title.$t : "(untitled)";
+  json.feed.entry.forEach(function (entry) {
+    var title = entry.title ? entry.title.$t : "(untitled)";
     var link = "";
-    (entry.link || []).forEach(function (l) { if (l.rel === "alternate") link = l.href; });
-
+    if (entry.link) {
+      entry.link.forEach(function (l) {
+        if (l.rel === "alternate") link = l.href;
+      });
+    }
     out += "<li>";
-    out += link
-      ? "<a href='" + link + "' target='_blank' rel='noopener noreferrer'>" + escapeHtml(title) + "</a>"
-      : escapeHtml(title);
+    out += link ? "<a href='" + link + "' target='_blank'>" + escapeHtml(title) + "</a>" : escapeHtml(title);
     out += "</li>";
   });
   out += "</ul>";
@@ -555,91 +649,358 @@ function handle_mKnowledge_archive(json) {
   el.innerHTML = out;
 }
 
-/* ===== mLetters ===== */
-function load_mLetters() { bloggerJsonp("mLetters", 6, "handle_mLetters"); }
+/* ===== mLetters (label: mLetters) ===== */
+function load_mLetters() {
+  bloggerJsonp("mLetters", 6, "handle_mLetters");
+}
 function handle_mLetters(json) {
   var el = document.getElementById("mLettersContent");
   var badge = document.getElementById("envelope-badge");
 
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-
   if (badge) {
-    var count = entries.length;
+    var count = json && json.feed && json.feed.entry ? json.feed.entry.length : 0;
     if (count > 6) count = 6;
     badge.textContent = count;
   }
 
   if (!el) return;
-  if (!entries.length) { el.textContent = "No letters."; return; }
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No letters.";
+    return;
+  }
 
   var html = "";
-  entries.forEach(function (entry, idx) {
+  json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += '<div style="height:10px;"></div>';
     if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
     html += content;
   });
+
   el.innerHTML = html;
 }
 
-function load_mLetters_archive() { bloggerJsonp("mLetters", 50, "handle_mLetters_archive"); }
+function load_mLetters_archive() {
+  bloggerJsonp("mLetters", 50, "handle_mLetters_archive");
+}
 function handle_mLetters_archive(json) {
   var el = document.getElementById("mLettersArchive");
   if (!el) return;
 
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) { el.textContent = "No letter archives."; return; }
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No letter archives.";
+    return;
+  }
 
   var html = "";
-  entries.forEach(function (entry, idx) {
+  json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += '<div style="height:10px;"></div>';
     if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
     html += content;
   });
+
   el.innerHTML = html;
 }
 
-/* ===== mBrush / mStory / mVisual remain the same logic ===== */
-/* (Keep your existing versions below; they should work as-is) */
+/* ===== mBrush (label: mBrush) ===== */
+function load_mBrush() {
+  bloggerJsonp("mBrush", 6, "handle_mBrush");
+}
+function handle_mBrush(json) {
+  var el = document.getElementById("mBrushContent");
+  if (!el) return;
 
-/* ===== mStratagems ===== */
-function load_mStratagems() { bloggerJsonp("mStratagems", 6, "handle_mStratagems"); }
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mBrush posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    var altText = temp.textContent.trim();
+    if (!altText && entry.title && entry.title.$t) altText = entry.title.$t.trim();
+    if (!altText && imgs.length > 0) altText = (imgs[0].getAttribute("alt") || "").trim();
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src = img.getAttribute("src") || img.getAttribute("data-src") || img.getAttribute("data-original") || "";
+        html += '<div class="mvisual-item" data-alt="' + escapeHtml(altText) + '"><img src="' + src + '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mBrush_archive() {
+  bloggerJsonp("mBrush", 50, "handle_mBrush_archive");
+}
+function handle_mBrush_archive(json) {
+  var el = document.getElementById("mBrushArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mBrush archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    var altText = temp.textContent.trim();
+    if (!altText && entry.title && entry.title.$t) altText = entry.title.$t.trim();
+    if (!altText && imgs.length > 0) altText = (imgs[0].getAttribute("alt") || "").trim();
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src = img.getAttribute("src") || img.getAttribute("data-src") || img.getAttribute("data-original") || "";
+        html += '<div class="mvisual-item" data-alt="' + escapeHtml(altText) + '"><img src="' + src + '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+/* ===== mStory (label: mStory) ===== */
+function load_mStory() {
+  bloggerJsonp("mStory", 6, "handle_mStory");
+}
+function handle_mStory(json) {
+  var el = document.getElementById("mStoryContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mStory posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    var altText = temp.textContent.trim();
+    if (!altText && entry.title && entry.title.$t) altText = entry.title.$t.trim();
+    if (!altText && imgs.length > 0) altText = (imgs[0].getAttribute("alt") || "").trim();
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src = img.getAttribute("src") || img.getAttribute("data-src") || img.getAttribute("data-original") || "";
+        html += '<div class="mvisual-item" data-alt="' + escapeHtml(altText) + '"><img src="' + src + '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mStory_archive() {
+  bloggerJsonp("mStory", 50, "handle_mStory_archive");
+}
+function handle_mStory_archive(json) {
+  var el = document.getElementById("mStoryArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mStory archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    var altText = temp.textContent.trim();
+    if (!altText && entry.title && entry.title.$t) altText = entry.title.$t.trim();
+    if (!altText && imgs.length > 0) altText = (imgs[0].getAttribute("alt") || "").trim();
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src = img.getAttribute("src") || img.getAttribute("data-src") || img.getAttribute("data-original") || "";
+        html += '<div class="mvisual-item" data-alt="' + escapeHtml(altText) + '"><img src="' + src + '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+/* ===== mVisual (label: mVisual) ===== */
+function load_mVisual() {
+  bloggerJsonp("mVisual", 6, "handle_mVisual");
+}
+function handle_mVisual(json) {
+  var el = document.getElementById("mVisualContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mVisual posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    var altText = temp.textContent.trim();
+    if (!altText && entry.title && entry.title.$t) altText = entry.title.$t.trim();
+    if (!altText && imgs.length > 0) altText = (imgs[0].getAttribute("alt") || "").trim();
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src = img.getAttribute("src") || img.getAttribute("data-src") || img.getAttribute("data-original") || "";
+        html += '<div class="mvisual-item" data-alt="' + escapeHtml(altText) + '"><img src="' + src + '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mVisual_archive() {
+  bloggerJsonp("mVisual", 50, "handle_mVisual_archive");
+}
+function handle_mVisual_archive(json) {
+  var el = document.getElementById("mVisualArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    var altText = temp.textContent.trim();
+    if (!altText && entry.title && entry.title.$t) altText = entry.title.$t.trim();
+    if (!altText && imgs.length > 0) altText = (imgs[0].getAttribute("alt") || "").trim();
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src = img.getAttribute("src") || img.getAttribute("data-src") || img.getAttribute("data-original") || "";
+        html += '<div class="mvisual-item" data-alt="' + escapeHtml(altText) + '"><img src="' + src + '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+/* ===== mStratagems (label: mStratagems) ===== */
+function load_mStratagems() {
+  bloggerJsonp("mStratagems", 6, "handle_mStratagems");
+}
 function handle_mStratagems(json) {
   var el = document.getElementById("mStratagemsContent");
   if (!el) return;
-
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) { el.textContent = "No mStratagems posts."; return; }
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mStratagems posts.";
+    return;
+  }
 
   var html = "";
-  entries.forEach(function (entry, idx) {
+  json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += "<hr>";
     if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
     html += content;
   });
+
   el.innerHTML = html;
 }
 
-function load_mStratagems_archive() { bloggerJsonp("mStratagems", 50, "handle_mStratagems_archive"); }
+function load_mStratagems_archive() {
+  bloggerJsonp("mStratagems", 50, "handle_mStratagems_archive");
+}
 function handle_mStratagems_archive(json) {
   var el = document.getElementById("mStratagemsArchiveContent");
   if (!el) return;
 
-  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
-  if (!entries.length) { el.textContent = "No archives."; return; }
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No archives.";
+    return;
+  }
 
   var html = "";
-  entries.forEach(function (entry, idx) {
+  json.feed.entry.forEach(function (entry, idx) {
     var content = extractContent(entry);
     var dateStr = formatDate(entry);
+
     if (idx > 0) html += "<hr>";
     if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
     html += content;
   });
+
   el.innerHTML = html;
 }
+
