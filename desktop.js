@@ -574,34 +574,33 @@ function handle_mChapters(json) {
   el.innerHTML = html;
 }
 
+/* ===== mChapters (label: mChapters) ===== */
 function load_mChapters_archive() {
-  bloggerJsonp("mChapters", 200, "handle_mChapters_archive");
+  // keep this smaller & consistent first (you can increase later)
+  bloggerJsonp("mChapters", 50, "handle_mChapters_archive");
 }
+
 function handle_mChapters_archive(json) {
   var el = document.getElementById("mChaptersArchive");
   if (!el) return;
 
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mChapters Archives yet.";
+  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
+  if (!entries.length) {
+    el.textContent = "No mChapters Archives yet (check Blogger label spelling: mChapters).";
     return;
   }
 
-  var out = "<ul class='archive-list'>";
-  json.feed.entry.forEach(function (entry) {
-    var title = entry.title ? entry.title.$t : "(untitled)";
-    var link = "";
-    if (entry.link) {
-      entry.link.forEach(function (l) {
-        if (l.rel === "alternate") link = l.href;
-      });
-    }
-    out += "<li>";
-    out += link ? "<a href='" + link + "' target='_blank'>" + escapeHtml(title) + "</a>" : escapeHtml(title);
-    out += "</li>";
-  });
-  out += "</ul>";
+  var html = "";
+  entries.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
 
-  el.innerHTML = out;
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+
+  el.innerHTML = html;
 }
 
 /* ===== mKnowledge (label: mKnowledge) ===== */
@@ -629,34 +628,32 @@ function handle_mKnowledge(json) {
   el.innerHTML = html;
 }
 
+/* ===== mKnowledge (label: mKnowledge) ===== */
 function load_mKnowledge_archive() {
-  bloggerJsonp("mKnowledge", 200, "handle_mKnowledge_archive");
+  bloggerJsonp("mKnowledge", 50, "handle_mKnowledge_archive");
 }
+
 function handle_mKnowledge_archive(json) {
   var el = document.getElementById("mKnowledgeArchive");
   if (!el) return;
 
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mKnowledge Archives yet.";
+  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
+  if (!entries.length) {
+    el.textContent = "No mKnowledge Archives yet (check Blogger label spelling: mKnowledge).";
     return;
   }
 
-  var out = "<ul class='archive-list'>";
-  json.feed.entry.forEach(function (entry) {
-    var title = entry.title ? entry.title.$t : "(untitled)";
-    var link = "";
-    if (entry.link) {
-      entry.link.forEach(function (l) {
-        if (l.rel === "alternate") link = l.href;
-      });
-    }
-    out += "<li>";
-    out += link ? "<a href='" + link + "' target='_blank'>" + escapeHtml(title) + "</a>" : escapeHtml(title);
-    out += "</li>";
-  });
-  out += "</ul>";
+  var html = "";
+  entries.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
 
-  el.innerHTML = out;
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+
+  el.innerHTML = html;
 }
 
 /* ===== mLetters (label: mLetters) ===== */
