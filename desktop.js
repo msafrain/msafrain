@@ -149,7 +149,7 @@
       /// INITIALISE WINDOWS
 $("#mSafrain .window").each(function () {
   var $win = $(this);
-  var key = $win.attr("data-window-id") || "window-" + i;
+  var key = ($win.attr("data-window-id") || ("window-" + i)).toString().trim();
 
   var title =
     $win.attr("data-title") ||
@@ -191,7 +191,7 @@ $("#mSafrain .window").each(function () {
   windowTopPos[i]    = $win.css("top");
   windowLeftPos[i]   = $win.css("left");
 
-  keyToId[key] = i;
+  if (key) { keyToId[key] = i; }
 
   $("#taskbar").append(
     '<div class="taskbarPanel" id="minimPanel' +
