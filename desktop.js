@@ -99,8 +99,11 @@
       
 
       // Open a window by its string key (data-window-id). Falls back even if keyToId isn't ready.
-      function openWindowByKey(key) {
-        if (typeof key === "undefined" || key === null) return;
+        function openWindowByKey(key) {
+          key = (key || "").toString().trim();
+          if (!key) return;
+
+  // Normal path...
 
         // Normal path: keyToId mapping
         if (typeof keyToId !== "undefined" && typeof keyToId[key] !== "undefined") {
@@ -281,11 +284,14 @@ adjustFullScreenSize();
         openWindowByKey(key);
       });
 
-                       // Clicking items inside the mArchives window opens that archive
-     $(document).on("click", "#mArchivesList li", function () {
-  var key = $(this).attr("data-archive-target");
-  openWindowByKey(key);
-});
+                       // Clicking items inside the mArchives window opens that archive (reliable)
+      $(document).on("click", "#mArchivesList .archive-item", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var key = ($(this).attr("data-archive-target") || "").toString().trim();
+        if (!key) return;
+        openWindowByKey(key);
+      });
 
       // Desktop icons (mEnvelope etc.)
       $(document).on("click", ".desktop-icon", function () {
@@ -626,22 +632,24 @@ function handle_mKnowledge_archive(json) {
   var el = document.getElementById("mKnowledgeArchive");
   if (!el) return;
 
-  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
-    el.textContent = "No mKnowledge Archives yet.";
+  var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
+  if (!entries.length) {
+    el.textContent = "No mKnowledge Archives yet (check Blogger label spelling: mKnowledge).";
     return;
   }
 
   var out = "<ul class='archive-list'>";
-  json.feed.entry.forEach(function (entry) {
-    var title = entry.title ? entry.title.$t : "(untitled)";
+  entries.forEach(function (entry) {
+    var title = (entry.title && entry.title.$t) ? entry.title.$t : "(untitled)";
     var link = "";
-    if (entry.link) {
-      entry.link.forEach(function (l) {
-        if (l.rel === "alternate") link = l.href;
-      });
-    }
+    (entry.link || []).forEach(function (l) {
+      if (l.rel === "alternate") link = l.href;
+    });
+
     out += "<li>";
-    out += link ? "<a href='" + link + "' target='_blank'>" + escapeHtml(title) + "</a>" : escapeHtml(title);
+    out += link
+      ? "<a href='" + link + "' target='_blank' rel='noopener noreferrer'>" + escapeHtml(title) + "</a>"
+      : escapeHtml(title);
     out += "</li>";
   });
   out += "</ul>";
