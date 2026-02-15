@@ -343,13 +343,23 @@ adjustFullScreenSize();
           $(".top-dropdown").removeClass("open");
         });
 
-        // Initial Blogger feed loads (mMe + mThoughts)
-        if (typeof load_mMe === "function") {
-          load_mMe();
-        }
-        if (typeof load_mThoughts === "function") {
-          load_mThoughts();
-        }
+     // Initial Blogger feed loads
+// (loads the main “recent posts” panels immediately)
+// (loads archives too, but only if the archive containers exist on the page)
+if (typeof load_mMe === "function") load_mMe();
+if (typeof load_mThoughts === "function") load_mThoughts();
+
+// Recent panels (optional but recommended)
+if (typeof load_mChapters === "function") load_mChapters();
+if (typeof load_mKnowledge === "function") load_mKnowledge();
+
+// Archives (THIS fixes your issue)
+if (document.getElementById("mChaptersArchive") && typeof load_mChapters_archive === "function") {
+  load_mChapters_archive();
+}
+if (document.getElementById("mKnowledgeArchive") && typeof load_mKnowledge_archive === "function") {
+  load_mKnowledge_archive();
+}
       });
   } // end initDesktopUI
 
