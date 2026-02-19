@@ -961,6 +961,108 @@ function handle_mVisual_archive(json) {
   el.innerHTML = html;
 }
 
+
+/* ===== mPhilosophy (label: mPhilosophy) ===== */
+function load_mPhilosophy() {
+  bloggerJsonp("mPhilosophy", 6, "handle_mPhilosophy");
+}
+function handle_mPhilosophy(json) {
+  var el = document.getElementById("mPhilosophyContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mPhilosophy posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mPhilosophy_archive() {
+  bloggerJsonp("mPhilosophy", 50, "handle_mPhilosophy_archive");
+}
+function handle_mPhilosophy_archive(json) {
+  var el = document.getElementById("mPhilosophyArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+/* ===== mStudy (label: mStudy) ===== */
+function load_mStudy() {
+  bloggerJsonp("mStudy", 6, "handle_mStudy");
+}
+function handle_mStudy(json) {
+  var el = document.getElementById("mStudyContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mStudy posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mStudy_archive() {
+  bloggerJsonp("mStudy", 50, "handle_mStudy_archive");
+}
+function handle_mStudy_archive(json) {
+  var el = document.getElementById("mStudyArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+
 /* ===== mStratagems (label: mStratagems) ===== */
 function load_mStratagems() {
   bloggerJsonp("mStratagems", 6, "handle_mStratagems");
