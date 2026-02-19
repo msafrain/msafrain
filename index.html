@@ -32,6 +32,9 @@ function loadAllFeeds() {
   // mThoughts — 6 recent posts
   load_mThoughts();
 
+  // mPhilosophy — 6 recent posts
+  load_mPhilosophy();
+
   // mChapters — 6 recent posts
   load_mChapters();
 
@@ -41,6 +44,7 @@ function loadAllFeeds() {
 
   // Other main windows
   load_mVisual();
+  load_mStudy();
   load_mStratagems();
   load_mLetters();
   load_mKnowledge();
@@ -48,10 +52,12 @@ function loadAllFeeds() {
   // Archives
   load_mPoetry_archive();
   load_mThoughts_archive();
+  load_mPhilosophy_archive();
   load_mChapters_archive();
   load_mBrush_archive();
   load_mStory_archive();
   load_mVisual_archive();
+  load_mStudy_archive();
   load_mKnowledge_archive();
   load_mStratagems_archive();
   load_mLetters_archive();
@@ -78,9 +84,11 @@ function loadAllFeeds() {
   <!-- Dropdown for mMind -->
 <div id="mind-menu" class="top-dropdown">
   <button class="openWindow" data-window-id="mthoughts">mThoughts</button>
+  <button class="openWindow" data-window-id="mphilosophy">mPhilosophy</button>
   <button class="openWindow" data-window-id="mknowledge">mKnowledge</button>
   <button class="openWindow" data-window-id="mstratagems">mStratagems</button>
   <button class="openWindow" data-window-id="mvisual">mVisual</button>
+  <button class="openWindow" data-window-id="mstudy">mStudy</button>
 </div>
 
 <!-- Dropdown for mBody -->
@@ -173,6 +181,37 @@ function loadAllFeeds() {
     </div>
 
       
+
+
+    <!-- mPhilosophy -->
+    <div class="window closed" data-window-id="mphilosophy" style="top:420px; left:540px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mPhilosophy</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mPhilosophyContent" class="poetry-area">Loading mPhilosophy...</div>
+      </div>
+    </div>
+
+    <!-- mStudy -->
+    <div class="window closed" data-window-id="mstudy" style="top:520px; left:300px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mStudy</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="mStudyContent" class="poetry-area">Loading mStudy...</div>
+      </div>
+    </div>
 
     <!-- mKnowledge -->
     <div class="window closed" data-window-id="mknowledge" style="top:420px; left:780px;">
@@ -294,13 +333,15 @@ function loadAllFeeds() {
   <ul class="poetry-area" id="mArchivesList">
   <li class="archive-item" data-archive-target="mpoetry-archive">mPoetry Archives</li>
   <li class="archive-item" data-archive-target="mthoughts-archive">mThoughts Archives</li>
+  <li class="archive-item" data-archive-target="mphilosophy-archive">mPhilosophy Archives</li>
+  <li class="archive-item" data-archive-target="mstratagems-archive">mStratagems Archives</li>
+  <li class="archive-item" data-archive-target="mknowledge-archive">mKnowledge Archives</li>
   <li class="archive-item" data-archive-target="mchapters-archive">mChapters Archives</li>
   <li class="archive-item" data-archive-target="mletters-archive">mLetters Archives</li>
-  <li class="archive-item" data-archive-target="mbrush-archive">mBrush Archives</li>
-  <li class="archive-item" data-archive-target="mstory-archive">mStory Archives</li>
   <li class="archive-item" data-archive-target="mvisual-archive">mVisual Archives</li>
-  <li class="archive-item" data-archive-target="mknowledge-archive">mKnowledge Archives</li>
-  <li class="archive-item" data-archive-target="mstratagems-archive">mStratagems Archives</li>
+  <li class="archive-item" data-archive-target="mstudy-archive">mStudy Archives</li>
+  <li class="archive-item" data-archive-target="mstory-archive">mStory Archives</li>
+  <li class="archive-item" data-archive-target="mbrush-archive">mBrush Archives</li>
 </ul>
 </div>
     </div>
@@ -329,7 +370,22 @@ function loadAllFeeds() {
         </div>
       </div>
 
+      
+    <div class="window closed" data-window-id="mphilosophy-archive" style="top:160px; left:560px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mPhilosophy Archives</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
       <div class="wincontent">
+        <div id="mPhilosophyArchive" class="poetry-area">Loading mPhilosophy Archives...</div>
+      </div>
+    </div>
+
+<div class="wincontent">
         <div id="mThoughtsArchive" class="poetry-area">Loading mThoughts Archives...</div>
       </div>
     </div>
@@ -400,7 +456,22 @@ function loadAllFeeds() {
           <span class="winclose">x</span>
         </div>
       </div>
+      
+    <div class="window closed" data-window-id="mstudy-archive" style="top:360px; left:440px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mStudy Archives</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
       <div class="wincontent">
+        <div id="mStudyArchive" class="poetry-area">Loading mStudy Archives...</div>
+      </div>
+    </div>
+
+<div class="wincontent">
         <div id="mVisualArchive" class="poetry-area">Loading mVisual Archives...</div>
       </div>
     </div>
