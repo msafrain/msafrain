@@ -285,6 +285,43 @@ adjustFullScreenSize();
      $(document).on("click", "#mArchivesList li", function () {
   var key = $(this).attr("data-archive-target");
   openWindowByKey(key);
+
+  // Lazy-load the archive feed when the archive window is opened
+  switch (key) {
+    case "mpoetry-archive":
+      if (typeof load_mPoetry_archive === "function") load_mPoetry_archive();
+      break;
+    case "mthoughts-archive":
+      if (typeof load_mThoughts_archive === "function") load_mThoughts_archive();
+      break;
+    case "mphilosophy-archive":
+      if (typeof load_mPhilosophy_archive === "function") load_mPhilosophy_archive();
+      break;
+    case "mstratagems-archive":
+      if (typeof load_mStratagems_archive === "function") load_mStratagems_archive();
+      break;
+    case "mknowledge-archive":
+      if (typeof load_mKnowledge_archive === "function") load_mKnowledge_archive();
+      break;
+    case "mchapters-archive":
+      if (typeof load_mChapters_archive === "function") load_mChapters_archive();
+      break;
+    case "mletters-archive":
+      if (typeof load_mLetters_archive === "function") load_mLetters_archive();
+      break;
+    case "mvisual-archive":
+      if (typeof load_mVisual_archive === "function") load_mVisual_archive();
+      break;
+    case "mstudy-archive":
+      if (typeof load_mStudy_archive === "function") load_mStudy_archive();
+      break;
+    case "mstory-archive":
+      if (typeof load_mStory_archive === "function") load_mStory_archive();
+      break;
+    case "mbrush-archive":
+      if (typeof load_mBrush_archive === "function") load_mBrush_archive();
+      break;
+  }
 });
 
       // Desktop icons (mEnvelope etc.)
