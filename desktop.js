@@ -297,6 +297,9 @@ adjustFullScreenSize();
     case "mphilosophy-archive":
       if (typeof load_mPhilosophy_archive === "function") load_mPhilosophy_archive();
       break;
+    case "mlaws-archive":
+      if (typeof load_mLaws_archive === "function") load_mLaws_archive();
+      break;
     case "mstratagems-archive":
       if (typeof load_mStratagems_archive === "function") load_mStratagems_archive();
       break;
@@ -389,6 +392,7 @@ if (typeof load_mThoughts === "function") load_mThoughts();
 // Recent panels (optional but recommended)
 if (typeof load_mChapters === "function") load_mChapters();
 if (typeof load_mKnowledge === "function") load_mKnowledge();
+if (typeof load_mLaws === "function") load_mLaws();
 
 // Archives (THIS fixes your issue)
 if (document.getElementById("mChaptersArchive") && typeof load_mChapters_archive === "function") {
@@ -396,6 +400,9 @@ if (document.getElementById("mChaptersArchive") && typeof load_mChapters_archive
 }
 if (document.getElementById("mKnowledgeArchive") && typeof load_mKnowledge_archive === "function") {
   load_mKnowledge_archive();
+}
+if (document.getElementById("mLawsArchive") && typeof load_mLaws_archive === "function") {
+  load_mLaws_archive();
 }
       });
   } // end initDesktopUI
@@ -1033,6 +1040,57 @@ function handle_mPhilosophy_archive(json) {
 
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
     el.textContent = "No archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+
+/* ===== mLaws (label: mLaws) ===== */
+function load_mLaws() {
+  bloggerJsonp("mLaws", 6, "handle_mLaws");
+}
+function handle_mLaws(json) {
+  var el = document.getElementById("mLawsContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mLaws posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mLaws_archive() {
+  bloggerJsonp("mLaws", 50, "handle_mLaws_archive");
+}
+function handle_mLaws_archive(json) {
+  var el = document.getElementById("mLawsArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mLaws archives.";
     return;
   }
 
