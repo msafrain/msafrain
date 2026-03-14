@@ -672,3 +672,7 @@
   width: 420px;
   height: 250px;
 }
+
+#mSafrain .window[data-window-id="bysafrain"]{
+  min-height: 340px;
+}
