@@ -294,6 +294,9 @@ adjustFullScreenSize();
     case "mthoughts-archive":
       if (typeof load_mThoughts_archive === "function") load_mThoughts_archive();
       break;
+    case "mcommentary-archive":
+      if (typeof load_mCommentary_archive === "function") load_mCommentary_archive();
+      break;
     case "mphilosophy-archive":
       if (typeof load_mPhilosophy_archive === "function") load_mPhilosophy_archive();
       break;
@@ -388,6 +391,7 @@ adjustFullScreenSize();
 // (loads archives too, but only if the archive containers exist on the page)
 if (typeof load_mMe === "function") load_mMe();
 if (typeof load_mThoughts === "function") load_mThoughts();
+if (typeof load_mCommentary === "function") load_mCommentary();
 
 // Recent panels (optional but recommended)
 if (typeof load_mChapters === "function") load_mChapters();
@@ -400,6 +404,9 @@ if (document.getElementById("mChaptersArchive") && typeof load_mChapters_archive
 }
 if (document.getElementById("mKnowledgeArchive") && typeof load_mKnowledge_archive === "function") {
   load_mKnowledge_archive();
+}
+if (document.getElementById("mCommentaryArchive") && typeof load_mCommentary_archive === "function") {
+  load_mCommentary_archive();
 }
 if (document.getElementById("mLawsArchive") && typeof load_mLaws_archive === "function") {
   load_mLaws_archive();
@@ -577,6 +584,57 @@ function handle_mThoughts_archive(json) {
 
   if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
     el.textContent = "No mThoughts archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+
+/* ===== mCommentary (label: mCommentary) ===== */
+function load_mCommentary() {
+  bloggerJsonp("mCommentary", 6, "handle_mCommentary");
+}
+function handle_mCommentary(json) {
+  var el = document.getElementById("mCommentaryContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mCommentary posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mCommentary_archive() {
+  bloggerJsonp("mCommentary", 50, "handle_mCommentary_archive");
+}
+function handle_mCommentary_archive(json) {
+  var el = document.getElementById("mCommentaryArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mCommentary archives.";
     return;
   }
 
