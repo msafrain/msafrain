@@ -321,6 +321,9 @@ adjustFullScreenSize();
     case "mstudy-archive":
       if (typeof load_mStudy_archive === "function") load_mStudy_archive();
       break;
+    case "mvision-archive":
+      if (typeof load_mVision_archive === "function") load_mVision_archive();
+      break;
     case "mstory-archive":
       if (typeof load_mStory_archive === "function") load_mStory_archive();
       break;
@@ -811,6 +814,89 @@ function handle_mLetters_archive(json) {
     if (idx > 0) html += '<div style="height:10px;"></div>';
     if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
     html += content;
+  });
+
+  el.innerHTML = html;
+}
+
+/* ===== mVision (label: mVision) ===== */
+function load_mVision() {
+  bloggerJsonp("mVision", 6, "handle_mVision");
+}
+function handle_mVision(json) {
+  var el = document.getElementById("mVisionContent");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mVision posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    var altText = temp.textContent.trim();
+    if (!altText && entry.title && entry.title.$t) altText = entry.title.$t.trim();
+    if (!altText && imgs.length > 0) altText = (imgs[0].getAttribute("alt") || "").trim();
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src = img.getAttribute("src") || img.getAttribute("data-src") || img.getAttribute("data-original") || "";
+        html += '<div class="mvisual-item" data-alt="' + escapeHtml(altText) + '"><img src="' + src + '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+function load_mVision_archive() {
+  bloggerJsonp("mVision", 50, "handle_mVision_archive");
+}
+function handle_mVision_archive(json) {
+  var el = document.getElementById("mVisionArchive");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mVision archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    var temp = document.createElement("div");
+    temp.innerHTML = content;
+    var imgs = temp.querySelectorAll("img");
+
+    var altText = temp.textContent.trim();
+    if (!altText && entry.title && entry.title.$t) altText = entry.title.$t.trim();
+    if (!altText && imgs.length > 0) altText = (imgs[0].getAttribute("alt") || "").trim();
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+
+    if (imgs.length) {
+      imgs.forEach(function (img) {
+        var src = img.getAttribute("src") || img.getAttribute("data-src") || img.getAttribute("data-original") || "";
+        html += '<div class="mvisual-item" data-alt="' + escapeHtml(altText) + '"><img src="' + src + '" alt=""></div>';
+      });
+    } else {
+      html += content;
+    }
   });
 
   el.innerHTML = html;
