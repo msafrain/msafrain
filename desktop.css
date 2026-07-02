@@ -549,6 +549,12 @@
   height: 520px !important;
 }
 
+/* Make mVision same size as mVisual */
+#mSafrain .window[data-window-id="mvision"] {
+  width: 650px !important;
+  height: 520px !important;
+}
+
 /* Make mArt same size as mVisual */
 #mSafrain .window[data-window-id="mbrush"] {
   width: 650px !important;
@@ -628,6 +634,12 @@
   line-height: 1.45; /* optional – cleaner spacing */
 }
 
+/* Make mVision Archive same size as mVision */
+#mSafrain .window[data-window-id="mvision-archive"] {
+  width: 650px !important;
+  height: 520px !important;
+}
+
 /* Make mArt Archive same size as mArt */
 #mSafrain .window[data-window-id="mbrush-archive"] {
   width: 650px !important;
@@ -641,6 +653,7 @@
 }
 
 /* Ensure archive windows match normal windows */
+#mSafrain .window[data-window-id="mvision-archive"] .wincontent,
 #mSafrain .window[data-window-id="mbrush-archive"] .wincontent,
 #mSafrain .window[data-window-id="mstory-archive"] .wincontent {
   padding: 10px;
@@ -649,6 +662,7 @@
 }
 
 /* Fix image scaling inside archive windows */
+#mSafrain .window[data-window-id="mvision-archive"] img,
 #mSafrain .window[data-window-id="mbrush-archive"] img,
 #mSafrain .window[data-window-id="mstory-archive"] img {
   width: 100% !important;
@@ -671,8 +685,4 @@
 #mSafrain .window[data-window-id="mlaws-archive"] {
   width: 420px;
   height: 250px;
-}
-
-#mSafrain .window[data-window-id="bysafrain"]{
-  min-height: 340px;
 }
