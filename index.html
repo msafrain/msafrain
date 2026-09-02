@@ -26,6 +26,9 @@
 
   <script>
 function loadAllFeeds() {
+  // Recent — 6 newest posts across the whole blog
+  load_Recent();
+
   // mPoetry — 6 recent posts
   load_mPoetry();
 
@@ -82,7 +85,7 @@ function loadAllFeeds() {
   <!-- =============== TOP LAUNCHBAR =============== -->
 <div class="openWindowButtons">
   <button class="openWindow" data-window-id="bysafrain">By mSafrain</button>
-  <button class="openWindow" data-window-id="mpoetry">mPoetry</button>
+  <button class="openWindow" data-window-id="recent">Recent</button>
 
   <!-- These two are now MENU buttons, not windows -->
   <button class="topMenuButton" data-menu-id="mind-menu">mMind</button>
@@ -94,6 +97,7 @@ function loadAllFeeds() {
   <!-- Dropdown for mMind -->
 <div id="mind-menu" class="top-dropdown">
   <button class="openWindow" data-window-id="mthoughts">mThoughts</button>
+  <button class="openWindow" data-window-id="mpoetry">mPoetry</button>
   <button class="openWindow" data-window-id="mcommentary">mCommentary</button>
   <button class="openWindow" data-window-id="mphilosophy">mPhilosophy</button>
   <button class="openWindow" data-window-id="mlaws">mLaws</button>
@@ -142,26 +146,44 @@ function loadAllFeeds() {
     </div>
   </div>
   <div class="wincontent">
-    <p>I am <a href="https://www.matinsafrain.com" target="_blank">Matin Safrain</a></p>
-    <br>
-    <p>My Projects</P>
+    <p>I am</p><p><a href="https://www.matinsafrain.com" target="_blank">Matin Safrain</a></p>
+    <p> </p>
+    <p> </p>
+    <p>I create:</P>
+     <p><a href="https://thelibrarist.com" target="_blank">thelibrarist.com</a></p>
      <p><a href="https://rpblackmarket.weebly.com" target="_blank">rpblackmarket.weebly.com</a></p>
      <p><a href="https://rpblackmarket.boards.net" target="_blank">rpblackmarket.boards.net</a></p>
      <p><a href="https://yourlisteningears.weebly.com" target="_blank">yourlisteningears.weebly.com</a></p>
-     <p><a href="https://www.instagram.com/666bykira/" target="_blank">instagram.com/666bykira/</a></p>
-     <p><a href="https://opensea.io/collection/mplanetspace" target="_blank">opensea.io/collection/mplanetspace</a></p>
-     <p><a href="https://www.tiktok.com/@vslchapters" target="_blank">tiktok.com/@vslchapters</a></p>
-     <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSdVdfs70A1gmI2Y6u5V6ZCkGZaC__Qckn2yS5Av41JoMBxCZw/viewform?usp=dialog">forms.gle/9seyCgLG3bm76WsR8</a></p>
-     <p><a href="https://www.wattpad.com/story/325135598-middleism">wattpad.com/story/325135598-middleism</a></p>
-     <p><a href="https://www.wattpad.com/story/359459464-mpoetry-unspoken">wattpad.com/story/359459464-mpoetry-unspoken"></a></p>
-     <p><a href="https://www.wattpad.com/story/340279528-mpoetry-2">wattpad.com/story/340279528-mpoetry-2</a></p>
-     <p><a href="https://www.wattpad.com/story/301614902-mpoetry">wattpad.com/story/301614902-mpoetry</a></p>
+    <p> </p>
+    <p>I survey:</p>
+     <p><a href="https://docs.google.com/forms/d/e/1FAIpQLSdVdfs70A1gmI2Y6u5V6ZCkGZaC__Qckn2yS5Av41JoMBxCZw/viewform?usp=dialog">mStudy One</a></p>
+    <p> </p>
+    <p>I write:</p>
+     <p><a href="https://www.wattpad.com/story/325135598-middleism">Middleism</a></p>
+     <p><a href="https://www.wattpad.com/story/359459464-mpoetry-unspoken">mPoetry Unspoken</a></p>
+     <p><a href="https://www.wattpad.com/story/340279528-mpoetry-2">mPoetry 2</a></p>
+     <p><a href="https://www.wattpad.com/story/301614902-mpoetry">mPoetry</a></p>
    </p>  
   </div>
 </div>
 
+    <!-- Recent -->
+    <div class="window" data-window-id="recent" style="top:160px; left:380px;">
+      <div class="windowHeader">
+        <span class="windowTitle">Recent</span>
+        <div>
+          <span class="winminimize">–</span>
+          <span class="winmaximize">□</span>
+          <span class="winclose">x</span>
+        </div>
+      </div>
+      <div class="wincontent">
+        <div id="RecentContent" class="poetry-area">Loading recent posts...</div>
+      </div>
+    </div>
+
     <!-- mPoetry -->
-    <div class="window" data-window-id="mpoetry" style="top:160px; left:380px;">
+    <div class="window closed" data-window-id="mpoetry" style="top:260px; left:380px;">
       <div class="windowHeader">
         <span class="windowTitle">mPoetry</span>
         <div>

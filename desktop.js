@@ -159,7 +159,7 @@ $("#mSafrain .window").each(function () {
   // preset base positions for main windows
   var presetPositions = {
     bysafrain: { top: 160, left: 60 },
-    mpoetry:   { top: 210, left: 380 },
+    recent:    { top: 210, left: 380 },
     mthoughts: { top: 140, left: 700 }
   };
 
@@ -393,6 +393,7 @@ adjustFullScreenSize();
 // (loads the main “recent posts” panels immediately)
 // (loads archives too, but only if the archive containers exist on the page)
 if (typeof load_mMe === "function") load_mMe();
+if (typeof load_Recent === "function") load_Recent();
 if (typeof load_mThoughts === "function") load_mThoughts();
 if (typeof load_mCommentary === "function") load_mCommentary();
 
@@ -498,6 +499,35 @@ function getTitleOrSnippet(entry) {
 /********************************
  * 3. FEED LOADERS (MAIN + ARCH) *
  ********************************/
+
+/* ===== Recent (all labels/categories) ===== */
+function load_Recent() {
+  bloggerJsonp(null, 6, "handle_Recent");
+}
+
+function handle_Recent(json) {
+  var el = document.getElementById("RecentContent");
+  if (!el) return;
+
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No recent posts yet.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+
+    if (idx > 0) html += "<hr>";
+    if (dateStr) {
+      html += '<div class="post-date">' + dateStr + "</div>";
+    }
+    html += content;
+  });
+
+  el.innerHTML = html;
+}
 
 /* ===== mPoetry (label: mPoetry) ===== */
 function load_mPoetry() {
