@@ -125,8 +125,8 @@
 /* WINDOWS */
 #mSafrain .window {
   position: absolute;
-  width: 420px;
-  height: 250px;
+  width: 800px;
+  height: 600px;
   background: #f9fafb;
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -539,32 +539,32 @@
 
 /* Make mVisual window larger so images are easier to see */
 #mSafrain .window[data-window-id="mvisual"] {
-  width: 650px !important;
-  height: 520px !important;
+  width: 850px !important;
+  height: 650px !important;
 }
 
 /* Make mVisual Archive same size as mVisual */
 #mSafrain .window[data-window-id="mvisual-archive"] {
-  width: 650px !important;
-  height: 520px !important;
+  width: 850px !important;
+  height: 650px !important;
 }
 
 /* Make mVision same size as mVisual */
 #mSafrain .window[data-window-id="mvision"] {
-  width: 650px !important;
-  height: 520px !important;
+  width: 850px !important;
+  height: 650px !important;
 }
 
 /* Make mArt same size as mVisual */
 #mSafrain .window[data-window-id="mbrush"] {
-  width: 650px !important;
-  height: 520px !important;
+  width: 850px !important;
+  height: 650px !important;
 }
 
 /* Make mStory same size as mVisual */
 #mSafrain .window[data-window-id="mstory"] {
-  width: 650px !important;
-  height: 520px !important;
+  width: 850px !important;
+  height: 650px !important;
 }
 
 @media (max-width: 768px) {
@@ -636,20 +636,20 @@
 
 /* Make mVision Archive same size as mVision */
 #mSafrain .window[data-window-id="mvision-archive"] {
-  width: 650px !important;
-  height: 520px !important;
+  width: 850px !important;
+  height: 650px !important;
 }
 
 /* Make mArt Archive same size as mArt */
 #mSafrain .window[data-window-id="mbrush-archive"] {
-  width: 650px !important;
-  height: 520px !important;
+  width: 850px !important;
+  height: 650px !important;
 }
 
 /* Make mStory Archive same size as mStory */
 #mSafrain .window[data-window-id="mstory-archive"] {
-  width: 650px !important;
-  height: 520px !important;
+  width: 850px !important;
+  height: 650px !important;
 }
 
 /* Ensure archive windows match normal windows */
@@ -683,6 +683,6 @@
 /* mLaws uses the standard text-window layout */
 #mSafrain .window[data-window-id="mlaws"],
 #mSafrain .window[data-window-id="mlaws-archive"] {
-  width: 420px;
-  height: 250px;
+  width: 800px;
+  height: 600px;
 }
