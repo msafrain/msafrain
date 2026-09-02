@@ -621,7 +621,7 @@
 
 /* Force Blogger images to scale correctly inside all windows */
 #mSafrain .wincontent img {
-  width: auto !important;
+  width: 100% !important;
   height: auto !important;
   max-width: 100% !important;
   display: block;
@@ -665,7 +665,7 @@
 #mSafrain .window[data-window-id="mvision-archive"] img,
 #mSafrain .window[data-window-id="mbrush-archive"] img,
 #mSafrain .window[data-window-id="mstory-archive"] img {
-  width: auto !important;
+  width: 100% !important;
   height: auto !important;
   display: block;
 }
