@@ -688,8 +688,8 @@
 }
 
 
-/* =============== mMood: compact persistent Spotify player =============== */
-#mMood {
+/* =============== mSound: compact persistent Spotify player =============== */
+#mSound {
   position: fixed;
   right: 12px;
   bottom: 48px;
@@ -701,7 +701,7 @@
   padding: 5px;
 }
 
-#mMood .msound-label {
+#mSound .msound-label {
   display: block;
   margin: 0 0 4px 2px;
   font-size: 11px;
@@ -709,7 +709,7 @@
   color: #111;
 }
 
-#mMood iframe {
+#mSound iframe {
   display: block;
   width: 100%;
   height: 80px;
@@ -718,7 +718,7 @@
 }
 
 @media (max-width: 768px) {
-  #mMood {
+  #mSound {
     position: sticky;
     right: auto;
     bottom: 0;
@@ -727,7 +727,7 @@
     z-index: 5500;
   }
 
-  #mMood iframe {
+  #mSound iframe {
     width: 100%;
     height: 80px;
   }
