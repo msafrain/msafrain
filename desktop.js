@@ -71,9 +71,19 @@
         );
       }
 
+      // GA4: record which desktop window a visitor opens.
+      function trackWindowOpen($win) {
+        if (!$win || !$win.length || typeof window.gtag !== "function") return;
+        window.gtag("event", "window_open", {
+          window_name: $win.find(".windowTitle").first().text().trim() || $win.attr("data-window-id") || "Unknown",
+          window_id: $win.attr("data-window-id") || ""
+        });
+      }
+
       function openWindow(id) {
         if (typeof id === "undefined" || id === null) return;
 
+        trackWindowOpen($("#window" + id));
         $("#window" + id).removeClass("closed");
 
         if ($("#window" + id).hasClass("minimizedWindow")) {
@@ -119,6 +129,7 @@
         }
 
         // Last resort (should rarely happen): show it directly
+        trackWindowOpen($win);
         $win.removeClass("closed minimizedWindow");
         $win.css("z-index", 9999);
       }
@@ -332,6 +343,13 @@ adjustFullScreenSize();
       break;
   }
 });
+
+      // GA4: mMood is a persistent widget rather than a desktop window.
+      $(document).on("click", "#mSound", function () {
+        if (typeof window.gtag === "function") {
+          window.gtag("event", "window_open", { window_name: "mMood", window_id: "mSound" });
+        }
+      });
 
       // Desktop icons (mEnvelope etc.)
       $(document).on("click", ".desktop-icon", function () {
