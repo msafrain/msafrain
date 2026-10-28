@@ -332,6 +332,9 @@ adjustFullScreenSize();
     case "mstudy-archive":
       if (typeof load_mStudy_archive === "function") load_mStudy_archive();
       break;
+    case "mvault-archive":
+      if (typeof load_mVault_archive === "function") load_mVault_archive();
+      break;
     case "mvision-archive":
       if (typeof load_mVision_archive === "function") load_mVision_archive();
       break;
@@ -1348,6 +1351,51 @@ function handle_mStudy_archive(json) {
   el.innerHTML = html;
 }
 
+
+/* ===== mVault (label: mVault) ===== */
+function load_mVault() {
+  bloggerJsonp("mVault", 6, "handle_mVault");
+}
+function handle_mVault(json) {
+  var el = document.getElementById("mVaultContent");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No mVault posts.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+  el.innerHTML = html;
+}
+
+function load_mVault_archive() {
+  bloggerJsonp("mVault", 50, "handle_mVault_archive");
+}
+function handle_mVault_archive(json) {
+  var el = document.getElementById("mVaultArchive");
+  if (!el) return;
+  if (!json || !json.feed || !json.feed.entry || !json.feed.entry.length) {
+    el.textContent = "No archives.";
+    return;
+  }
+
+  var html = "";
+  json.feed.entry.forEach(function (entry, idx) {
+    var content = extractContent(entry);
+    var dateStr = formatDate(entry);
+    if (idx > 0) html += "<hr>";
+    if (dateStr) html += '<div class="post-date">' + dateStr + "</div>";
+    html += content;
+  });
+  el.innerHTML = html;
+}
 
 /* ===== mStratagems (label: mStratagems) ===== */
 function load_mStratagems() {

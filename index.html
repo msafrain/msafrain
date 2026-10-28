@@ -55,6 +55,7 @@ function loadAllFeeds() {
   // Other main windows
   load_mVisual();
   load_mStudy();
+  load_mVault();
   load_mStratagems();
   load_mLetters();
   load_mKnowledge();
@@ -71,6 +72,7 @@ function loadAllFeeds() {
   load_mStory_archive();
   load_mVisual_archive();
   load_mStudy_archive();
+  load_mVault_archive();
   load_mKnowledge_archive();
   load_mStratagems_archive();
   load_mLetters_archive();
@@ -105,6 +107,7 @@ function loadAllFeeds() {
   <button class="openWindow" data-window-id="mstratagems">mStratagems</button>
   <button class="openWindow" data-window-id="mvisual">mVisual</button>
   <button class="openWindow" data-window-id="mstudy">mStudy</button>
+  <button class="openWindow" data-window-id="mvault">mVault</button>
 </div>
 
 <!-- Dropdown for mBody -->
@@ -291,6 +294,17 @@ function loadAllFeeds() {
       </div>
     </div>
 
+    <!-- mVault -->
+    <div class="window closed" data-window-id="mvault" style="top:520px; left:420px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mVault</span>
+        <div><span class="winminimize">–</span><span class="winmaximize">□</span><span class="winclose">x</span></div>
+      </div>
+      <div class="wincontent">
+        <div id="mVaultContent" class="poetry-area">Loading mVault...</div>
+      </div>
+    </div>
+
     <!-- mKnowledge -->
     <div class="window closed" data-window-id="mknowledge" style="top:420px; left:780px;">
       <div class="windowHeader">
@@ -435,6 +449,7 @@ function loadAllFeeds() {
   <li class="archive-item" data-archive-target="mletters-archive">mLetters Archives</li>
   <li class="archive-item" data-archive-target="mvisual-archive">mVisual Archives</li>
   <li class="archive-item" data-archive-target="mstudy-archive">mStudy Archives</li>
+  <li class="archive-item" data-archive-target="mvault-archive">mVault Archives</li>
   <li class="archive-item" data-archive-target="mvision-archive">mVision Archives</li>
   <li class="archive-item" data-archive-target="mbrush-archive">mBrush Archives</li>
   <li class="archive-item" data-archive-target="mstory-archive">mStory Archives</li>
@@ -550,6 +565,16 @@ function loadAllFeeds() {
       </div>
       <div class="wincontent">
         <div id="mStudyArchive" class="poetry-area">Loading mStudy Archives...</div>
+      </div>
+    </div>
+
+    <div class="window closed" data-window-id="mvault-archive" style="top:480px; left:320px;">
+      <div class="windowHeader">
+        <span class="windowTitle">mVault Archives</span>
+        <div><span class="winminimize">–</span><span class="winmaximize">□</span><span class="winclose">x</span></div>
+      </div>
+      <div class="wincontent">
+        <div id="mVaultArchive" class="poetry-area">Loading mVault Archives...</div>
       </div>
     </div>
 
