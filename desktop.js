@@ -454,7 +454,67 @@ if (document.getElementById("mLawsArchive") && typeof load_mLaws_archive === "fu
  * 2. BLOGGER FEED HELPERS *
  ***************************/
 var BLOG_BASE = "https://msafrain.blogspot.com/feeds/posts/default";
+// Archive feeds retrieve every available page, not just the first 50 posts.
+var archiveFeedRequests = {};
+function bloggerArchiveAll(label, pageSize, callbackName) {
+  var previous = archiveFeedRequests[callbackName];
+  if (previous && previous.loading) return;
+  var state = { loading: true, entries: [] };
+  archiveFeedRequests[callbackName] = state;
+  var page = 1;
+  var size = pageSize || 50;
+
+  function finish() {
+    state.loading = false;
+    var handler = window[callbackName];
+    if (typeof handler === "function") {
+      handler({ feed: { entry: state.entries } });
+    }
+  }
+
+  function fetchPage() {
+    var name = "__archivePage_" + callbackName + "_" + page;
+    var src = BLOG_BASE + (label ? "/-/" + encodeURIComponent(label) : "") +
+      "?alt=json-in-script&callback=" + name +
+      "&max-results=" + size + "&start-index=" + (1 + (page - 1) * size);
+    var script = document.createElement("script");
+    var completed = false;
+    function cleanup() {
+      delete window[name];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+    window[name] = function (json) {
+      if (completed) return;
+      completed = true;
+      var entries = json && json.feed && json.feed.entry ? json.feed.entry : [];
+      state.entries = state.entries.concat(entries);
+      var total = json && json.feed && json.feed["openSearch$totalResults"] &&
+        parseInt(json.feed["openSearch$totalResults"].$t, 10);
+      cleanup();
+      if (entries.length === size && (!Number.isFinite(total) || state.entries.length < total)) {
+        page++;
+        fetchPage();
+      } else {
+        finish();
+      }
+    };
+    script.onerror = function () {
+      if (completed) return;
+      completed = true;
+      cleanup();
+      finish();
+    };
+    script.src = src;
+    document.body.appendChild(script);
+  }
+  fetchPage();
+}
+
 function bloggerJsonp(label, maxResults, callbackName) {
+  if (/_archive$/.test(callbackName)) {
+    bloggerArchiveAll(label, maxResults, callbackName);
+    return;
+  }
   var src = BLOG_BASE;
   if (label) {
     src += "/-/" + encodeURIComponent(label);
